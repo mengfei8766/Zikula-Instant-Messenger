@@ -123,8 +123,12 @@ class Zim_Controller_Message extends Zikula_Controller
         return new Zikula_Response_Ajax($output);
     }
     
+    /**
+     * Send a new message to user.
+     *
+     * @return output with a status message or zikula ajax exception.
+     */
     public function send_new_message($args) {
-        
         //security check
         if (!SecurityUtil::confirmAuthKey()) {
             LogUtil::registerAuthidError();
@@ -184,12 +188,15 @@ class Zim_Controller_Message extends Zikula_Controller
             'uid' => $message['to']));  
         ModUtil::apiFunc('Zim', 'state', 'update', $state);
         
+        //return the JSON output.
         return new Zikula_Response_Ajax($output);
-        
     }
     
+    /**
+     * Confirm reciept of message so that Zim can stop sending it.
+     * 
+     */
     public function confirm_message($args) {
-        
         //security check
         if (!SecurityUtil::confirmAuthKey()) {
             LogUtil::registerAuthidError();

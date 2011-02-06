@@ -20,8 +20,12 @@ class Zim_Controller_Ajax extends Zikula_Controller
         $this->view->setCaching(false);
     }
     
+    /**
+     * The init function is called via an ajax call from the browser, it performs
+     * all startup functions such as getting contact lists and messages/state.
+     *
+     */
     public function init() {
-        
         //security checks
         if (!SecurityUtil::confirmAuthKey()) {
             LogUtil::registerAuthidError();

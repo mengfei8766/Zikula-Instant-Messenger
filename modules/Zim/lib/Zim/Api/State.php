@@ -10,7 +10,8 @@
 class Zim_Api_State extends Zikula_Api {
 
     /**
-     *
+     * Make changes to the current state of a user, this keeps information such
+     * as what message windows and messages are open. 
      */
     function update($args) {
         //skip if the args are not set
@@ -29,9 +30,6 @@ class Zim_Api_State extends Zikula_Api {
 
         //go through all the args and perform the updates
         foreach ($args as $arg) {
-            //TODO the count doesnt need to be used, it was here to define how
-            //long to keep a message in the session
-            $arg['count'] = 0;
 
             //check session params to insure they are all ok
             if (!isset($arg['data']) || empty($arg['data'])
@@ -42,16 +40,14 @@ class Zim_Api_State extends Zikula_Api {
 
             //set session information depending on type
             if ($arg['type'] == 'message') {
-                //if (!isset($arg['count']) || empty($arg['count']) || !is_numeric($arg['count'])) {
-                //    $arg['count'] = 0;
-                //}
+                
                 //check that uid is set for messages
                 if (!isset($arg['uid']) || empty($arg['uid'])) {
                     continue;
                 }
 
                 //make the session line for messages
-                $line = array('type' => $arg['type'], 'data' => $arg['data'], 'uid' => $arg['uid'], 'count' => $arg['count']);
+                $line = array('type' => $arg['type'], 'data' => $arg['data'], 'uid' => $arg['uid']);
             } else if ($arg['type'] == 'window') {
                 //make the session line for windows
                 $line = array('type' => $arg['type'], 'data' => $arg['data']);
@@ -77,14 +73,7 @@ class Zim_Api_State extends Zikula_Api {
                 //find session entries to remove
                 foreach ($sess as $key => $s) {
                     if ($s['type'] == 'message' && $s['uid'] == $arg['data']) {
-                        //if (isset($s['count']) && is_numeric($s['count'])) {
-                        //    $sess[$key]['count'] = $sess[$key]['count'] + 1;
-                        //} else {
-                        //    $sess[$key]['count'] = 1;
-                        //}
-                        //if ($sess[$key]['count'] > 1) {
                         unset($sess[$key]);
-                        //}
                     }
                     if ($s['type'] == $arg['type'] && $s['data'] == $arg['data']) {
                         unset($sess[$key]);
@@ -96,6 +85,9 @@ class Zim_Api_State extends Zikula_Api {
         return true;
     }
 
+    /**
+     * Gets the current state of the user, what windows/messages are open.
+     */
     function get() {
         $this->sanitize();
         $sess = SessionUtil::getVar('zim-sess', array());

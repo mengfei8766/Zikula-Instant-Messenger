@@ -22,13 +22,8 @@ class Zim_Controller_Admin extends Zikula_Controller
 
     /**
      * the main administration function
-     * This function is the default function, and is called whenever the
-     * module is initiated without defining arguments.  As such it can
-     * be used for a number of things, but most commonly it either just
-     * shows the module menu and returns or calls whatever the module
-     * designer feels should be the default function (often this is the
-     * view() function)
-     * @return string HTML string
+     * Just a stub for now
+     * @return void
      */
     public function main()
     {
