@@ -1,13 +1,5 @@
 Event.observe(window, 'load', function() {
     Zim.init();
-    /*soundManager.onload = function() {
-    
-    var mySoundObject = soundManager.createSound({
-          id: 'mySound', // required
-          url: '/modules/Zim/soundmanager/demo/_mp3/button-1.mp3', // required
-    });
-    mySoundObject.play(); // SMSound object reference, same as soundManager.getSoundById('mySound');
-    }*/
 });
 
 var Zim ={

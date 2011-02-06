@@ -6,7 +6,7 @@
  * @package Zim
  *
  */
- 
+ //TODO: all instances of rewriting status 3 to status 0 (invis show as offline) should be taken out and moved to controllers.
 class Zim_Api_Contact extends Zikula_Api {
 
     /**
