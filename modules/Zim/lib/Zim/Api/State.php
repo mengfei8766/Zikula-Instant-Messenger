@@ -6,7 +6,7 @@
  * @package Zim
  *
  */
- 
+ //TODO: why aren't messages and windows in seperate session variables.
 class Zim_Api_State extends Zikula_Api {
 
     /**
@@ -81,6 +81,7 @@ class Zim_Api_State extends Zikula_Api {
                 }
             }
         }
+        //save the session
         SessionUtil::setVar('zim-sess', $sess, '/', true, true);
         return true;
     }
@@ -90,9 +91,12 @@ class Zim_Api_State extends Zikula_Api {
      */
     function get() {
         $this->sanitize();
+        //get the session
         $sess = SessionUtil::getVar('zim-sess', array());
         $messages = array();
         $windows = array();
+        
+        //break the session into windows or messages
         foreach ($sess as $s) {
             if ($s['type'] == 'message') {
                 array_push($messages, $s['data']);
@@ -100,14 +104,25 @@ class Zim_Api_State extends Zikula_Api {
                 array_push($windows, $s['data']);
             }
         }
+        
+        //mid array of messages
         $args['mid'] = $messages;
+        
+        //get the users id.
+        //TODO: should a UID be grabbed in the api?
         $args['to'] = UserUtil::getVar('uid');
+        
+        //get the messages
         $s = ModUtil::apiFunc('Zim', 'message', 'getSelectedMessages', $args);
+        
+        //get each contact for open windows.
         $w = array();
         foreach ($windows as $window) {
             $wd = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $window);
             array_push($w, $wd);
         }
+        
+        //return the messages and windows
         $return['messages'] = $s;
         $return['windows'] = $w;
         return $return;
