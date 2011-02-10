@@ -162,6 +162,7 @@ class Zim_Controller_Message extends Zikula_Controller
         if (!isset($message['message']) || !is_string($message['message'])) {
             throw new Zikula_Exception_Fatal($this->__('Error! Malformed Message'));
         }
+        //TODO: What tags should be allowed in messages? user defined?
         $message['message'] = strip_tags($message['message'], '<b><u>');
         
         //send the message

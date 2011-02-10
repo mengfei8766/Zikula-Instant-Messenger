@@ -55,10 +55,6 @@ class Zim_Api_Contact extends Zikula_Api {
         $contacts = DBUtil::selectObjectArray('zim_users');
         
         foreach ($contacts as $key => $contact) {
-            //if status is 3 (invis) make it appear as 0 (offline)
-            if ($contact['status'] == 3) {
-                $contacts[$key]['status'] = 0;
-            }
             //if the contacts username is not set then get it from Zikula
             if (!isset($contact['uname']) || empty($contact['uname'])) {
                 $contacts[$key]['uname'] = UserUtil::getVar('uname', $contact['uid']);
