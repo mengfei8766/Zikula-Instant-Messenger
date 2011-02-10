@@ -65,9 +65,7 @@ class Zim_Block_Zim extends Zikula_Block
         if (!isset($me) || !$me || empty($me) || !isset($me['status'])) {
             $args['status'] = 1;
             $args['uid'] = $uid;
-            //TODO: update_contact_status should return the contact. not just the status.
-            ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
-            $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
+            $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
         }
         $my_uname = $me['uname'];
         

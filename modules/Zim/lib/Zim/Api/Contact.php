@@ -105,10 +105,6 @@ class Zim_Api_Contact extends Zikula_Api {
         if (!isset($args['status']))
             return false;
         
-        //get current date and time and set the update_on.
-        $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $args['update_on'] = $nowUTC->format(UserUtil::DATETIME_FORMAT);
-        
         //get the tables and prepare the where statment.
         $dbtable = DBUtil::getTables();
         $column = $dbtable['zim_users_column'];
@@ -117,29 +113,41 @@ class Zim_Api_Contact extends Zikula_Api {
         //get the user matching $args['uid']
         $me = $this->get_contact($args['uid']);
         
+        //get current date and time and set the update_on.
+        $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
+        $args['update_on'] = $nowUTC->format(UserUtil::DATETIME_FORMAT);
+        
         //if me doesnt exist then create me and get their uname from zikula
         if (!isset($me) || sizeof($me) == 0 || empty($me) || $me === false) {
-            if ((!isset($me['uname']) || empty($me['uname'])) && (!isset($args['uname']) || empty($args['uname'])))
-            {
-                $args['uname'] = UserUtil::getVar('uname', $args['uid']);
+            if ((!isset($args['uname']) || empty($args['uname']))) {
+                $me['uname'] = UserUtil::getVar('uname', $args['uid']);
+            } else {
+                $me['uname'] = $args['uname'];
             }
+            if ((!isset($me['uid']) || empty($me['uid']))) {
+                $me['uid'] = $args['uid'];
+            }
+            $me['status'] = $args['status'];
+            $me['update_on'] = $args['update_on'];
             
             //insert the new user
-            if (!DBUtil::insertObject($args, 'zim_users')) {
+            if (!DBUtil::insertObject($me, 'zim_users')) {
                 return false;
             }
             
             //return the status of the user
-            return $args['status'];
+            return $me;
         }
         
+        $me['update_on'] = $args['update_on'];
+        $me['status'] = $args['status'];
         //user does exist so we update that user
-        if (!DBUtil::updateObject($args, 'zim_users', $where)) {
+        if (!DBUtil::updateObject($me, 'zim_users', $where)) {
             return false;
         }
         
         //return users status
-        return $args['status'];
+        return $me;
     }
 
     /**

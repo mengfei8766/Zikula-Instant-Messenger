@@ -38,8 +38,9 @@ class Zim_Controller_Contact extends Zikula_Controller
         $args['status'] = FormUtil::getPassedValue('status', 1);
         $args['uid'] = UserUtil::getVar('uid');
         
-        //call api function to update teh tatus
-        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        //call api function to update the status
+        $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        //TODO: check me to make sure update was good.
         return new Zikula_Response_Ajax(array());
     }
     
@@ -60,11 +61,12 @@ class Zim_Controller_Contact extends Zikula_Controller
         }
         
         //perform status update
-        //TODO: if the status is not set it might not be best to default to 1
-        //TODO: should probably check the users status.
-        $args['status'] = FormUtil::getPassedValue('status', 1);
-        $args['uid'] = UserUtil::getVar('uid');
-        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        $status = FormUtil::getPassedValue('status');
+        if (isset($status) && is_int($status)) {
+            $args['status'] = $status;
+            $args['uid'] = UserUtil::getVar('uid');
+            $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        }
         
         //get the contact list
         $show_offline = $this->getVar('show_offline');
