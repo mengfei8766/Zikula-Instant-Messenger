@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Version extends Zikula_Version
+class Zim_Version extends Zikula_AbstractVersion
 {
     public function getMetaData()
     {

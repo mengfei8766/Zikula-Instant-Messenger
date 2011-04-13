@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Installer extends Zikula_Installer
+class Zim_Installer extends Zikula_AbstractInstaller
 {
     /**
      * Initialise the Admin module.

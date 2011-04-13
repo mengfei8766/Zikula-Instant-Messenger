@@ -1,1 +1,1 @@
-{literal}<li id='contact_#{uid}'><img id="zim_contact_status_img_#{uid}" src="images/icons/extrasmall/#{color}.gif" style="vertical-align: text-bottom;" alt="status-img"/> <div class="uname" style="display:inline;">#{uname}</div></li>{/literal}
+{literal}<li id='contact_#{uid}'><img id="zim_contact_status_img_#{uid}" src="#{color}.png" style="vertical-align: text-bottom;" alt="status-img"/> <div class="uname" style="display:inline;">#{uname}</div></li>{/literal}

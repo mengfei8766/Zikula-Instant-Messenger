@@ -7,7 +7,7 @@
  *
  */
  //TODO: why aren't messages and windows in seperate session variables.
-class Zim_Api_State extends Zikula_Api {
+class Zim_Api_State extends Zikula_AbstractApi {
 
     /**
      * Make changes to the current state of a user, this keeps information such

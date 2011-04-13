@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Block_Zim extends Zikula_Block
+class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
 {
     /**
      * initialise block

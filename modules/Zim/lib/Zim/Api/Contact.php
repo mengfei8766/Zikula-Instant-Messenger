@@ -7,7 +7,7 @@
  *
  */
  //TODO: all instances of rewriting status 3 to status 0 (invis show as offline) should be taken out and moved to controllers.
-class Zim_Api_Contact extends Zikula_Api {
+class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
      * Return an array of items to show in the your account panel.
@@ -115,7 +115,7 @@ class Zim_Api_Contact extends Zikula_Api {
         
         //get current date and time and set the update_on.
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $args['update_on'] = $nowUTC->format(UserUtil::DATETIME_FORMAT);
+        $args['update_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         
         //if me doesnt exist then create me and get their uname from zikula
         if (!isset($me) || sizeof($me) == 0 || empty($me) || $me === false) {
@@ -158,7 +158,7 @@ class Zim_Api_Contact extends Zikula_Api {
     function timeout() {
         //get current datetime and format it.
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $now = $nowUTC->format(UserUtil::DATETIME_FORMAT);
+        $now = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         
         //get the table
         $dbtable = DBUtil::getTables();

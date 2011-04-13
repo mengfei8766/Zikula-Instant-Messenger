@@ -7,7 +7,7 @@
  *
  */
  
-class Zim_Api_Message extends Zikula_Api {
+class Zim_Api_Message extends Zikula_AbstractApi {
 
     /**
      * Get all messages for a user.
@@ -98,7 +98,7 @@ class Zim_Api_Message extends Zikula_Api {
         //Set the sent date/time.
         if (!isset($message['sent_on'])) {
             $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-            $message['sent_on'] = $nowUTC->format(UserUtil::DATETIME_FORMAT);
+            $message['sent_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         }
         
         //insert the message.
@@ -123,7 +123,7 @@ class Zim_Api_Message extends Zikula_Api {
         $message['recd'] = 1;
         $message['mid'] = $args['id'];
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $message['recd_on'] = $nowUTC->format(UserUtil::DATETIME_FORMAT);
+        $message['recd_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         
         //get the table and update the object
         $dbtable = DBUtil::getTables();

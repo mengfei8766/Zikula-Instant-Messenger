@@ -20,10 +20,10 @@ var Zim ={
     my_uid: '',
     status: '1',
     status_colors:{
-        '0': 'redled',
-        '1': 'greenled',
-        '2': 'yellowled',
-        '3': 'free_icon'
+        '0': 'images/icons/extrasmall/redled.png',
+        '1': 'images/icons/extrasmall/greenled.png',
+        '2': 'images/icons/extrasmall/yellowled.png',
+        '3': 'images/icons/extrasmall/free_icon.png'
     },
     contacts: Array(),
     init_in_progress: false,
@@ -444,19 +444,19 @@ var Zim ={
                  animation: false
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/greenled.gif" style="vertical-align: text-bottom;"/> Online',
+                 label: '<img src="images/icons/extrasmall/greenled.png" style="vertical-align: text-bottom;"/> Online',
                  callback: function(){Zim.set_status(1);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/yellowled.gif" style="vertical-align: text-bottom;"/> Away',
+                 label: '<img src="images/icons/extrasmall/yellowled.png" style="vertical-align: text-bottom;"/> Away',
                  callback: function(){Zim.set_status(2);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/free_icon.gif" style="vertical-align: text-bottom;"/> Invisible',
+                 label: '<img src="images/icons/extrasmall/free_icon.png" style="vertical-align: text-bottom;"/> Invisible',
                  callback: function(){Zim.set_status(3);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/redled.gif" style="vertical-align: text-bottom;"/> Offline',
+                 label: '<img src="images/icons/extrasmall/redled.png" style="vertical-align: text-bottom;"/> Offline',
                  callback: function(){Zim.set_status(0);}
          });
     },
@@ -492,7 +492,7 @@ var Zim ={
     
     set_status_image: function() {
         var color = Zim.status_colors[Zim.status];
-        var colours = Object.values(Zim.status_colors).concat(Array('indicator_circle'));
+        var colours = Object.values(Zim.status_colors).concat(Array('images/ajax/indicator_circle.gif'));
         var src = ($('zim-my-status').readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
         $('zim-my-status').writeAttribute({src: src});
     },

@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Controller_Message extends Zikula_Controller
+class Zim_Controller_Message extends Zikula_AbstractController
 {
     /**
      * Post initialise.

@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Controller_Ajax extends Zikula_Controller
+class Zim_Controller_Ajax extends Zikula_AbstractController
 {
     /**
      * Post initialise.
