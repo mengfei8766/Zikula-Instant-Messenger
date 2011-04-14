@@ -208,5 +208,28 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //return the users uname
         return $args['uname'];
     }
-
+    
+    function keep_alive($uid) {
+    	//get the tables and prepare the where statment.
+        $dbtable = DBUtil::getTables();
+        $column = $dbtable['zim_users_column'];
+        $where = "WHERE $column[uid] =" . $uid;
+        
+        //get the user matching $uid
+        $me = $this->get_contact($uid);
+        if (!isset($me) || !$me || empty($me)) {
+        	return false;
+        }
+        
+        //get current date and time and set the update_on.
+        $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
+        $me['update_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
+        
+        //update the user
+        if (!DBUtil::updateObject($me, 'zim_users', $where)) {
+            return false;
+        }
+        //return users status
+        return $me;
+    }
 }

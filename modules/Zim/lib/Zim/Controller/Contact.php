@@ -60,12 +60,15 @@ class Zim_Controller_Contact extends Zikula_AbstractController
             throw new Zikula_Exception_Forbidden();
         }
         
-        //perform status update
+        //perform status update if supplied
         $status = FormUtil::getPassedValue('status');
         if (isset($status) && is_int($status)) {
             $args['status'] = $status;
             $args['uid'] = UserUtil::getVar('uid');
-            $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+            ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        } else {
+        	ModUtil::apiFunc('Zim', 'contact', 'keep_alive', UserUtil::getVar('uid'));
+        	//if status update not performed we still need to update when we last heard from this user.
         }
         
         //get the contact list
