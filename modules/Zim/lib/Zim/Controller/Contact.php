@@ -39,7 +39,7 @@ class Zim_Controller_Contact extends Zikula_AbstractController
         $args['uid'] = UserUtil::getVar('uid');
         
         //call api function to update the status
-        $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
         //TODO: check me to make sure update was good.
         return new Zikula_Response_Ajax(array());
     }
@@ -62,7 +62,7 @@ class Zim_Controller_Contact extends Zikula_AbstractController
         
         //perform status update if supplied
         $status = FormUtil::getPassedValue('status');
-        if (isset($status) && is_int($status)) {
+        if (isset($status) && is_numeric($status)) {
             $args['status'] = $status;
             $args['uid'] = UserUtil::getVar('uid');
             ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);

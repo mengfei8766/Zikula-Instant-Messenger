@@ -44,7 +44,7 @@ class Zim_Controller_Ajax extends Zikula_AbstractController
         //TODO: Offline status gets set to online, should check state to see if user wants to be online
         $status = $me['status'];
         $status = (!isset($status) || !is_numeric($status) || empty($status) || $status == '0') ? '1' : $status;
-         ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
+        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
          	Array(	'status'=> $status,
          			'uid'	=> $uid));
         //get all contacts
