@@ -85,6 +85,7 @@ var Zim ={
                     okControl:false,
                     submitOnBlur:true,
                     cancelControl:false,
+                    ajaxOptions: Zikula.Ajax.Request.defaultOptions(),
                     onFormCustomization: function(obj, form) {
                         $(form).observe('keypress',function(e) {
                             if(e.keyCode == Event.KEY_RETURN) {
