@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Controller_Ajax extends Zikula_AbstractController
+class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 {
     /**
      * Post initialise.
@@ -17,6 +17,7 @@ class Zim_Controller_Ajax extends Zikula_AbstractController
     protected function postInitialize()
     {
         // In this controller we never want caching.
+        Zikula_AbstractController::configureView();
         $this->view->setCaching(false);
     }
     
@@ -27,14 +28,8 @@ class Zim_Controller_Ajax extends Zikula_AbstractController
      */
     public function init() {
         //security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //get users status
         $uid = UserUtil::getVar('uid');
@@ -90,6 +85,10 @@ class Zim_Controller_Ajax extends Zikula_AbstractController
      * TODO: is this even used?
      */
     public function get_state(){
+    	//security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        
         $output = ModUtil::apiFunc('Zim', 'state', 'get', $args);
         return new Zikula_Response_Ajax($output);
     }

@@ -33,9 +33,7 @@ var Zim ={
         var pars = "status=" + Zim.status;
         
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=ajax&func=init", {
-            method: 'post',
             parameters: pars,
-            authid: 'zimauthid',
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -96,12 +94,10 @@ var Zim ={
                         });
                     },
                     callback: function(form, value) {
-                        var authid = $('zimauthid').value;
-                        return 'uname='+encodeURIComponent(value)+'&authid='+authid;
+                        return 'uname='+encodeURIComponent(value);
                     },
                     onComplete: function(transport, element) {
                         transport = Zikula.Ajax.Response.extend(transport);
-                        $('zimauthid').setValue(transport.getAuthid());
                         if (!transport.isSuccess()) {
                             this.element.innerHTML = Admin.Editor.getOrig(element.id);
                             Zikula.showajaxerror(transport.getMessage());
@@ -131,9 +127,7 @@ var Zim ={
         if (Zim.periodical_update_contact.currentlyExecuting == false) {return false;}
         var pars = "status=" + Zim.status;
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_online_contacts", {
-            method: 'post',
             parameters: pars,
-            authid: 'zimauthid',
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -278,9 +272,7 @@ var Zim ={
     send_message: function(uid,message) {
         var pars = "message=" + message +"&to=" + uid + "&status=" + Zim.status;
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=message&func=send_new_message", {
-            method: 'post',
             parameters: pars,
-            authid: 'zimauthid',
             onCreate: function() {
                 $('zim-message-textbox-' + uid).clear();
                 $('zim-message-textbox-' + uid).disable();
@@ -321,9 +313,7 @@ var Zim ={
             pars += str;
         }
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=message&func=get_new_messages", {
-            method: 'post',
             parameters: pars,
-            authid: 'zimauthid',
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -425,9 +415,7 @@ var Zim ={
     get_contact: function(uid) {
         var pars = "uid=" + uid;
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_contact", {
-            method: 'post',
             parameters: pars,
-            authid: 'zimauthid',
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -470,9 +458,7 @@ var Zim ={
             });
             var pars = "status=" + "0";
             new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=update_status", {
-                method: 'post',
                 parameters: pars,
-                authid: 'zimauthid',
                 onComplete : function(req) {
                     if (!req.isSuccess()) {
                         Zikula.showajaxerror(req.getMessage());

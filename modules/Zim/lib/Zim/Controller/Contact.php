@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Controller_Contact extends Zikula_AbstractController
+class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
 { 
     /**
      * Post initialise.
@@ -17,7 +17,7 @@ class Zim_Controller_Contact extends Zikula_AbstractController
     protected function postInitialize()
     {
         // In this controller we never want caching.
-        $this->view->setCaching(false);
+       // $this->view->setCaching(false);
     }
     
     /**
@@ -25,14 +25,8 @@ class Zim_Controller_Contact extends Zikula_AbstractController
      */
     public function update_status() {
         //security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //Get params from front end (ajax)
         $args['status'] = FormUtil::getPassedValue('status', 1);
@@ -49,16 +43,9 @@ class Zim_Controller_Contact extends Zikula_AbstractController
      *
      */
     public function get_online_contacts() {
-        
-        //security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+		//security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //perform status update if supplied
         $status = FormUtil::getPassedValue('status');
@@ -97,15 +84,9 @@ class Zim_Controller_Contact extends Zikula_AbstractController
      *
      */
     public function get_contact() {
-        //security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+		//security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //get the uid to pull up contact information for
         $uid = FormUtil::getPassedValue('uid');
@@ -130,15 +111,9 @@ class Zim_Controller_Contact extends Zikula_AbstractController
      * Update users username.
      */
     public function update_username() {
-        //Security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //get required information.
         $args['uid'] = UserUtil::getVar('uid');

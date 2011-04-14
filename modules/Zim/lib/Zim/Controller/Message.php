@@ -7,7 +7,7 @@
  *
  */
 
-class Zim_Controller_Message extends Zikula_AbstractController
+class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
 {
     /**
      * Post initialise.
@@ -17,7 +17,7 @@ class Zim_Controller_Message extends Zikula_AbstractController
     protected function postInitialize()
     {
         // In this controller we never want caching.
-        $this->view->setCaching(false);
+        //$this->view->setCaching(false);
     }
     
     /**
@@ -27,14 +27,8 @@ class Zim_Controller_Message extends Zikula_AbstractController
      */
     public function get_all_messages() {
        //security checks
-       if (!SecurityUtil::confirmAuthKey()) {
-           LogUtil::registerAuthidError();
-           throw new Zikula_Exception_Fatal();
-       }
-       if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-           LogUtil::registerPermissionError(null,true);
-           throw new Zikula_Exception_Forbidden();
-       }
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
        
        //check and update status
        $status = FormUtil::getPassedValue('status');
@@ -58,16 +52,9 @@ class Zim_Controller_Message extends Zikula_AbstractController
      * @return JSON Ajax array of all new messages.
      */
     public function get_new_messages() {
-        //perform security checks
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //Check and update status
         $status = FormUtil::getPassedValue('status');
@@ -129,15 +116,9 @@ class Zim_Controller_Message extends Zikula_AbstractController
      * @return output with a status message or zikula ajax exception.
      */
     public function send_new_message($args) {
-        //security check
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //check and update user status
         $status = FormUtil::getPassedValue('status');
@@ -198,15 +179,9 @@ class Zim_Controller_Message extends Zikula_AbstractController
      * 
      */
     public function confirm_message($args) {
-        //security check
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-        if (!SecurityUtil::checkPermission('Zim::', "::", ACCESS_COMMENT)) {
-            LogUtil::registerPermissionError(null,true);
-            throw new Zikula_Exception_Forbidden();
-        }
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //message id to confirm
         $mid = FormUtil::getPassedValue('mid');
