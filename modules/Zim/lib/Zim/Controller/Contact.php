@@ -16,8 +16,6 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
      */
     protected function postInitialize()
     {
-        // In this controller we never want caching.
-       // $this->view->setCaching(false);
     }
     
     /**
@@ -33,9 +31,11 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $args['uid'] = UserUtil::getVar('uid');
         
         //call api function to update the status
-        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
-        //TODO: check me to make sure update was good.
-        return new Zikula_Response_Ajax(array());
+        $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        if(!isset($me) || !$me || empty($me)) {
+        	throw new Zikula_Exception_Fatal();
+        }
+        return new Zikula_Response_Ajax($me);
     }
     
     /**

@@ -16,8 +16,6 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
      */
     protected function postInitialize()
     {
-        // In this controller we never want caching.
-        //$this->view->setCaching(false);
     }
     
     /**

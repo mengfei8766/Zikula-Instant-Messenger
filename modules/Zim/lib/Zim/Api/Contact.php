@@ -10,11 +10,11 @@
 class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
-     * Return an array of items to show in the your account panel.
+     * Get a single contact.
      *
      * @param array $array The arguments to pass to the function.
      *
-     * @return   array   indexed array of items.
+     * @return   array   contact information.
      */
     function get_contact($uid) {
         //make sure the uid is set
@@ -28,13 +28,9 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         $contact = DBUtil::selectObject('zim_users', $where);
         
         //if no contact found return false
-        //TODO: maybe this should return empty as false is for an error
-        if (!$contact) {
+        if (!$contact || sizeof($contact) == 0) {
             return false;
         }
-        //TODO: whats the point of this? does an empty array eval to false above?
-        if (sizeof($contact) == 0)
-            return $contact;
         
         //If the contacts username has never been set then get their username from zikula
         if (!isset($contact['uname']) || empty($contact['uname'])) {
@@ -96,8 +92,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * @return Intiger the status or boolean false if fail.
      */
     function update_contact_status($args) {
-        //perform timeout checks/updates
-        //$this->timeout();
         
         //check the params to make sure everything is set
         if (!isset($args))
@@ -196,8 +190,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         $dbtable = DBUtil::getTables();
         $column = $dbtable['zim_users_column'];
         $where = "WHERE $column[uid] =" . $args['uid'];
-        
-        //TODO is this unset needed?
         unset($args['uid']);
         
         //update the object

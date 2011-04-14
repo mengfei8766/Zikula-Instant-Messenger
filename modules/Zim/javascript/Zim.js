@@ -18,7 +18,7 @@ var Zim ={
     sentmessage_template: '',
     my_uname: '',
     my_uid: '',
-    status: '1',
+    status: '',
     status_colors:{
         '0': 'images/icons/extrasmall/redled.png',
         '1': 'images/icons/extrasmall/greenled.png',
@@ -30,7 +30,11 @@ var Zim ={
     
     init: function() {
         Zim.init_in_progress = true;
-        var pars = "status=" + Zim.status;
+        
+        var pars = '';
+        if (Zim.status !== '') {
+        	var pars = "status=" + Zim.status;
+        }
         
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=ajax&func=init", {
             parameters: pars,
@@ -55,6 +59,12 @@ var Zim ={
                 Zim.sentmessage_template = new Template(data.sentmessage_template);
                 Zim.contacts = data.contacts;
                 Zim.settings = data.settings;
+                
+                new Tooltip($('zim-my-status'), {});
+                Zim.set_status_image();
+                Zim.status_observer();
+             
+                if (Zim.status == '0') return;
                 Zim.contacts.each(function(item) {
                     Zim.toggle_contact_state(item);
                 });
@@ -62,7 +72,7 @@ var Zim ={
                 Zim.periodical_update_contact = new PeriodicalExecuter(function(pe) {
                     Zim.update_contacts();
                 }, Zim.settings.execute_period);
-                Zim.status_observer();
+                
                 if (typeof data.state != 'undefined') {
                     (data.state.windows).each(function(window) {
                         if(!has_open_message(window.uid)) {
@@ -77,11 +87,8 @@ var Zim ={
                 Zim.state.clear();
                 Zim.contact_search_observer();
                 
-                new Tooltip($('zim-my-status'), {});
-                Zim.set_status_image();
                 
-                
-                new Ajax.InPlaceEditor('zim-uname', 'ajax.php?module=Zim&type=contact&func=update_username', {
+                Zim.uname_editor = new Ajax.InPlaceEditor('zim-uname', 'ajax.php?module=Zim&type=contact&func=update_username', {
                     okControl:false,
                     submitOnBlur:true,
                     cancelControl:false,
@@ -451,30 +458,35 @@ var Zim ={
     },
     
     set_status: function(status) {
-        if (status == 0) {
+        if (status == Zim.status) {
+        	return;
+        } else if (status == 0) {
             Zim.periodical_update_contact.stop();
             Zim.contacts.each(function(item) {
                 item.status = 0;
                 Zim.toggle_contact_state(item);
             });
-            var pars = "status=" + "0";
-            new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=update_status", {
-                parameters: pars,
-                onComplete : function(req) {
-                    if (!req.isSuccess()) {
-                        Zikula.showajaxerror(req.getMessage());
-                        return;
-                    }
-                    var data = req.getData();
-                }
+            Zim.uname_editor.dispose();
+            ($('zim-block-message-container').childElements()).each(function(item) {
+                $(item.id).remove();
             });
-            
         } else if (Zim.status == 0) {
             Zim.status = status;
-            Zim.init();
+            return Zim.init();
         }
-        Zim.status = status;
-        Zim.set_status_image();
+        var pars = "status=" + status;
+        new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=update_status", {
+            parameters: pars,
+            onComplete : function(req) {
+                if (!req.isSuccess()) {
+                    Zikula.showajaxerror(req.getMessage());
+                    return;
+                }
+                var data = req.getData();
+                Zim.status = data.status;
+                Zim.set_status_image();
+            }
+        });
     },
     
     set_status_image: function() {

@@ -34,14 +34,27 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //get users status
         $uid = UserUtil::getVar('uid');
         $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
-        
-        //TODO Aslo does the js connect if status is offline?
-        //TODO: Offline status gets set to online, should check state to see if user wants to be online
-        $status = $me['status'];
-        $status = (!isset($status) || !is_numeric($status) || empty($status) || $status == '0') ? '1' : $status;
-        ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
+
+        //see if the JS side requested a certain status, if not then get it from the DB
+        $status = FormUtil::getPassedValue('status', $me['status']);
+
+    	//if status from the database and JS aren't set then make it 1 (probably first time)
+        if (!isset($status) || !is_numeric($status) || (empty($status) && $status !== '0')) {
+        	$status = '1';
+        	//save the status update so it filters to all users
+        	ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
          	Array(	'status'=> $status,
          			'uid'	=> $uid));
+        } elseif ($status !== $me['status']) {
+        	//the user requested a new status in the init and its different from the DB
+        	//save the status update so it filters to all users
+        	ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
+         	Array(	'status'=> $status,
+         			'uid'	=> $uid));
+        }
+		
+        
+        
         //get all contacts
         $show_offline = $this->getVar('show_offline');
         if ($show_offline) {
