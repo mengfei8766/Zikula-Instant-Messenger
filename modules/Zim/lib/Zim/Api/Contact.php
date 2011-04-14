@@ -61,6 +61,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
             }
         }
         //return the array of contacts
+        $this->timeout($contacts);
+        //timeout the contacts but dont remove offline from returned array
         return $contacts;
     }
 
@@ -82,7 +84,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         }
         
         //return the array of contacts.
-        return $contacts;
+        return $this->timeout($contacts);
     }
 
     /**
@@ -95,7 +97,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      */
     function update_contact_status($args) {
         //perform timeout checks/updates
-        $this->timeout();
+        //$this->timeout();
         
         //check the params to make sure everything is set
         if (!isset($args))
@@ -155,28 +157,23 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * see if they have been inactive for too long, if so then it sets them offline.
      *
      */
-    function timeout() {
+    function timeout($contacts) {
         //get current datetime and format it.
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
         $now = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         
-        //get the table
-        $dbtable = DBUtil::getTables();
-        $column = $dbtable['zim_users_column'];
-        
-        //get all online contacts
-        $contacts = $this->get_all_online_contacts();
-        
-        //TODO: this can be optimized to compile a list of objects to update and  only execute one DB call.
         //go through removing each contact thats timed out.
-        foreach ($contacts as $contact) {
+        $contacts_to_timeout = Array();
+        foreach ($contacts as $key => $contact) {
             $datediff = DateUtil::GetDatetimeDiff($contact['update_on'], $now);
             if ($datediff['d'] > 0 || $datediff['h'] > 0 || $datediff['m'] > 0 || $datediff['s'] > 30) {
-                $contact['status'] = 0;
-                $where = "$column[uid] = $contact[uid]";
-                DBUtil::updateObject($contact, 'zim_users', $where);
+                $contact['status]'] = 0;
+                array_push($contacts_to_timeout, $contact);
+                unset($contacts[$key]);
             }
         }
+        DBUtil::updateObjectArray($contacts_to_timeout, 'zim_users', 'uid');
+        return $contacts;
     }
 
     /**
