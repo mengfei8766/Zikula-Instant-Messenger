@@ -16,7 +16,10 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
      */
     protected function postInitialize()
     {
+    	$this->uid = UserUtil::getVar('uid');
     }
+    
+    private $uid;
     
     /**
      * Update the users status.
@@ -27,8 +30,8 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //Get params from front end (ajax)
-        $args['status'] = FormUtil::getPassedValue('status', 1);
-        $args['uid'] = UserUtil::getVar('uid');
+        $args['status'] = $this->request->getPost()->get('status', 1);
+        $args['uid'] = $this->uid;
         
         //call api function to update the status
         $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
@@ -48,7 +51,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //keep the user from timing out
-        ModUtil::apiFunc('Zim', 'contact', 'keep_alive', UserUtil::getVar('uid'));
+        ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
         
         //get the contact list
         $show_offline = $this->getVar('show_offline');
@@ -81,7 +84,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //get the uid to pull up contact information for
-        $uid = FormUtil::getPassedValue('uid');
+        $uid = $this->request->getPost()->get('uid');
         if (!isset($uid) || empty($uid)) {
              throw new Zikula_Exception_Fatal();
         }
@@ -108,8 +111,8 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //get required information.
-        $args['uid'] = UserUtil::getVar('uid');
-        $args['uname'] = FormUtil::getPassedValue('uname');
+        $args['uid'] = $this->uid;
+        $args['uname'] = $this->request->getPost()->get('uname');
         
         //api function to change the user name.
         $output = ModUtil::apiFunc('Zim', 'contact', 'update_username', $args);

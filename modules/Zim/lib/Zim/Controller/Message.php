@@ -15,7 +15,10 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
      */
     protected function postInitialize()
     {
+    	$this->uid = UserUtil::getVar('uid');
     }
+    
+    private $uid;
     
     /**
      * Get all of the messages for a user.
@@ -26,11 +29,9 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
        //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-       
-        $uid = UserUtil::getVar('uid');
         
        //get all messages from database
-       $args = array('to' =>  $uid, 'recd' => true);
+       $args = array('to' =>  $this->uid, 'recd' => true);
        $messages = ModUtil::apiFunc('Zim', 'message', 'getAll', $args);
        $output['messages'] = $messages;
        return new Zikula_Response_Ajax($output);
@@ -46,19 +47,17 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
-        $uid = UserUtil::getVar('uid');
-        
         //confirm old messages
-        $mid = FormUtil::getPassedValue('confirm');
+        $mid = $this->request->getPost()->get('confirm');
         if (isset($mid) && is_array($mid)) {
             foreach($mid as $id) {
-                ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $id, 'to' => $uid));
+                ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $id, 'to' => $this->uid));
             }
         }
         
         //check for state updates (windows opened or closed)
-        $state_add = FormUtil::getPassedValue('state_add');
-        $state_del = FormUtil::getPassedValue('state_del');
+        $state_add = $this->request->getPost()->get('state_add');
+        $state_del = $this->request->getPost()->get('state_del');
         $state = array();
         if (isset($state_add) && !empty($state_add) && is_array($state_add)) {
             foreach ($state_add as $add) { 
@@ -74,7 +73,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         }
         
         //get all new messages from database
-        $args = array(  'to'    =>  $uid);
+        $args = array(  'to'    =>  $this->uid);
         $messages = ModUtil::apiFunc('Zim', 'message', 'getAll', $args);
         
         //add state information to messages
@@ -103,19 +102,17 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
-        $uid = UserUtil::getVar('uid');
-        
         //make sure the 'to' user id is set
-        $message['to'] = FormUtil::getPassedValue('to');
+        $message['to'] = $this->request->getPost()->get('to');
         if (!isset($message['to']) || !$message['to']) {
             throw new Zikula_Exception_Fatal($this->__('Error! No recipient set.'));
         }
         
         //set from address to current users uid
-        $message['from'] = $uid;
+        $message['from'] = $this->uid;
         
         //get and make sure the message is set
-        $message['message'] = FormUtil::getPassedValue('message');
+        $message['message'] = $this->request->getPost()->get('message');
         if (!isset($message['message']) || !is_string($message['message'])) {
             throw new Zikula_Exception_Fatal($this->__('Error! Malformed Message'));
         }
@@ -159,20 +156,19 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //message id to confirm
-        $mid = FormUtil::getPassedValue('mid');
+        $mid = $this->request->getPost()->get('mid');
         
         //current user - this is used in the api to make sure current user
         //is allowed to confirm the message
-        $uid = UserUtil::getVar('uid');
         
         //confirm the message(s) as recd.
         if (is_array($mid)) {
             foreach($mid as $id) {
-                ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $id, 'to' => $uid));
+                ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $id, 'to' => $this->uid));
             }
             return new Zikula_Response_Ajax(array());
         }
-        ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $mid, 'to' => $uid));
+        ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $mid, 'to' => $this->uid));
         return new Zikula_Response_Ajax(array());
     }
 }
