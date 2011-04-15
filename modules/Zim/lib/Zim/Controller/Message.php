@@ -6,7 +6,6 @@
  * @package Zim
  *
  */
-
 class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
 {
     /**
@@ -28,15 +27,8 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
        
-       //check and update status
-       $status = FormUtil::getPassedValue('status');
-       $uid = UserUtil::getVar('uid');
-       if (isset($status) && is_int($status)) {
-           $args2['status'] = $status;
-           $args2['uid'] = $uid;
-           ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args2);
-       }
-       
+        $uid = UserUtil::getVar('uid');
+        
        //get all messages from database
        $args = array('to' =>  $uid, 'recd' => true);
        $messages = ModUtil::apiFunc('Zim', 'message', 'getAll', $args);
@@ -54,14 +46,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
-        //Check and update status
-        $status = FormUtil::getPassedValue('status');
         $uid = UserUtil::getVar('uid');
-        if (isset($status) && is_int($status)) {
-            $args2['status'] = $status;
-            $args2['uid'] = $uid;
-            ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args2);
-        }
         
         //confirm old messages
         $mid = FormUtil::getPassedValue('confirm');
@@ -118,14 +103,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
-        //check and update user status
-        $status = FormUtil::getPassedValue('status');
         $uid = UserUtil::getVar('uid');
-        if (isset($status) && is_int($status)) {
-            $args['status'] = $status;
-            $args['uid'] = $uid;
-            ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
-        }
         
         //make sure the 'to' user id is set
         $message['to'] = FormUtil::getPassedValue('to');
@@ -141,8 +119,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         if (!isset($message['message']) || !is_string($message['message'])) {
             throw new Zikula_Exception_Fatal($this->__('Error! Malformed Message'));
         }
-        //TODO: What tags should be allowed in messages? user defined?
-        $message['message'] = strip_tags($message['message'], '<b><u>');
+        $message['message'] = strip_tags($message['message'], $this->getVar('allowed_msg_tags'));
         
         //send the message
         $allow_offline_msg = $this->getVar('allow_offline_msg');

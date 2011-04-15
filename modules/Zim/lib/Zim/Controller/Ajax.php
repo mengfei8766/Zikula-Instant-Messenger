@@ -53,8 +53,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
          			'uid'	=> $uid));
         }
 		
-        
-        
         //get all contacts
         $show_offline = $this->getVar('show_offline');
         if ($show_offline) {

@@ -47,16 +47,8 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
-        //perform status update if supplied
-        $status = FormUtil::getPassedValue('status');
-        if (isset($status) && is_numeric($status)) {
-            $args['status'] = $status;
-            $args['uid'] = UserUtil::getVar('uid');
-            ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
-        } else {
-        	ModUtil::apiFunc('Zim', 'contact', 'keep_alive', UserUtil::getVar('uid'));
-        	//if status update not performed we still need to update when we last heard from this user.
-        }
+        //keep the user from timing out
+        ModUtil::apiFunc('Zim', 'contact', 'keep_alive', UserUtil::getVar('uid'));
         
         //get the contact list
         $show_offline = $this->getVar('show_offline');

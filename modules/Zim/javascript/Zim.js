@@ -133,9 +133,7 @@ var Zim ={
         }
         Zim.execute_count = 0;
         if (Zim.periodical_update_contact.currentlyExecuting == false) {return false;}
-        var pars = "status=" + Zim.status;
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_online_contacts", {
-            parameters: pars,
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -278,7 +276,7 @@ var Zim ={
         }
     },
     send_message: function(uid,message) {
-        var pars = "message=" + message +"&to=" + uid + "&status=" + Zim.status;
+        var pars = "message=" + message +"&to=" + uid;
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=message&func=send_new_message", {
             parameters: pars,
             onCreate: function() {
@@ -311,8 +309,7 @@ var Zim ={
     },
     
     get_messages: function() {
-        var pars = "status=" + Zim.status;
-        pars = pars + Zim.state.params();
+        var pars = Zim.state.params();
         if ((Zim.messages_to_confirm).length > 0) {
             var str = '';
             Zim.messages_to_confirm.each(function(item) {
