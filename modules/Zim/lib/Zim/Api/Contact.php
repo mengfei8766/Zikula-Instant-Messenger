@@ -6,7 +6,6 @@
  * @package Zim
  *
  */
- //TODO: all instances of rewriting status 3 to status 0 (invis show as offline) should be taken out and moved to controllers.
 class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
@@ -18,8 +17,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      */
     function get_contact($uid) {
         //make sure the uid is set
-        if (!isset($uid)) {
-            return false;
+        if (!isset($uid) || empty($uid)) {
+            throw new Zim_Exception_UIDNotSet();
         }
         //get the table and select contact where uid is the same as supplied.
         $dbtable = DBUtil::getTables();
@@ -29,7 +28,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         
         //if no contact found return false
         if (!$contact || sizeof($contact) == 0) {
-            return false;
+            throw new Zim_Exception_ContactNotFound();
         }
         
         //If the contacts username has never been set then get their username from zikula
@@ -92,14 +91,11 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * @return Intiger the status or boolean false if fail.
      */
     function update_contact_status($args) {
-        
         //check the params to make sure everything is set
-        if (!isset($args))
-            return false;
         if (!isset($args['uid']) || !$args['uid'])
-            return false;
+            throw new Zim_Exception_UIDNotSet();
         if (!isset($args['status']))
-            return false;
+            throw new Zim_Exception_StatusNotSet();
         
         //get the tables and prepare the where statment.
         $dbtable = DBUtil::getTables();
@@ -111,32 +107,9 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         
         //get current date and time and set the update_on.
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $args['update_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
-        
-        //if me doesnt exist then create me and get their uname from zikula
-        if (!isset($me) || sizeof($me) == 0 || empty($me) || $me === false) {
-            if ((!isset($args['uname']) || empty($args['uname']))) {
-                $me['uname'] = UserUtil::getVar('uname', $args['uid']);
-            } else {
-                $me['uname'] = $args['uname'];
-            }
-            if ((!isset($me['uid']) || empty($me['uid']))) {
-                $me['uid'] = $args['uid'];
-            }
-            $me['status'] = $args['status'];
-            $me['update_on'] = $args['update_on'];
-            
-            //insert the new user
-            if (!DBUtil::insertObject($me, 'zim_users')) {
-                return false;
-            }
-            
-            //return the status of the user
-            return $me;
-        }
-        
-        $me['update_on'] = $args['update_on'];
+        $me['update_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
         $me['status'] = $args['status'];
+        
         //user does exist so we update that user
         if (!DBUtil::updateObject($me, 'zim_users', $where)) {
             return false;
@@ -144,6 +117,29 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         
         //return users status
         return $me;
+    }
+    
+    function first_time_init($uid) {
+    	try {
+    		$me = $this->get_contact($uid);
+    		return $me;
+    	} catch (Zim_Exception_ContactNotFound $e) {
+    		//if me doesnt exist then create me and get their uname from zikula
+        	$me['uname'] = UserUtil::getVar('uname', $uid);
+        	$me['uid'] = $uid;
+        	$me['status'] = 1;
+        	$nowUTC = new DateTime(null, new DateTimeZone('UTC'));
+        	$me['update_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
+            
+            //insert the new user
+            if (!DBUtil::insertObject($me, 'zim_users')) {
+                throw new Zim_Exception_CouldNotCreateUser;
+            }
+            
+            //return the status of the user
+            return $me;
+        }
+        throw new Zim_Exception_CouldNotCreateUser;
     }
 
     /**
@@ -178,8 +174,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      */
     function update_username($args) {
         //check input to make sure everything is set.
-        if (!isset($args['uid']) || empty($args['uid']))
-            return false;
+        if (!isset($args['uid']) || !$args['uid'])
+            throw new Zim_Exception_UIDNotSet();
         
         //if uname not set then go to default from zikula.
         if (!isset($args['uname']) || empty($args['uname'])) {
@@ -194,7 +190,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         
         //update the object
         if (!DBUtil::updateObject($args, 'zim_users', $where)) {
-            return false;
+            throw new Zim_Exception_UsernameCouldNotBeUpdated();
         }
         
         //return the users uname
@@ -209,9 +205,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         
         //get the user matching $uid
         $me = $this->get_contact($uid);
-        if (!isset($me) || !$me || empty($me)) {
-        	return false;
-        }
         
         //get current date and time and set the update_on.
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));

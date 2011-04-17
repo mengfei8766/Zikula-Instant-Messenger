@@ -59,18 +59,15 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         
         //get users information
         $uid = UserUtil::getVar('uid');
-        $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
-        
-        //this should handle if user doesnt exist in the records.
-        if (!isset($me) || !$me || empty($me) || !isset($me['status'])) {
-            $args['status'] = 1;
-            $args['uid'] = $uid;
-            $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        $me = array();
+    	try {
+        	$me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+        	$me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $uid);
         }
-        $my_uname = $me['uname'];
         
         //get the block
-        $this->view->assign('uname', $my_uname);
+        $this->view->assign('uname', $me['uname']);
         $blockinfo['content'] = $this->view->fetch('zim_block_zim.tpl');
         
         //return the block

@@ -30,15 +30,20 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //Get params from front end (ajax)
-        $args['status'] = $this->request->getPost()->get('status', 1);
+        $args['status'] = $this->request->getPost()->get('status');
         $args['uid'] = $this->uid;
-        
+
         //call api function to update the status
-        $me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
-        if(!isset($me) || !$me || empty($me)) {
-        	throw new Zikula_Exception_Fatal();
+        try {
+        	$me = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', $args);
+        	return new Zikula_Response_Ajax($me);
+        } catch (Zim_Exception_ContactNotFound $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        } catch (Zim_Exception_UIDNotSet $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        } catch (Zim_Exception_StatusNotSet $e) {
+        	return new Zim_Response_Ajax_Exception($e);
         }
-        return new Zikula_Response_Ajax($me);
     }
     
     /**
@@ -51,7 +56,13 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         
         //keep the user from timing out
-        ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
+        try {
+        	ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
+    	} catch (Zim_Exception_ContactNotFound $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        } catch (Zim_Exception_UIDNotSet $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        }
         
         //get the contact list
         $show_offline = $this->getVar('show_offline');
@@ -85,12 +96,15 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         
         //get the uid to pull up contact information for
         $uid = $this->request->getPost()->get('uid');
-        if (!isset($uid) || empty($uid)) {
-             throw new Zikula_Exception_Fatal();
-        }
         
-        //call api to get contact
-        $user = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
+        //call api to get contact 
+        try {
+        	$user = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        } catch (Zim_Exception_UIDNotSet $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        }
         
         //rewrite invisible to offline.
         if ($user['status'] == 3) {
@@ -114,10 +128,13 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         $args['uid'] = $this->uid;
         $args['uname'] = $this->request->getPost()->get('uname');
         
-        //api function to change the user name.
-        $output = ModUtil::apiFunc('Zim', 'contact', 'update_username', $args);
-        if (!$output) {
-            throw new Zikula_Exception_Fatal();
+        //api function to change the username.
+        try {
+        	$output = ModUtil::apiFunc('Zim', 'contact', 'update_username', $args);
+        } catch (Zim_Exception_UsernameCouldNotBeUpdated $e) {
+        	return new Zim_Response_Ajax_Exception($e);
+        } catch (UIDNotSet $e) {
+        	return new Zim_Response_Ajax_Exception($e);
         }
         
         //return JSON response

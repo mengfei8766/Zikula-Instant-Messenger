@@ -33,23 +33,19 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        
+        $me = array();
         //get users status
-        $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
-
+        try {
+        	$me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+        	$me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $this->uid);
+        }
         //see if the JS side requested a certain status, if not then get it from the DB
         $status = $this->request->getPost()->get('status', $me['status']);
 
-    	//if status from the database and JS aren't set then make it 1 (probably first time)
-        if (!isset($status) || !is_numeric($status) || (empty($status) && $status !== '0')) {
-        	$status = '1';
-        	//save the status update so it filters to all users
-        	ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
-         	Array(	'status'=> $status,
-         			'uid'	=> $this->uid));
-        } elseif ($status !== $me['status']) {
-        	//the user requested a new status in the init and its different from the DB
-        	//save the status update so it filters to all users
+        //the user requested a new status in the init and its different from the DB
+        //save the status update so it filters to all users
+    	if ($status !== $me['status']) {
         	ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
          	Array(	'status'=> $status,
          			'uid'	=> $this->uid));

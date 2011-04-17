@@ -105,7 +105,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         //make sure the 'to' user id is set
         $message['to'] = $this->request->getPost()->get('to');
         if (!isset($message['to']) || !$message['to']) {
-            throw new Zikula_Exception_Fatal($this->__('Error! No recipient set.'));
+            throw new Zikula_Exception_BadData($this->__('Error! No recipient set.'));
         }
         
         //set from address to current users uid
@@ -114,7 +114,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         //get and make sure the message is set
         $message['message'] = $this->request->getPost()->get('message');
         if (!isset($message['message']) || !is_string($message['message'])) {
-            throw new Zikula_Exception_Fatal($this->__('Error! Malformed Message'));
+            throw new Zikula_Exception_BadData($this->__('Error! Malformed Message'));
         }
         $message['message'] = strip_tags($message['message'], $this->getVar('allowed_msg_tags'));
         
@@ -129,8 +129,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
                 $message = ModUtil::apiFunc('Zim', 'message', 'send', $message);
                 $output['status'] = 'ok';
             } else {
-                //TODO what kind of exception?
-                throw new Zikula_Exception_Fatal($this->__('Error! Contact is offline. Offline messaging is disabled'));
+                return new Zikula_Response_Ajax_BadData($this->__('Error! Contact is offline. Offline messaging is disabled'));
             }
         }
         
