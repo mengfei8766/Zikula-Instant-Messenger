@@ -109,7 +109,7 @@ class Zim_Api_State extends Zikula_AbstractApi {
         $args['mid'] = $messages;
         
         //get the users id.
-        $args['to'] = $uid;
+        $args['uid'] = $uid;
         
         //get the messages
         $s = ModUtil::apiFunc('Zim', 'message', 'getSelectedMessages', $args);

@@ -146,7 +146,7 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         if (!isset($args) || !is_array($args)) {
             return false;
         }
-        if (!isset($args['to']) || !$args['to']) {
+        if (!isset($args['uid']) || !$args['uid']) {
             return false;
         }
         if (!isset($args['mid'])) {
@@ -158,7 +158,7 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         $column = $dbtable['zim_message_column'];
         
         //construct where argument.
-        $where = "WHERE ($column[to] =" . $args['to'] . " OR $column[from] =" . $args['to'] . ") AND $column[mid] IN(";
+        $where = "WHERE ($column[to] =" . $args['uid'] . " OR $column[from] =" . $args['uid'] . ") AND $column[mid] IN(";
         $in = '';
         foreach ($args['mid'] as $mid) {
             $in .= "$mid,";
