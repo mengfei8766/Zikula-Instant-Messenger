@@ -80,7 +80,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         $output['settings']['allow_offline_msg'] = $this->getVar('allow_offline_msg');
         
         //retreive state
-        $state = ModUtil::apiFunc('Zim', 'state', 'get');
+        $state = ModUtil::apiFunc('Zim', 'state', 'get', $this->uid);
         if (isset($state)) {
             $output['state'] = $state;   
         }

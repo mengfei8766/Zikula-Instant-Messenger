@@ -89,7 +89,7 @@ class Zim_Api_State extends Zikula_AbstractApi {
     /**
      * Gets the current state of the user, what windows/messages are open.
      */
-    function get() {
+    function get($uid) {
         $this->sanitize();
         //get the session
         $sess = SessionUtil::getVar('zim-sess', array());
@@ -109,8 +109,7 @@ class Zim_Api_State extends Zikula_AbstractApi {
         $args['mid'] = $messages;
         
         //get the users id.
-        //TODO: should a UID be grabbed in the api?
-        $args['to'] = UserUtil::getVar('uid');
+        $args['to'] = $uid;
         
         //get the messages
         $s = ModUtil::apiFunc('Zim', 'message', 'getSelectedMessages', $args);
