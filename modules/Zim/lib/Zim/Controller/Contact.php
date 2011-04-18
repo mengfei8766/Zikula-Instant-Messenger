@@ -139,7 +139,5 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         
         //return JSON response
         return new Zikula_Response_Ajax($output);
-    }
-     
-    
+    }  
 }

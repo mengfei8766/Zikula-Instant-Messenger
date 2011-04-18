@@ -88,17 +88,4 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //return the JSON output
         return new Zikula_Response_Ajax($output);
     }
-    
-    /**
-     * Get the current state for the current user.
-     * TODO: is this even used?
-     */
-    public function get_state(){
-    	//security checks
-        $this->checkAjaxToken();
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        
-        $output = ModUtil::apiFunc('Zim', 'state', 'get', $args);
-        return new Zikula_Response_Ajax($output);
-    }
 }
