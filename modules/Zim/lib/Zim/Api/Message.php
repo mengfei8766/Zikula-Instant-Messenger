@@ -143,8 +143,11 @@ class Zim_Api_Message extends Zikula_AbstractApi {
      */
     function getSelectedMessages($args) {
         //check arguments.
+        if (!isset($args) || !is_array($args)) {
+            return false;
+        }
         if (!isset($args['uid']) || !$args['uid']) {
-        	throw new Zim_Exception_UIDNotSet();
+            return false;
         }
         if (!isset($args['mid'])) {
             return false;

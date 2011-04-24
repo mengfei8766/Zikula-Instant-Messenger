@@ -18,22 +18,13 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function install()
     {
-    	
-   		 try {
-            DoctrineUtil::createTablesFromModels('Zim');
-           // DoctrineUtil::createTablesFromModels('Zim');
-        } catch (Exception $e) {
-            return LogUtil::registerError("<pre>".$e);
-        	return false;
-        }
-        /*
-    	if (!DBUtil::createTable('zim_users')) {
+        if (!DBUtil::createTable('zim_users')) {
             return false;
         }
 
         if (!DBUtil::createTable('zim_message')) {
             return false;
-        }*/
+        }
 
         $this->setVar('message_check_period', 4);
         $this->setVar('contact_update_freq', 6);
@@ -88,15 +79,13 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function uninstall()
     {
-    	DoctrineUtil::dropTable('zim_users');
-    	DoctrineUtil::dropTable('aim_message');
-        /*if (!DBUtil::dropTable('zim_users')) {
+        if (!DBUtil::dropTable('zim_users')) {
             return false;
         }
 
         if (!DBUtil::dropTable('zim_message')) {
             return false;
-        }*/
+        }
 
         $this->delVars();
 

@@ -88,33 +88,4 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //return the JSON output
         return new Zikula_Response_Ajax($output);
     }
-    
-    function test() {
-    	print "<pre>1";
-    	$contacts = ModUtil::apiFunc('Zim', 'contact', 'update_contact_status', array('uid' =>2, 'status' => '4'));
-    	print_r($contacts);die();
-    	$q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $this->uid);
-    	$me = $q->fetchOne();
-    	if (empty($me)) {
-    		$me = new Zim_Model_User();
-    		$me->save();
-    	}
-    	print "<pre>2";
-    	print_r($me->toArray());
-    	die();
-    	
-    	$msg = new Zim_Model_Message();
-    	$msg['msg_to'] = 2;
-    	$msg['msg_from'] = 2;
-    	$msg['message'] = "this is a test message";
-    	$msg->save();
-    	$task = Doctrine_Query::create()
-    		->from('Zim_Model_Message message')
-    		->where('message.msg_to = ?', 2);
-    	$msg = $task->execute();
-    	print_r($msg->toArray());
-    	
-    }
 }
