@@ -385,7 +385,7 @@ var Zim ={
             //$('zim-message-body-' + window_uid).show();
         }
         $('zim-message-message-'+ window_uid).scrollTop = $('zim-message-message-'+window_uid).scrollHeight;
-        if (message.to == Zim.my_uid) {
+        if (message.msg_to == Zim.my_uid) {
             Zim.confirm_message(message.mid);
             if (!Zim.init_in_progress) {
                 var restore_color = '#ffffff';
