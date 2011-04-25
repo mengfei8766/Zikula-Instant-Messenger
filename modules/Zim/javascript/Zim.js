@@ -291,18 +291,18 @@ var Zim ={
                 }
                 var data = req.getData();
                 var msg = {
-                    to: uid,
-                    from: Zim.my_uid,
-                    uname: '',
+                    msg_to: uid,
+                    msg_from: Zim.my_uid,
+                    from: {uname:''},
                     message: message
                 };
                 var date = new Date();
-                var sent_on = date.getFullYear() + '-' + date.getMonth() +
+                var created_at = date.getFullYear() + '-' + date.getMonth() +
                     '-' + date.getDate() +
                     ' ' + date.getHours() +
                     ':' + date.getMinutes() +
                     ';' + date.getSeconds();
-                msg.sent_on = sent_on;
+                msg.created_at = created_at;
                 Zim.add_message(msg);
             }
         });

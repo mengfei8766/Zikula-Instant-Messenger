@@ -49,11 +49,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         
         //confirm old messages
         $mid = $this->request->getPost()->get('confirm');
-        if (isset($mid) && is_array($mid)) {
-            foreach($mid as $id) {
-                ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $id, 'to' => $this->uid));
-            }
-        }
+        ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $mid, 'to' => $this->uid));
         
         //check for state updates (windows opened or closed)
         $state_add = $this->request->getPost()->get('state_add');

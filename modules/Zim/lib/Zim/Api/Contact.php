@@ -27,14 +27,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     	if (empty($contact)) {
     		throw new Zim_Exception_ContactNotFound();
     	}
-    	
     	$contact = $contact->toArray();
-        
-        //If the contacts username has never been set then get their username from zikula
-        if (!isset($contact['uname']) || empty($contact['uname'])) {
-            $contact['uname'] = UserUtil::getVar('uname', $uid);
-            $contact->save();
-        }
         
         //return the contact
         return $contact;
@@ -46,18 +39,11 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     function get_all_contacts() {
     	$this->timeout();
     	
-        //get the table and select everything.
+        //get all the users
         $task = Doctrine_Query::create()
     		->from('Zim_Model_User');
     	$exec = $task->execute();
     	$contacts = $exec->toArray();
-
-        foreach ($contacts as $key => $contact) {
-            //if the contacts username is not set then get it from Zikula
-            if (!isset($contact['uname']) || empty($contact['uname'])) {
-                $contacts[$key]['uname'] = UserUtil::getVar('uname', $contact['uid']);
-            }
-        }
         
         //return the array of contacts
         return $contacts;

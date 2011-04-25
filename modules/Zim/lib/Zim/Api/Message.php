@@ -57,10 +57,8 @@ class Zim_Api_Message extends Zikula_AbstractApi {
     	$message = $task->fetchOne();	
         
         //message is not found
-        if (empty($message)) {
-        	throw new Zim_Exception_MessageNotFound();
-        }
-
+        if (empty($message)) throw new Zim_Exception_MessageNotFound();
+        
         // Return the item
         return $message->toArray();
     }
@@ -87,7 +85,6 @@ class Zim_Api_Message extends Zikula_AbstractApi {
     	$msg['msg_from'] = $message['from'];
     	$msg['message'] = $message['message'];
     	$msg->save();    
-         
         return $msg->toArray();
     }
 
@@ -144,5 +141,4 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         // Return the items
         return $messages;
     }
-
 }
