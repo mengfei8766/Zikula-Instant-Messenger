@@ -65,6 +65,8 @@ class Zim_Api_Message extends Zikula_AbstractApi {
 
     /**
      * Send a new message.
+     * 
+     * TODO: what happens if you send a msg to a non-existing user?
      *
      */
     function send($message) {
@@ -77,8 +79,7 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         return false;
         if (!isset($message['message']) || !$message['message'])
         return false;
-        if (!isset($message['recd']))
-        $message['recd'] = 0;
+        if (!isset($message['recd'])) $message['recd'] = 0;
 
         $msg = new Zim_Model_Message();
         $msg['msg_to'] = $message['to'];

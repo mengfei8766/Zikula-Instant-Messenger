@@ -8,6 +8,7 @@
  * @package Zim
  */
 
+
 class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
@@ -103,6 +104,9 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         return $contact->toArray();
     }
 
+    /**
+     * Initializes user for first time use.
+     */
     function first_time_init() {
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
@@ -120,14 +124,13 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     /**
      * Timeout function goes through all the users who are online and checks to
      * see if they have been inactive for too long, if so then it sets them offline.
-     *
      */
     function timeout() {
         //TODO this time comparison doesnt really work
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User')
         ->set('status', 0)
-        ->where('(NOW() - updated_at) > 30');
+        ->where('(NOW() - updated_at) > ?', $this->getVar('allow_offline_msg', 30));
         $q->execute();
 
         return;
@@ -156,8 +159,12 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         return $contact->get('uname');
     }
 
+    /**
+     * Keep a user from timing out.
+     * 
+     * @param $uid Intiger User ID to keep alive.
+     */
     function keep_alive($uid) {
-         
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.uid = ?', $uid);

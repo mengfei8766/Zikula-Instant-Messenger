@@ -31,6 +31,7 @@ class Zim_Installer extends Zikula_AbstractInstaller
         $this->setVar('contact_update_freq', 6);
         $this->setVar('show_offline', 0);
         $this->setVar('allow_offline_msg', 1);
+        $this->setVar('timeout_period', 30);
         $this->setVar('allowed_msg_tags', '<b><u>');
 
         // Initialisation successful
