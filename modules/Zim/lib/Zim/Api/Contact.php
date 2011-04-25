@@ -140,6 +140,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     		->update('Zim_Model_User')
     		->set('status', 0)
     		->where('(NOW() - updated_at) > 30');
+    	$q->execute();
 
         return;
     }

@@ -25,26 +25,16 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         if (!isset($args['recd'])) {
             $args['recd'] = false;
         }
-        
-        //get tables and construct where statment
-        $dbtable = DBUtil::getTables();
-        $column = $dbtable['zim_message_column'];
-        $where = "WHERE $column[to] =" . $args['to'];
-        if (!$args['recd']) {
-            $where .= " AND $column[recd] = 0";
-        }
-        $orderBy = "$column[sent_on]";
-        
-        //get the messages
-        $messages = DBUtil::selectObjectArray('zim_message', $where, $orderBy);
-        foreach ($messages as $key => $message) {
-            //get the username for each message 
-            //TODO: this creates a lot of database calls, there should be a better way to do this.
-            $messages[$key]['uname'] = UserUtil::getVar('uname', $message['from']);
-        }
-
+        //get the table and select everything.
+        $task = Doctrine_Query::create()
+    		->from('Zim_Model_Message message')
+    		->where('message.msg_to = ?', $args['to'])
+    		->andWhere('message.recd != true')
+    		->leftJoin('message.from uname')
+    		->orderBy('message.created_at');
+    	$messages = $task->execute();
         // Return the messages
-        return $messages;
+        return $messages->toArray();
     }
 
     /**
@@ -60,22 +50,19 @@ class Zim_Api_Message extends Zikula_AbstractApi {
             return false;
         }
         
-        //get tables and construct where argument
-        $dbtable = DBUtil::getTables();
-        $column = $dbtable['zim_message_column'];
-        $where = "WHERE $column[mid] =" . $mid;
-        
-        //get the message
-        $message = DBUtil::selectObject('zim_message', $where);
+        $task = Doctrine_Query::create()
+    		->from('Zim_Model_Message message')
+    		->where('message.mid = ?', $mid)
+    		->leftJoin('message.from from');
+    	$message = $task->fetchOne();	
         
         //message is not found
-        //TODO: handle message not found
-        if (sizeof($message) == 0) {
-            return $message;
+        if (empty($message)) {
+        	throw new Zim_Exception_MessageNotFound();
         }
 
         // Return the item
-        return $message;
+        return $message->toArray();
     }
 
     /**
@@ -95,17 +82,16 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         if (!isset($message['recd']))
             $message['recd'] = 0;
         
-        //Set the sent date/time.
-        if (!isset($message['sent_on'])) {
-            $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-            $message['sent_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
-        }
-        
-        //insert the message.
-        $return = DBUtil::insertObject($message, 'zim_message', 'mid');
-        return $return;
+        $msg = new Zim_Model_Message();
+    	$msg['msg_to'] = $message['to'];
+    	$msg['msg_from'] = $message['from'];
+    	$msg['message'] = $message['message'];
+    	$msg->save();    
+         
+        return $msg->toArray();
     }
 
+    
     /**
      * Confirm receipt of message.
      *
@@ -113,23 +99,18 @@ class Zim_Api_Message extends Zikula_AbstractApi {
      * @param Integer $args['to'] User id of recipient of message.
      */
     function confirm($args) {
-        //Check params
+    	//Check params
         if (!isset($args['id']) || $args['id'] == '')
             return false;
         if (!isset($args['to']) || $args['to'] == '')
             return false;
-
-        //setup the message object
-        $message['recd'] = 1;
-        $message['mid'] = $args['id'];
-        $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $message['recd_on'] = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
-        
-        //get the table and update the object
-        $dbtable = DBUtil::getTables();
-        $column = $dbtable['zim_message_column'];
-        $where = "WHERE $column[mid] =" . $args['id'] . " AND $column[to] =" . $args['to'];
-        return DBUtil::updateObject($message, 'zim_message', $where);
+    	$q = Doctrine_Query::create()
+    		->update('Zim_Model_Message message')
+    		->set('message.recd', 1)
+    		->whereIn('message.mid', $args['id'])
+    		->andwhere('message.msg_to = ?', $args['to']);
+    	$q->execute();
+    	return;
     }
 
     /**
@@ -149,36 +130,16 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         if (!isset($args['mid'])) {
             return false;
         }
-
-        //get table
-        $dbtable = DBUtil::getTables();
-        $column = $dbtable['zim_message_column'];
-        
-        //construct where argument.
-        $where = "WHERE ($column[to] =" . $args['uid'] . " OR $column[from] =" . $args['uid'] . ") AND $column[mid] IN(";
-        $in = '';
-        foreach ($args['mid'] as $mid) {
-            $in .= "$mid,";
-        }
-        if (strlen($in) > 0) {
-            $in = substr($in, 0, -1);
-            $where .= $in . ')';
-        //if there are no mid's then just return here.
-        } else {
-            return array();
-        }
-
-        //order the messages by when they were sent
-        $orderBy = "$column[sent_on]";
-        
-        //query the database for the messages
-        $messages = DBUtil::selectObjectArray('zim_message', $where, $orderBy);
-        
-        //get the username for each message
-        //TODO: this is expensive on the database, should be a better way of doing this.
-        foreach ($messages as $key => $message) {
-            $messages[$key]['uname'] = UserUtil::getVar('uname', $message['from']);
-        }
+		$task = Doctrine_Query::create()
+    		->from('Zim_Model_Message message')
+    		->where('message.msg_to = ?', $args['uid'])
+    		->andWhereIn('message.mid',$args['mid'])
+    		->orWhere('message.msg_from = ?', $args['uid'])
+    		->andWhereIn('message.mid',$args['mid'])
+    		->leftJoin('message.from from')
+    		->orderBy('message.created_at');
+    	$exec = $task->execute();
+    	$messages = $exec->toArray();
 
         // Return the items
         return $messages;

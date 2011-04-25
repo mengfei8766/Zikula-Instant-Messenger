@@ -30,6 +30,14 @@ class Zim_Model_Message extends Doctrine_Record
         	'default' => ''
         	)
         );
+        $this->hasColumn('recd', 'integer',2 , array(
+        	'unique' => false,
+        	'primary'=> false,
+            'notnull' => true,
+        	'default' => 0
+        	)
+        );
+        
         
     }
 

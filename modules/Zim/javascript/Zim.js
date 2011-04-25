@@ -336,20 +336,20 @@ var Zim ={
     },
     
     add_message: function(message) {
-        if (message.from == message.to) {
+        if (message.msg_from == message.msg_to) {
             Zim.confirm_message(message.mid);
             return;
         }
         var color = '';
         var to_uname = '';
         var window_uid = '';
-        if (message.from == Zim.my_uid) {
-            window_uid = message.to;
+        if (message.msg_from == Zim.my_uid) {
+            window_uid = message.msg_to;
             to_uname = Zim.my_uname;
             color = '#0000FF';
         } else {
-            window_uid = message.from;
-            to_uname = message.uname;
+            window_uid = message.msg_from;
+            to_uname = message.from.uname;
             color = '#FF0000';
         }
         var status = has_open_message(window_uid);
@@ -377,7 +377,7 @@ var Zim ={
                 }
             }
         }
-        var show = {uname: to_uname, message: message.message.emote(), color: color, title: message.sent_on};
+        var show = {uname: to_uname, message: message.message.emote(), color: color, title: message.created_at};
         var element = (Zim.sentmessage_template.evaluate(show));
         
         $('zim-message-message-'+ window_uid).insert(element);

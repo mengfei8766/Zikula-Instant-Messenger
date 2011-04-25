@@ -55,12 +55,9 @@ class Zim_Model_User extends Doctrine_Record
     }
     
     public function preSave($event) {
-    	echo "1";
     	if (!isset($this['uid']) || empty($this['uid'])) {
-    		echo "2";
     		$uid = UserUtil::getVar('uid');
     		if (isset($uid) && is_int((int)$uid)) {
-    			echo "3";
     			$q = Doctrine_Query::create()
     					->from('Zim_Model_User user')
     					->where('user.uid = ?', $uid);
