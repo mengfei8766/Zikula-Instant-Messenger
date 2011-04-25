@@ -1,7 +1,7 @@
 <?php
 /**
  * Zikula-Instant-Messenger (ZIM)
- * 
+ *
  * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
  * @author  Kyle Giovannetti
@@ -40,12 +40,12 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
     {
         //disable cache
         $this->view->setCaching(false);
-                
+
         //if users not logged in we cant show the block at all
         if (!UserUtil::isLoggedIn()) {
             return;
         }
-           
+         
         //load all the JS and CSS that ZIM needs
         PageUtil::addVar('javascript', 'javascript/helpers/Zikula.js');
         PageUtil::addVar('javascript', 'javascript/ajax/original_uncompressed/scriptaculous.js');
@@ -57,20 +57,20 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/tooltips.css');
         //PageUtil::addVar('javascript', 'modules/Zim/soundmanager/script/soundmanager2.js');
-        
+
         //get users information
         $uid = UserUtil::getVar('uid');
         $me = array();
-    	try {
-        	$me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
+        try {
+            $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
         } catch (Zim_Exception_ContactNotFound $e) {
-        	$me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init');
+            $me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init');
         }
-        
+
         //get the block
         $this->view->assign('uname', $me['uname']);
         $blockinfo['content'] = $this->view->fetch('zim_block_zim.tpl');
-        
+
         //return the block
         return BlockUtil::themeBlock($blockinfo);
     }

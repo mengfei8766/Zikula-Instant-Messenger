@@ -1,7 +1,7 @@
 <?php
 /**
  * Zikula-Instant-Messenger (ZIM)
- * 
+ *
  * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
  * @author  Kyle Giovannetti
@@ -19,12 +19,12 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function install()
     {
-    	
-   		 try {
+         
+        try {
             DoctrineUtil::createTablesFromModels('Zim');
         } catch (Exception $e) {
             return LogUtil::registerError("<pre>".$e);
-        	return false;
+            return false;
         }
 
         $this->setVar('message_check_period', 4);
@@ -32,7 +32,7 @@ class Zim_Installer extends Zikula_AbstractInstaller
         $this->setVar('show_offline', 0);
         $this->setVar('allow_offline_msg', 1);
         $this->setVar('allowed_msg_tags', '<b><u>');
-        
+
         // Initialisation successful
         return true;
     }
@@ -64,8 +64,8 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function uninstall()
     {
-    	DoctrineUtil::dropTable('zim_users');
-    	DoctrineUtil::dropTable('zim_message');
+        DoctrineUtil::dropTable('zim_users');
+        DoctrineUtil::dropTable('zim_message');
         $this->delVars();
         // Deletion successful
         return true;

@@ -1,7 +1,7 @@
 <?php
 /**
  * Zikula-Instant-Messenger (ZIM)
- * 
+ *
  * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
  * @author  Kyle Giovannetti
@@ -24,7 +24,7 @@ class Zim_Model_User extends Doctrine_Record
             'notnull' => true,
             'autoincrement' => false,
         ));
-        
+
         $this->hasColumn('status', 'integer',  2, array(
            'notnull' => true,
            'default' => 0,
@@ -35,7 +35,7 @@ class Zim_Model_User extends Doctrine_Record
            'default' => '',
         ));
     }
-    
+
     /**
      * Record setup.
      *
@@ -47,41 +47,41 @@ class Zim_Model_User extends Doctrine_Record
         $this->hasMany('Zim_Model_Message as SentMessages', array(
         	'local'		=>	'uid',
         	'foreign'	=>	'msg_from',
-        	)
+        )
         );
         $this->hasMany('Zim_Model_Message as RecdMessages', array(
         	'local'		=>	'uid',
         	'foreign'	=>	'msg_to',
-        	)
+        )
         );
     }
-    
-    
+
+
     public function preInsert($event) {
-    	return $this->preSave($event);
+        return $this->preSave($event);
     }
-    
+
     public function preSave($event) {
-    	if (!isset($this['uid']) || empty($this['uid'])) {
-    		$uid = UserUtil::getVar('uid');
-    		if (isset($uid) && is_int((int)$uid)) {
-    			$q = Doctrine_Query::create()
-    					->from('Zim_Model_User user')
-    					->where('user.uid = ?', $uid);
-    			$user= $q->fetchOne();
-    			if (empty($user)) {
-    				$this['uid'] = $uid;
-    			} else {
-    				$event->skipOperation = true;
-    			}
-    		}
-    	}
-    	if (!isset($this['uname']) || $this['uname'] == '') {
-    		$this['uname'] = UserUtil::getVar('uname', $this['uid']);
-    	} 
+        if (!isset($this['uid']) || empty($this['uid'])) {
+            $uid = UserUtil::getVar('uid');
+            if (isset($uid) && is_int((int)$uid)) {
+                $q = Doctrine_Query::create()
+                ->from('Zim_Model_User user')
+                ->where('user.uid = ?', $uid);
+                $user= $q->fetchOne();
+                if (empty($user)) {
+                    $this['uid'] = $uid;
+                } else {
+                    $event->skipOperation = true;
+                }
+            }
+        }
+        if (!isset($this['uname']) || $this['uname'] == '') {
+            $this['uname'] = UserUtil::getVar('uname', $this['uid']);
+        }
     }
-    
-	public function keepAlive()
+
+    public function keepAlive()
     {
         // WILL be saved in the database
         $nowUTC = new DateTime(null, new DateTimeZone('UTC'));

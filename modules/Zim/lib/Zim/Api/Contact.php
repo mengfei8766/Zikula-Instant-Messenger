@@ -1,7 +1,7 @@
 <?php
 /**
  * Zikula-Instant-Messenger (ZIM)
- * 
+ *
  * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
  * @author  Kyle Giovannetti
@@ -22,31 +22,31 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         if (!isset($uid) || empty($uid)) {
             throw new Zim_Exception_UIDNotSet();
         }
-    	$q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $uid);
-    	$contact = $q->fetchOne();
-    	if (empty($contact)) {
-    		throw new Zim_Exception_ContactNotFound();
-    	}
-    	$contact = $contact->toArray();
-        
+        $q = Doctrine_Query::create()
+        ->from('Zim_Model_User user')
+        ->where('user.uid = ?', $uid);
+        $contact = $q->fetchOne();
+        if (empty($contact)) {
+            throw new Zim_Exception_ContactNotFound();
+        }
+        $contact = $contact->toArray();
+
         //return the contact
         return $contact;
     }
 
     /**
-     * Gets all the contacts. 
+     * Gets all the contacts.
      */
     function get_all_contacts() {
-    	$this->timeout();
-    	
+        $this->timeout();
+         
         //get all the users
         $task = Doctrine_Query::create()
-    		->from('Zim_Model_User');
-    	$exec = $task->execute();
-    	$contacts = $exec->toArray();
-        
+        ->from('Zim_Model_User');
+        $exec = $task->execute();
+        $contacts = $exec->toArray();
+
         //return the array of contacts
         return $contacts;
     }
@@ -55,17 +55,17 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * Get all of the online contacts only
      */
     function get_all_online_contacts() {
-    	
-    	$this->timeout();
-    	
+         
+        $this->timeout();
+         
         //get the table and select everything.
         $task = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		//->where('user.status !== 0')
-    		->where('user.status != 0')
-    		->andWhere('user.status != 3');
-    	$exec = $task->execute();
-    	$contacts = $exec->toArray();
+        ->from('Zim_Model_User user')
+        //->where('user.status !== 0')
+        ->where('user.status != 0')
+        ->andWhere('user.status != 3');
+        $exec = $task->execute();
+        $contacts = $exec->toArray();
 
         foreach ($contacts as $key => $contact) {
             //if the contacts username is not set then get it from Zikula
@@ -73,7 +73,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
                 $contacts[$key]['uname'] = UserUtil::getVar('uname', $contact['uid']);
             }
         }
-        
+
         //return the array of contacts
         return $contacts;
     }
@@ -90,29 +90,29 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //check the params to make sure everything is set
         if (!isset($args['uid']) || !$args['uid']) throw new Zim_Exception_UIDNotSet();
         if (!isset($args['status'])) throw new Zim_Exception_StatusNotSet();
-        
+
         $q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $args['uid']);
-    	$contact = $q->fetchOne();
-    	if (empty($contact)) throw new Zim_Exception_ContactNotFound();
+        ->from('Zim_Model_User user')
+        ->where('user.uid = ?', $args['uid']);
+        $contact = $q->fetchOne();
+        if (empty($contact)) throw new Zim_Exception_ContactNotFound();
         $contact['status'] = $args['status'];
-        $contact->save();    
-        
+        $contact->save();
+
         //return contact
         return $contact->toArray();
     }
-    
+
     function first_time_init() {
-    	$q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $this->uid);
-    	$me = $q->fetchOne();
-    	if (empty($me)) {
-    		$me = new Zim_Model_User();
-    		$me['status'] = 1;
-    		$me->save();
-    	}
+        $q = Doctrine_Query::create()
+        ->from('Zim_Model_User user')
+        ->where('user.uid = ?', $this->uid);
+        $me = $q->fetchOne();
+        if (empty($me)) {
+            $me = new Zim_Model_User();
+            $me['status'] = 1;
+            $me->save();
+        }
         //return the status of the user
         return $me;
     }
@@ -123,12 +123,12 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      *
      */
     function timeout() {
-    	//TODO this time comparison doesnt really work 
-    	$q = Doctrine_Query::create()
-    		->update('Zim_Model_User')
-    		->set('status', 0)
-    		->where('(NOW() - updated_at) > 30');
-    	$q->execute();
+        //TODO this time comparison doesnt really work
+        $q = Doctrine_Query::create()
+        ->update('Zim_Model_User')
+        ->set('status', 0)
+        ->where('(NOW() - updated_at) > 30');
+        $q->execute();
 
         return;
     }
@@ -142,29 +142,29 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     function update_username($args) {
         //check input to make sure everything is set.
         if (!isset($args['uid']) || !$args['uid'])
-            throw new Zim_Exception_UIDNotSet();
+        throw new Zim_Exception_UIDNotSet();
 
-    	$q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $args['uid']);
-    	$contact = $q->fetchOne();
-    	if (empty($contact)) throw new Zim_Exception_ContactNotFound();
-    	    
+        $q = Doctrine_Query::create()
+        ->from('Zim_Model_User user')
+        ->where('user.uid = ?', $args['uid']);
+        $contact = $q->fetchOne();
+        if (empty($contact)) throw new Zim_Exception_ContactNotFound();
+         
         $contact['uname'] = $args['uname'];
         $contact->save();
         //return the users uname
         return $contact->get('uname');
     }
-    
+
     function keep_alive($uid) {
-    	
-    	$q = Doctrine_Query::create()
-    		->from('Zim_Model_User user')
-    		->where('user.uid = ?', $uid);
-    	$me = $q->fetchOne();
+         
+        $q = Doctrine_Query::create()
+        ->from('Zim_Model_User user')
+        ->where('user.uid = ?', $uid);
+        $me = $q->fetchOne();
         $me->keepAlive();
         $me->save();
-        
+
         //return users status
         return $me->toArray();
     }
