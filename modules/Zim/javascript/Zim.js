@@ -1,3 +1,13 @@
+/**
+ * Zikula-Instant-Messenger(ZIM)
+ * Main client-side JavaScript.
+ * 
+ * @Copyright Kyle Giovannetti 2011
+ * @license GNU/LGPLv3 (or at your option, any later version).
+ * @author  Kyle Giovannetti
+ * @package Zim
+ */
+
 Event.observe(window, 'load', function() {
     Zim.init();
 });

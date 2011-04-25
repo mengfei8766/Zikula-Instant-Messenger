@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright Kyle Giovannetti 2011
- 
+ * Zikula-Instant-Messenger (ZIM)
+ * 
+ * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
+ * @author  Kyle Giovannetti
  * @package Zim
- *
  */
 
 class Zim_Installer extends Zikula_AbstractInstaller
@@ -50,22 +51,6 @@ class Zim_Installer extends Zikula_AbstractInstaller
         // Upgrade dependent on old version number
         switch ($oldversion)
         {
-        case '0.0.1':
-            return $this->upgrade('0.0.2');
-        case '0.0.2':    
-            if (!DBUtil::changeTable('zim_users')) {
-                return '0.0.2';
-            }
-            $this->setVar('message_check_period', 4);
-            $this->setVar('contact_update_freq', 6);
-            $this->setVar('show_offline', 0);
-            return $this->upgrade('0.0.3');
-        case '0.0.3':    
-            if (!DBUtil::changeTable('zim_users')) {
-                return '0.0.3';
-            }
-            $this->setVar('allow_offline_msg', 1);
-            break;
         }
 
         // Update successful

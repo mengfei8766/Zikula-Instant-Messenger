@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright Kyle Giovannetti 2011
- 
+ * Zikula-Instant-Messenger (ZIM)
+ * 
+ * @Copyright Kyle Giovannetti 2011
  * @license GNU/LGPLv3 (or at your option, any later version).
+ * @author  Kyle Giovannetti
  * @package Zim
- *
  */
 
 class Zim_Version extends Zikula_AbstractVersion
@@ -17,7 +18,7 @@ class Zim_Version extends Zikula_AbstractVersion
         $meta['description']    = $this->__("An instant messenger module for Zikula.");
         //! module name that appears in URL
         $meta['url']            = $this->__('zim');
-        $meta['version']        = '0.0.4';
+        $meta['version']        = '0.0.5';
         return $meta;
     }
 }
