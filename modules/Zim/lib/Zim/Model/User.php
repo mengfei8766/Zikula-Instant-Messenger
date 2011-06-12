@@ -25,7 +25,7 @@ class Zim_Model_User extends Doctrine_Record
             'autoincrement' => false,
         ));
 
-        $this->hasColumn('status', 'integer',  2, array(
+        $this->hasColumn('status', 'integer',  16, array(
            'notnull' => true,
            'default' => 0,
         ));
@@ -47,6 +47,11 @@ class Zim_Model_User extends Doctrine_Record
         $this->hasMany('Zim_Model_Message as SentMessages', array(
         	'local'		=>	'uid',
         	'foreign'	=>	'msg_from',
+        )
+        );
+        $this->hasMany('Zim_Model_State as State', array(
+        	'local'		=>	'uid',
+        	'foreign'	=>	'uid',
         )
         );
         $this->hasMany('Zim_Model_Message as RecdMessages', array(

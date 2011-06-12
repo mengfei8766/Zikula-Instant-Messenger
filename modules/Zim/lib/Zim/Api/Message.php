@@ -29,8 +29,11 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         //get the table and select everything.
         $task = Doctrine_Query::create()
         ->from('Zim_Model_Message message')
-        ->where('message.msg_to = ? or message.msg_from = ?', array($args['uid'], $args['uid']))
-        ->leftJoin('message.from uname')
+        ->where('message.msg_to = ? ', $args['to']);
+        if (!$args['recd']){
+            $task->andWhere('message.recd != 1');
+        }
+        $task->leftJoin('message.from uname')
         ->orderBy('message.created_at');
         $messages = $task->execute();
         // Return the messages
@@ -73,17 +76,17 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         //Check that everythings set.
         if (!isset($message))
         return false;
-        if (!isset($message['from']) || !$message['from'])
+        if (!isset($message['msg_from']) || !$message['msg_from'])
         return false;
-        if (!isset($message['to']) || !$message['to'])
+        if (!isset($message['msg_to']) || !$message['msg_to'])
         return false;
         if (!isset($message['message']) || !$message['message'])
         return false;
         if (!isset($message['recd'])) $message['recd'] = 0;
 
         $msg = new Zim_Model_Message();
-        $msg['msg_to'] = $message['to'];
-        $msg['msg_from'] = $message['from'];
+        $msg['msg_to'] = $message['msg_to'];
+        $msg['msg_from'] = $message['msg_from'];
         $msg['message'] = $message['message'];
         $msg->save();
         return $msg->toArray();
@@ -104,7 +107,7 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         return false;
         $q = Doctrine_Query::create()
         ->update('Zim_Model_Message message')
-        ->set('message.recd', 1)
+        ->set('message.recd',"?", 1)
         ->whereIn('message.mid', $args['id'])
         ->andwhere('message.msg_to = ?', $args['to']);
         $q->execute();

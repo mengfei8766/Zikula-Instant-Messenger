@@ -67,6 +67,8 @@ class Zim_Installer extends Zikula_AbstractInstaller
     {
         DoctrineUtil::dropTable('zim_users');
         DoctrineUtil::dropTable('zim_message');
+        DoctrineUtil::dropTable('zim_message_history');
+        DoctrineUtil::dropTable('zim_state');
         $this->delVars();
         // Deletion successful
         return true;

@@ -54,36 +54,28 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         ModUtil::apiFunc('Zim', 'message', 'confirm', array('id' => $mid, 'to' => $this->uid));
 
         //check for state updates (windows opened or closed)
-        $state_add = $this->request->getPost()->get('state_add');
-        $state_del = $this->request->getPost()->get('state_del');
-        $state = array();
-        if (isset($state_add) && !empty($state_add) && is_array($state_add)) {
-            foreach ($state_add as $add) {
-                $s = array('method' => 'add', 'type' => 'window', 'data' => $add);
-                array_push($state, $s);
-            }
-        }
-        if (isset($state_del) && !empty($state_del) && is_array($state_del)) {
-            foreach ($state_del as $del) {
-                $s = array('method' => 'del', 'type' => 'window', 'data' => $del);
-                array_push($state, $s);
-            }
-        }
+        $state_window_add = array();
+        $state_window_del = array();
+        $state_windows = array();
+        $state_window_add = $this->request->getPost()->get('state_add', array());
+        $state_window_del = $this->request->getPost()->get('state_del', array());
+        //$state_windows = $this->request->getPost()->get('state_windows', array());
+        
+        ModUtil::apiFunc('Zim', 'state', 'window_add', 
+        array(	'state_windows_add'	 => $state_window_add,
+                'uid'        => $this->uid));
+        ModUtil::apiFunc('Zim', 'state', 'window_del', 
+        array(	'state_windows_del'	 => $state_window_del,
+                'uid'        => $this->uid));
+        
 
         //get all new messages from database
         $args = array(  'to'    =>  $this->uid);
-        $messages = ModUtil::apiFunc('Zim', 'message', 'getAll', $args);
-
-        //add state information to messages
-        foreach ($messages as $message) {
-            $s = array('method' => 'add', 'type' => 'message', 'data' => $message['mid'], 'uid' => $message['from']);
-            array_push($state, $s);
-        }
-
-        //update the state in the session
-        if (!empty($state)) {
-            ModUtil::apiFunc('Zim', 'state', 'update', $state);
-        }
+        $messages = ModUtil::apiFunc('Zim', 'message', 'getall', $args);
+        
+        ModUtil::apiFunc('Zim', 'state', 'message_set', 
+        array(	'state_messages_set' => $messages,
+                'uid'                => $this->uid));
 
         //return the new messages
         $output['messages'] = $messages;
@@ -101,13 +93,13 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
 
         //make sure the 'to' user id is set
-        $message['to'] = $this->request->getPost()->get('to');
-        if (!isset($message['to']) || !$message['to']) {
+        $message['msg_to'] = $this->request->getPost()->get('to');
+        if (!isset($message['msg_to']) || !$message['msg_to']) {
             throw new Zikula_Exception_BadData($this->__('Error! No recipient set.'));
         }
 
         //set from address to current users uid
-        $message['from'] = $this->uid;
+        $message['msg_from'] = $this->uid;
 
         //get and make sure the message is set
         $message['message'] = $this->request->getPost()->get('message');
@@ -122,7 +114,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
             $message = ModUtil::apiFunc('Zim', 'message', 'send', $message);
             $output['status'] = 'ok';
         } else {
-            $contact = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $message['to']);
+            $contact = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $message['msg_to']);
             if ($contact['status'] != 0 && $contact['status'] != 3) {
                 $message = ModUtil::apiFunc('Zim', 'message', 'send', $message);
                 $output['status'] = 'ok';
@@ -131,13 +123,10 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
             }
         }
 
+        ModUtil::apiFunc('Zim', 'state', 'message_set', 
+        array('state_messages_set' => array($message)));
         //add the message to the current state
-        $state = array(array(
-            'method' => 'add', 
-            'type' => 'message',
-            'data' => $message['mid'],
-            'uid' => $message['to']));  
-        ModUtil::apiFunc('Zim', 'state', 'update', $state);
+        
 
         //return the JSON output.
         return new Zikula_Response_Ajax($output);

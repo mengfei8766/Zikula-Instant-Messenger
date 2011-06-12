@@ -47,9 +47,9 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         ->from('Zim_Model_User');
         $exec = $task->execute();
         $contacts = $exec->toArray();
-
         //return the array of contacts
         return $contacts;
+        
     }
 
     /**
@@ -91,15 +91,19 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //check the params to make sure everything is set
         if (!isset($args['uid']) || !$args['uid']) throw new Zim_Exception_UIDNotSet();
         if (!isset($args['status'])) throw new Zim_Exception_StatusNotSet();
-
+        
+        $q = Doctrine_Query::create()
+        ->update('Zim_Model_User user')
+        ->set('user.status',"?", $args['status'])
+        ->where('user.uid = ?', $args['uid']);
+        $q->execute();
+        
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
-        ->where('user.uid = ?', $args['uid']);
+        ->where('user.uid = ?', $args['uid'])
+        ->limit(1);
         $contact = $q->fetchOne();
-        if (empty($contact)) throw new Zim_Exception_ContactNotFound();
-        $contact['status'] = $args['status'];
-        $contact->save();
-
+        
         //return contact
         return $contact->toArray();
     }
@@ -129,8 +133,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //TODO this time comparison doesnt really work
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User')
-        ->set('status', 0)
-        ->where('(NOW() - updated_at) > ?', $this->getVar('allow_offline_msg', 30));
+        ->set('status',"?", 0)
+        ->where('(NOW() - updated_at) > ?', $this->getVar('timeout_period', 30));
         $q->execute();
 
         return;
@@ -148,15 +152,20 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         throw new Zim_Exception_UIDNotSet();
 
         $q = Doctrine_Query::create()
+        ->update('Zim_Model_User')
+        ->set('uname', "?", $args['uname'])
+        ->where('uid = ?', $args['uid']);
+        $result = $q->execute();
+        
+        $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
-        ->where('user.uid = ?', $args['uid']);
+        ->where('user.uid = ?', $args['uid'])
+        ->limit(1);
         $contact = $q->fetchOne();
-        if (empty($contact)) throw new Zim_Exception_ContactNotFound();
-         
-        $contact['uname'] = $args['uname'];
-        $contact->save();
+        $contact = $contact->get('uname');
+        
         //return the users uname
-        return $contact->get('uname');
+        return $contact;
     }
 
     /**

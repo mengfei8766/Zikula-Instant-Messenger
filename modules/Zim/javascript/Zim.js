@@ -558,33 +558,56 @@ var Zim ={
     
     state: {
         windows: Array(),
+   
+        windows_to_add: Array(),
+        windows_to_del: Array(),
         
         add_window: function(uid) {
+            Zim.state.windows_to_add.push(uid);
+            Zim.state.windows_to_add.uniq();
+            
+            var window_found = false;
+            Zim.state.windows.each(function(item){
+            	if (item.user == uid) {window_found = true; throw $break;}
+            });
+            if (!window_found){
+            	var sw = new StateWindow(uid);
+            	Zim.state.windows.push(sw);
+            }
+            
             Zim.state.windows.push(uid);
             Zim.state.windows.uniq();
         },
         
         remove_window: function(uid) {
-            var index = Zim.state.windows.indexOf(uid);
-            if (index >= 0) {
-                Zim.state.windows.splice(index,1);
-            } else { 
-                Zim.state.windows.push(uid * -1);
-            }
+        	Zim.state.windows_to_del.push(uid);
+            Zim.state.windows_to_del.uniq();
+            
+            var idx = 0;
+            Zim.state.windows.each(function(item){
+            	if (item.user == uid) {
+            		Zim.state.windows.splice(idx,1);
+            		throw $break;
+            	}
+            	idx = idx + 1;
+            });
         },
         
         clear: function() {
-            Zim.state.windows.clear();
+            Zim.state.windows_to_add.clear();
+            Zim.state.windows_to_del.clear();
         },
         
         params: function() {
             var state = '';
+            Zim.state.windows_to_add.each(function(item) {
+            	state = state + "&state_add[]=" + item;
+            });
+            Zim.state.windows_to_del.each(function(item) {
+            	state = state + "&state_del[]=" + item;
+            });
             Zim.state.windows.each(function(item) {
-                    if (item >= 0 ) {
-                        state = state + "&state_add[]=" + item;
-                    } else {
-                        state = state + "&state_del[]=" + (item * -1);
-                    }
+            	state = state + "&state_windows["+ item.user+"]=" + item.start_msg;
             });
             return state;
         }
@@ -617,6 +640,26 @@ var Zim ={
         });
     }
 };
+
+StateWindow = Class.create();
+StateWindow.prototype = {
+	start_msg: null,
+	user: null,
+	
+	initialize: function(user) {  
+		this.user = user;
+		this.start_msg = null;
+	},
+
+	add_msg: function(message) {
+		if (message.uid !== this.user || message.uid !== Zim.my_uid) {
+			return;
+		}
+		if (message.mid > this.start_msg) {
+			this.start_msg = message.mid;
+		}
+	}
+}
 
 function contact_in_list(uid, contacts) {
     var result = false;
