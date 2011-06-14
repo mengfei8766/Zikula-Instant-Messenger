@@ -89,7 +89,7 @@ class Zim_Model_User extends Doctrine_Record
     public function keepAlive()
     {
         // WILL be saved in the database
-        $nowUTC = new DateTime(null, new DateTimeZone('UTC'));
-        $this->updated_at = $nowUTC->format(Users_Constant::DATETIME_FORMAT);
+        $nowUTC = date('Y-m-d H:i:s', time());
+        $this->updated_at = $nowUTC;
     }
 }

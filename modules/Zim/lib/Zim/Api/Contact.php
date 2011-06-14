@@ -62,7 +62,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //get the table and select everything.
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User user')
-        //->where('user.status !== 0')
         ->where('user.status != 0')
         ->andWhere('user.status != 3');
         $exec = $task->execute();
@@ -130,13 +129,11 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * see if they have been inactive for too long, if so then it sets them offline.
      */
     function timeout() {
-        //TODO this time comparison doesnt really work
         $q = Doctrine_Query::create()
-        ->update('Zim_Model_User')
-        ->set('status',"?", 0)
-        ->where('(NOW() - updated_at) > ?', $this->getVar('timeout_period', 30));
+        ->update('Zim_Model_User u')
+        ->set('u.status',"?", '0')
+        ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()-getVar('timeout_period', 30)));
         $q->execute();
-
         return;
     }
 
