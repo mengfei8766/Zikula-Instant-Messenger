@@ -39,6 +39,7 @@ class Zim_Model_State extends Doctrine_Record
         ->from('Zim_Model_Message m')
         ->where('(m.msg_to = ? AND m.msg_from = ?) OR (m.msg_to = ? AND m.msg_from = ?)',array(
             $this->user, UserUtil::getVar('uid'),UserUtil::getVar('uid'), $this->user))
+        ->andWhere('m.recd = ?', '1')
         ->andWhere('(m.mid < ( SELECT s.start_msg FROM Zim_Model_State s WHERE s.uid = ? LIMIT 1)) OR (SELECT COUNT(*) FROM Zim_Model_State s2 WHERE s2.uid = ?)= 0 ', array($this->user, $this->user));
         $messages = $task->execute();
         foreach ($messages as $message) {
