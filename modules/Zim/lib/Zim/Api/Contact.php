@@ -132,7 +132,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User u')
         ->set('u.status',"?", '0')
-        ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()-getVar('timeout_period', 30)));
+        ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()- $this->getVar('timeout_period', 30)));
         $q->execute();
         return;
     }
