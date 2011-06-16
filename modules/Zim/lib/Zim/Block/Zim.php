@@ -38,6 +38,8 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
      */
     public function display($blockinfo)
     {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        
         //disable cache
         $this->view->setCaching(false);
 
@@ -56,7 +58,6 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         PageUtil::addVar('javascript', 'modules/Zim/javascript/tooltips.js');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/tooltips.css');
-        //PageUtil::addVar('javascript', 'modules/Zim/soundmanager/script/soundmanager2.js');
 
         //get users information
         $uid = UserUtil::getVar('uid');
