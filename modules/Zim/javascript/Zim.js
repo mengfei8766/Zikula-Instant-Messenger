@@ -69,7 +69,6 @@ var Zim ={
                 Zim.sentmessage_template = new Template(data.sentmessage_template);
                 Zim.contacts = data.contacts;
                 Zim.settings = data.settings;
-                
                 new Tooltip($('zim-my-status'), {});
                 Zim.set_status_image();
                 Zim.status_observer();
@@ -136,12 +135,12 @@ var Zim ={
     },
     
     update_contacts: function() {
-        if( Zim.execute_count < (Zim.settings.execute_period - 1)) {
+        if( Zim.execute_count <= (Zim.settings.contact_update_freq - 1)) {
             Zim.get_messages();
             Zim.execute_count++;
             return;
         }
-        Zim.execute_count = 0;
+        Zim.execute_count = 1;
         if (Zim.periodical_update_contact.currentlyExecuting == false) {return false;}
         new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_online_contacts", {
             onComplete : function(req) {
