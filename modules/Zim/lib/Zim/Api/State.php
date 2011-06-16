@@ -107,8 +107,8 @@ class Zim_Api_State extends Zikula_AbstractApi {
             $messages = $q->execute();
             $state['messages'] = $messages->toArray();
         } else {
-            $state['windows'] = '';
-            $state['messages'] = '';
+            $state['windows'] = array();
+            $state['messages'] = array();
         }
 
         // Return the messages
