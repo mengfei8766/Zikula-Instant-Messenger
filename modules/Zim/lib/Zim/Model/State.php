@@ -32,13 +32,13 @@ class Zim_Model_State extends Doctrine_Record
         )
         );
     }
-    
-     public function preDelete($event)
-     {
+
+    public function preDelete($event)
+    {
         $task = Doctrine_Query::create()
         ->from('Zim_Model_Message m')
         ->where('(m.msg_to = ? AND m.msg_from = ?) OR (m.msg_to = ? AND m.msg_from = ?)',array(
-            $this->user, UserUtil::getVar('uid'),UserUtil::getVar('uid'), $this->user))
+        $this->user, UserUtil::getVar('uid'),UserUtil::getVar('uid'), $this->user))
         ->andWhere('m.recd = ?', '1')
         ->andWhere('(m.mid < ( SELECT s.start_msg FROM Zim_Model_State s WHERE s.uid = ? LIMIT 1)) OR (SELECT COUNT(*) FROM Zim_Model_State s2 WHERE s2.uid = ?)= 0 ', array($this->user, $this->user));
         $messages = $task->execute();
@@ -48,11 +48,11 @@ class Zim_Model_State extends Doctrine_Record
             $msg->save();
             $message->delete();
         }
-     }
+    }
      
     public function preInsert($ecent)
     {
-        
+
         return $this->preSave($event);
     }
     public function preSave($event)
@@ -64,7 +64,7 @@ class Zim_Model_State extends Doctrine_Record
         ->andWhere('window.user = ?', $this->user)
         ->limit(1);
         $statewindow = $task->fetchOne();
-        
+
         if (!isset($statewindow) || empty($statewindow)) {
             $isUnique = true;
         } else {
@@ -73,7 +73,7 @@ class Zim_Model_State extends Doctrine_Record
                 $statewindow['start_msg'] = $this->start_msg;
             }
         }
-        
+
         if (!$isUnique) {
             $q = Doctrine_Query::create()
             ->update('Zim_Model_State')
@@ -83,12 +83,12 @@ class Zim_Model_State extends Doctrine_Record
             $q->execute();
             $event->skipOperation();
         }
-        
+
     }
-    
+
     private function isUnique()
     {
-         $task = Doctrine_Query::create()
+        $task = Doctrine_Query::create()
         ->from('Zim_Model_State window')
         ->where('window.uid = ?', $this->uid)
         ->andWhere('window.user = ?', $this->user);

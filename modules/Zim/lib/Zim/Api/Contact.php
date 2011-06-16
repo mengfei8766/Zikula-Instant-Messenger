@@ -41,7 +41,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      */
     function get_all_contacts() {
         $this->timeout();
-         
         //get all the users
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User');
@@ -49,7 +48,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         $contacts = $exec->toArray();
         //return the array of contacts
         return $contacts;
-        
+
     }
 
     /**
@@ -63,7 +62,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.status != 0')
-        ->andWhere('user.status != 3');
+        ->andWhere('user.status != 3')
+        ->andWhere('user.timedout != 1');
         $exec = $task->execute();
         $contacts = $exec->toArray();
 
@@ -90,19 +90,19 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //check the params to make sure everything is set
         if (!isset($args['uid']) || !$args['uid']) throw new Zim_Exception_UIDNotSet();
         if (!isset($args['status'])) throw new Zim_Exception_StatusNotSet();
-        
+
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User user')
         ->set('user.status',"?", $args['status'])
         ->where('user.uid = ?', $args['uid']);
         $q->execute();
-        
+
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.uid = ?', $args['uid'])
         ->limit(1);
         $contact = $q->fetchOne();
-        
+
         //return contact
         return $contact->toArray();
     }
@@ -131,9 +131,24 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
     function timeout() {
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User u')
-        ->set('u.status',"?", '0')
+        //->set('u.status','?', '0')
+        ->set('u.timedout', '?', '1')
         ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()- $this->getVar('timeout_period', 30)));
         $q->execute();
+        return;
+    }
+
+    function timein($uid) {
+        if (!isset($uid) || $uid == '') {
+            throw new Zim_Exception_UIDNotSet();
+        }
+        $q = Doctrine_Query::create()
+        ->update('Zim_Model_User u')
+        ->set('u.timedout', '?', '0')
+        ->where("u.uid = ?", $uid);
+        if ($q->execute() < 1) {
+            throw new Zim_Exception_ContactNotFound();
+        }
         return;
     }
 
@@ -153,21 +168,21 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         ->set('uname', "?", $args['uname'])
         ->where('uid = ?', $args['uid']);
         $result = $q->execute();
-        
+
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.uid = ?', $args['uid'])
         ->limit(1);
         $contact = $q->fetchOne();
         $contact = $contact->get('uname');
-        
+
         //return the users uname
         return $contact;
     }
 
     /**
      * Keep a user from timing out.
-     * 
+     *
      * @param $uid Intiger User ID to keep alive.
      */
     function keep_alive($uid) {

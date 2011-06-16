@@ -25,12 +25,12 @@ class Zim_Api_State extends Zikula_AbstractApi {
             try {
                 $w->save();
             } catch (Exception $e){
-                
+
             }
         }
     }
-    
-	/**
+
+    /**
      * Make changes to the current state of a user, this keeps information such
      * as what message windows and messages are open.
      */
@@ -39,13 +39,13 @@ class Zim_Api_State extends Zikula_AbstractApi {
         if (!empty($args['state_windows_del']) || sizeof($args['state_windows_del']) != 0)
         {
             $q = Doctrine_Query::create()
-                ->from('Zim_Model_State window')
-                ->whereIn('window.user', $args['state_windows_del'])
-                ->andWhere('window.uid = ?', $args['uid']);
+            ->from('Zim_Model_State window')
+            ->whereIn('window.user', $args['state_windows_del'])
+            ->andWhere('window.uid = ?', $args['uid']);
             $windows = $q->execute();
-            
+
             foreach ($windows as $window) {
-                $window->delete(); 
+                $window->delete();
             }
         }
     }
@@ -66,11 +66,11 @@ class Zim_Api_State extends Zikula_AbstractApi {
             try {
                 $m->save();
             } catch (Exception $e){
-                
+
             }
         }
     }
-    
+
     /**
      * Gets the current state of the user, what windows/messages are open.
      */
@@ -86,18 +86,18 @@ class Zim_Api_State extends Zikula_AbstractApi {
             $q = Doctrine_Query::create();
             $q->from("Zim_Model_Message m");
             $q->where("m.mid >= ? AND (m.msg_to = ? OR m.msg_from = ?)", array(
-                $state['windows'][0]['start_msg'],
-                $state['windows'][0]['my_uid'],
-                $state['windows'][0]['my_uid']
-                )
+            $state['windows'][0]['start_msg'],
+            $state['windows'][0]['my_uid'],
+            $state['windows'][0]['my_uid']
+            )
             );
             foreach ($state['windows'] as $key => $window) {
                 $q->orWhere("m.mid >= ? AND (m.msg_to = ? OR m.msg_from = ?)", array(
-                    $window['start_msg'],
-                    $window['my_uid'],
-                    $window['my_uid']
-                    )
-                ); 
+                $window['start_msg'],
+                $window['my_uid'],
+                $window['my_uid']
+                )
+                );
                 unset($state['windows'][$key]['user']);
                 unset($state['windows'][$key]['my_uid']);
                 unset($state['windows'][$key]['id']);

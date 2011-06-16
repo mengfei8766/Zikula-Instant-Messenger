@@ -29,6 +29,10 @@ class Zim_Model_User extends Doctrine_Record
            'notnull' => true,
            'default' => 0,
         ));
+        $this->hasColumn('timedout', 'integer',  16, array(
+           'notnull' => true,
+           'default' => 0,
+        ));
 
         $this->hasColumn('uname', 'string', 100, array(
            'notnull' => true,
@@ -89,7 +93,7 @@ class Zim_Model_User extends Doctrine_Record
     public function keepAlive()
     {
         // WILL be saved in the database
-        $nowUTC = date('Y-m-d H:i:s', time());
-        $this->updated_at = $nowUTC;
+        $now = date('Y-m-d H:i:s', time());
+        $this->updated_at = $now;
     }
 }

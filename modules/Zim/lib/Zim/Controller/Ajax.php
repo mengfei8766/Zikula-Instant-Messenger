@@ -25,16 +25,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 
     private $uid;
 
-    
-    public function test() {
-        $q = Doctrine_Query::create()
-            ->from('Zim_Model_State window')
-            ->where('window.user = 3');
-        $results = $q->execute();
-        foreach ($results as $result) {
-            $result->delete();
-        }
-    }
     /**
      * The init function is called via an ajax call from the browser, it performs
      * all startup functions such as getting contact lists and messages/state.
@@ -42,8 +32,8 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
      */
     public function init() {
         //security checks
-        //$this->checkAjaxToken();
-        //$this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
         $me = array();
         //get users status
         try {
@@ -51,11 +41,10 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         } catch (Zim_Exception_ContactNotFound $e) {
             $me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $this->uid);
         }
-        //print_r($me);
-        
+
         //see if the JS side requested a certain status, if not then get it from the DB
         $status = (int)$this->request->getPost()->get('status');
-        if (!isset($status) || empty($status) || $status == '') {
+        if (!isset($status) || $status == '') {
             $status = (int)$me['status'];
         }
         //the user requested a new status in the init and its different from the DB
@@ -66,14 +55,30 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
          			'uid'	=> $this->uid));
         }
 
+        if ($me['timedout'] == '1') {
+            try {
+                ModUtil::apiFunc('Zim', 'contact', 'timein',$this->uid);
+            } catch (Zim_Exception_ContactNotFound $e) {
+                return new Zim_Response_Ajax_Exception($e);
+            } catch (Zim_Exception_UIDNotSet $e) {
+                return new Zim_Response_Ajax_Exception($e);
+            }
+        }
+
         //get all contacts
         $show_offline = $this->getVar('show_offline');
         if ($show_offline) {
             $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
+            foreach ($contacts as $key => $contact) {
+                if ($contact['status'] == 3 || $contact['timedout'] == 1) {
+                    $contact[$key]['status'] = 0;
+                }
+                unset($contacts[$key]['timedout']);
+            }
         } else {
             $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
         }
-      
+
         //get templates for javascript
         $contact_template = $this->view->fetch('zim_block_contact.tpl');
         $message_template = $this->view->fetch('zim_block_message.tpl');
@@ -99,7 +104,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         if (isset($state)) {
             $output['state'] = $state;
         }
-        
+
         //return the JSON output
         return new Zikula_Response_Ajax($output);
     }

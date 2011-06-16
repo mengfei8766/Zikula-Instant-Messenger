@@ -65,12 +65,22 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function uninstall()
     {
-        DoctrineUtil::dropTable('zim_users');
-        DoctrineUtil::dropTable('zim_message');
-        DoctrineUtil::dropTable('zim_message_history');
-        DoctrineUtil::dropTable('zim_state');
-        $this->delVars();
-        // Deletion successful
         return true;
+        $tables = array(
+            'Zim_Model_User',
+            'Zim_Model_State',
+            'Zim_Model_Message',
+            'Zim_Model_HistoricalMessage'
+            );
+
+            foreach ($tables as $table) {
+                if (!Doctrine_Core::getTable($table)->dropTable()) {
+                    return false;
+                }
+            }
+
+            $this->delVars();
+            // Deletion successful
+            return true;
     }
 }

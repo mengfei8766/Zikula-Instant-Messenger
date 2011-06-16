@@ -68,7 +68,7 @@ class Zim_Api_Message extends Zikula_AbstractApi {
 
     /**
      * Send a new message.
-     * 
+     *
      * TODO: what happens if you send a msg to a non-existing user?
      *
      */
