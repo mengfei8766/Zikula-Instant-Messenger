@@ -38,7 +38,9 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
      */
     public function display($blockinfo)
     {
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
         
         //disable cache
         $this->view->setCaching(false);
