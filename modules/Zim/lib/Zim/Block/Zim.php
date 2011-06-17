@@ -15,7 +15,6 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
      */
     public function init()
     {
-        SecurityUtil::registerPermissionSchema('Admin:adminnavblock:', 'Block title::Block ID');
     }
 
     /**
@@ -39,7 +38,7 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
     public function display($blockinfo)
     {
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
+            return false;
         }
         
         //disable cache
