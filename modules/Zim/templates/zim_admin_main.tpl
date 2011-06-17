@@ -1,15 +1,15 @@
 {admincategorymenu}
 <div class="z-adminbox">
     {img modname='Zim' src='admin.png'}
-    <h1>{gt text="Zim Settings"}</h1>
+    <h1>{gt text="Zikula Instant Messenger"}</h1>
     {modulelinks modname='Zim' type='admin'}
 </div>
 <div class="z-admincontainer z-clearfix">
-    <div class="z-adminpageicon">{icon type="view" size="large"}</div>
-    <h2>{gt text="Module settings"}</h2>
+    <div class="z-adminpageicon">{icon type="view" size="medium"}</div>
+    <h2>{gt text="Zim Settings"}</h2>
 <form class="z-form" id="zim_performance" action="{modurl modname='Zim' type='admin' func='settings_update'}" method="post" enctype="application/x-www-form-urlencoded">
-	<input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
 	<fieldset>
+		<input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
 		<legend>{gt text='Performance Settings'}</legend>
 		<div class="z-formrow">
 			<label for="zim_performance_messagecheckperiod">{gt text='Message check period (seconds)'}</label>
@@ -28,11 +28,11 @@
 		<legend>{gt text='General Settings'}</legend>
 		<div class="z-formrow">
 			<label for="zim_general_allowofflinemsg">{gt text='Allow offline messaging'}</label>
-			<input id="zim_general_allowofflinemsg" type="checkbox" name="settings[allow_offline_msg]" {if $modvars.Zim.allow_offline_msg} checked='1' {/if}/>
+			<input id="zim_general_allowofflinemsg" type="checkbox" name="settings[allow_offline_msg]" {if $modvars.Zim.allow_offline_msg} checked="checked"{/if}/>
 		</div>
 		<div class="z-formrow">
 			<label for="zim_general_showoffline">{gt text='Show offline contacts in list'}</label>
-			<input id="zim_general_showoffline" type="checkbox" name="settings[show_offline]" {if $modvars.Zim.show_offline} checked='1' {/if}/>
+			<input id="zim_general_showoffline" type="checkbox" name="settings[show_offline]" {if $modvars.Zim.show_offline} checked="checked" {/if}/>
 		</div>
 		<div class="z-formrow">
 			<label for="zim_performance_allowedtags">{gt text='Allowed message HTML tags (comma separated list)'}</label>
