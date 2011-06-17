@@ -11,7 +11,7 @@
 class Zim_Installer extends Zikula_AbstractInstaller
 {
     /**
-     * Initialise the Admin module.
+     * Initialise the Zim module.
      * This function is only ever called once during the lifetime of a particular
      * module instance
      *
