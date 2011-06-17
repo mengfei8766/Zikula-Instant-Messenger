@@ -18,7 +18,7 @@ class Zim_Version extends Zikula_AbstractVersion
         $meta['description']    = $this->__("An instant messenger module for Zikula.");
         //! module name that appears in URL
         $meta['url']            = $this->__('zim');
-        $meta['version']        = '0.0.6';
+        $meta['version']        = '0.0.7';
         return $meta;
     }
 }
