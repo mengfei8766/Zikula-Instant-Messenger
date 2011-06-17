@@ -72,12 +72,9 @@ class Zim_Installer extends Zikula_AbstractInstaller
             'zim_message_history'
             );
 
-            
             foreach ($tables as $table) {
                 $r = DoctrineUtil::dropTable($table);
-                echo $r;
             }
-die();
             $this->delVars();
             // Deletion successful
             return true;
