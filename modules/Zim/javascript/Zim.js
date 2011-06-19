@@ -618,11 +618,20 @@ var Zim ={
         zim_settings_menu.addClassName('zim-settings');
         zim_settings_menu.setAttribute('id', 'zim-settings-menu');
         var top_offset = $('zim-settings-button').getHeight();
+        
         zim_settings_menu.setStyle({
            top: top_offset + "px",
            left: $('zim-settings-button').positionedOffset().left + "px"
         });
         $('zim-block-head').appendChild(zim_settings_menu);
+        if (zim_settings_menu.cumulativeOffset().left + zim_settings_menu.getWidth() > document.viewport.getDimensions().width) {
+        	$('zim-settings-menu').setStyle({
+        		top: top_offset + "px",
+                left: "0px"
+             });
+        }
+        
+        
         $('zim-settings-button').setStyle({
            'color': '#44bbff'
         });
