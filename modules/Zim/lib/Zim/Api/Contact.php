@@ -90,6 +90,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //check the params to make sure everything is set
         if (!isset($args['uid']) || !$args['uid']) throw new Zim_Exception_UIDNotSet();
         if (!isset($args['status'])) throw new Zim_Exception_StatusNotSet();
+        //TODO: check to make sure valid status.
 
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User user')
@@ -160,8 +161,9 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      */
     function update_username($args) {
         //check input to make sure everything is set.
-        if (!isset($args['uid']) || !$args['uid'])
+        if (!isset($args['uid']) || !$args['uid']) 
         throw new Zim_Exception_UIDNotSet();
+        //TODO: in this case maybe we should just get the user and use their zikula uname.
 
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User')

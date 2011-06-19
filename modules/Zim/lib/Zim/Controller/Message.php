@@ -123,10 +123,9 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
             }
         }
 
+        //add the message to the current state
         ModUtil::apiFunc('Zim', 'state', 'message_set',
         array('state_messages_set' => array($message)));
-        //add the message to the current state
-
 
         //return the JSON output.
         return new Zikula_Response_Ajax($output);
@@ -143,9 +142,6 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
 
         //message id to confirm
         $mid = $this->request->getPost()->get('mid');
-
-        //current user - this is used in the api to make sure current user
-        //is allowed to confirm the message
 
         //confirm the message(s) as recd.
         if (is_array($mid)) {

@@ -50,12 +50,17 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         }
          
         //load all the JS and CSS that ZIM needs
+        //TODO: is this the best way of doing this? 
         PageUtil::addVar('javascript', 'javascript/helpers/Zikula.js');
         PageUtil::addVar('javascript', 'javascript/ajax/original_uncompressed/scriptaculous.js');
         PageUtil::addVar('javascript', 'javascript/livepipe/livepipe.js');
         PageUtil::addVar('javascript', 'javascript/livepipe/contextmenu.js');
         PageUtil::addVar('javascript', 'modules/Zim/javascript/Emoticon.js');
-        PageUtil::addVar('javascript', 'modules/Zim/javascript/Zim.js');
+        if ($this->getVar('use_minjs')) {
+            PageUtil::addVar('javascript', 'modules/Zim/javascript/Zim_min.js');
+        } else {
+            PageUtil::addVar('javascript', 'modules/Zim/javascript/Zim.js');
+        }
         PageUtil::addVar('javascript', 'modules/Zim/javascript/tooltips.js');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/tooltips.css');

@@ -23,16 +23,20 @@
 			<label for="zim_performance_timeoutperiod">{gt text='Contact timeout period (seconds)'}</label>
 			<input id="zim_performance_timeoutperiod" type="text" name="settings[timeout_period]" value="{$modvars.Zim.timeout_period|safetext}"/>
 		</div>
+		<div class="z-formrow">
+			<label for="zim_general_useminifiedjs">{gt text='Use minified JavaScript'}</label>
+			<input id="zim_general_useminifiedjs" type="checkbox" name="settings_use_minjs" value="1" {if $modvars.Zim.use_minjs} checked="checked"{/if}/>
+		</div>
 	</fieldset>
 	<fieldset>
 		<legend>{gt text='General Settings'}</legend>
 		<div class="z-formrow">
 			<label for="zim_general_allowofflinemsg">{gt text='Allow offline messaging'}</label>
-			<input id="zim_general_allowofflinemsg" type="checkbox" name="settings[allow_offline_msg]" {if $modvars.Zim.allow_offline_msg} checked="checked"{/if}/>
+			<input id="zim_general_allowofflinemsg" type="checkbox" name="settings_allow_offline_msg" value="1" {if $modvars.Zim.allow_offline_msg} checked="checked"{/if}/>
 		</div>
 		<div class="z-formrow">
 			<label for="zim_general_showoffline">{gt text='Show offline contacts in list'}</label>
-			<input id="zim_general_showoffline" type="checkbox" name="settings[show_offline]" {if $modvars.Zim.show_offline} checked="checked" {/if}/>
+			<input id="zim_general_showoffline" type="checkbox" name="settings_show_offline" value="1" {if $modvars.Zim.show_offline} checked="checked" {/if}/>
 		</div>
 		<div class="z-formrow">
 			<label for="zim_performance_allowedtags">{gt text='Allowed message HTML tags (comma separated list)'}</label>
