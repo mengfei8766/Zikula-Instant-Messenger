@@ -37,7 +37,7 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
      */
     public function display($blockinfo)
     {
-        if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_ADMIN)) {
+        if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
             return false;
         }
         
