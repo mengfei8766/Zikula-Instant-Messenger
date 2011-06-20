@@ -626,11 +626,9 @@ var Zim ={
         $('zim-block-head').appendChild(zim_settings_menu);
         if (zim_settings_menu.cumulativeOffset().left + zim_settings_menu.getWidth() > document.viewport.getDimensions().width) {
         	$('zim-settings-menu').setStyle({
-        		top: top_offset + "px",
                 left: "0px"
              });
         }
-        
         
         $('zim-settings-button').setStyle({
            'color': '#44bbff'
