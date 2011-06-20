@@ -44,6 +44,7 @@ class Zim_Controller_Admin extends Zikula_AbstractController
         $settings['use_minjs'] = $this->request->getPost()->get('settings_use_minjs', 0);
         $settings['allow_offline_msg'] = $this->request->getPost()->get('settings_allow_offline_msg', 0);
         $settings['show_offline'] = $this->request->getPost()->get('settings_show_offline', 0);
+        $settings['keep_history'] = $this->request->getPost()->get('settings_keep_history', 0);
         
         if (!isset($settings) || empty($settings)) {
             return false;

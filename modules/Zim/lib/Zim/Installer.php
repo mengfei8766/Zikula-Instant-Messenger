@@ -34,6 +34,7 @@ class Zim_Installer extends Zikula_AbstractInstaller
         $this->setVar('timeout_period', 30);
         $this->setVar('allowed_msg_tags', '<b><u>');
         $this->setVar('use_minjs', 1);
+        $this->setVar('keep_history', 1);
 
         // Initialisation successful
         return true;

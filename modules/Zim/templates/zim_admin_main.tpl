@@ -42,6 +42,10 @@
 			<label for="zim_performance_allowedtags">{gt text='Allowed message HTML tags (comma separated list)'}</label>
 			<input id="zim_performance_allowedtags" type="text" name="settings[allowed_msg_tags]" value="{$modvars.Zim.allowed_msg_tags|safetext}"/>
 		</div>
+		<div class="z-formrow">
+			<label for="zim_general_keephistory">{gt text='Keep message history'}</label>
+			<input id="zim_general_keephistory" type="checkbox" name="settings_keep_history" value="1" {if $modvars.Zim.keep_history} checked="checked"{/if}/>
+		</div>
 	</fieldset>
 	 <div class="z-buttons z-formbuttons">
      	{button src="button_ok.png" set="icons/extrasmall" __alt="Save" __title="Save" __text="Save"}
