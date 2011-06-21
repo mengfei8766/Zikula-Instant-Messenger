@@ -94,7 +94,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         $output['sentmessage_template'] = $sentmessage_template;
 
         //get global settings
-        $output['settings']['show_offline']= $this->getVar('show_offline');
         $output['settings']['execute_period'] = $this->getVar('message_check_period');
         $output['settings']['contact_update_freq'] = $this->getVar('contact_update_freq');
         $output['settings']['allow_offline_msg'] = $this->getVar('allow_offline_msg');

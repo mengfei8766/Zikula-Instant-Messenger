@@ -16,7 +16,6 @@ var Zim ={
     periodical_update_contact: '',
     settings: {
         execute_period: 6,
-        show_offline: 0,
         contact_update_freq: 4,
         allow_offline_msg: 1
     },
