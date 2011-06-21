@@ -71,7 +71,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
             $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
             foreach ($contacts as $key => $contact) {
                 if ($contact['status'] == 3 || $contact['timedout'] == 1) {
-                    $contact[$key]['status'] = 0;
+                    $contacts[$key]['status'] = 0;
                 }
                 unset($contacts[$key]['timedout']);
             }

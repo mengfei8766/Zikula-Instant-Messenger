@@ -76,7 +76,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         //go through each contact making sure that any invisible contact is shown as offline
         foreach ($contacts as $key => $contact) {
             if ($contact['status'] == 3 || $contact['timedout'] == 1) {
-                $contact[$key]['status'] = 0;
+                $contacts[$key]['status'] = 0;
             }
             unset($contacts[$key]['timedout']);
         }

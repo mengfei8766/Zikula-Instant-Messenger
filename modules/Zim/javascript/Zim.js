@@ -30,10 +30,10 @@ var Zim ={
     my_uid: '',
     status: '',
     status_colors:{
-        '0': 'images/icons/extrasmall/redled.png',
-        '1': 'images/icons/extrasmall/greenled.png',
-        '2': 'images/icons/extrasmall/yellowled.png',
-        '3': 'images/icons/extrasmall/free_icon.png'
+        '0': 'modules/Zim/images/icons/offline.png',
+        '1': 'modules/Zim/images/icons/online.png',
+        '2': 'modules/Zim/images/icons/busy.png',
+        '3': 'modules/Zim/images/icons/invisible.png'
     },
     contacts: Array(),
     init_in_progress: false,
@@ -446,19 +446,19 @@ var Zim ={
                  animation: false
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/greenled.png" style="vertical-align: text-bottom;"/> Online',
+                 label: '<img src="' + Zim.status_colors[1] + '" style="vertical-align: text-bottom;"/> Online',
                  callback: function(){Zim.set_status(1);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/yellowled.png" style="vertical-align: text-bottom;"/> Away',
+                 label: '<img src="' + Zim.status_colors[2] + '" style="vertical-align: text-bottom;"/> Away',
                  callback: function(){Zim.set_status(2);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/free_icon.png" style="vertical-align: text-bottom;"/> Invisible',
+                 label: '<img src="' + Zim.status_colors[3] + '" style="vertical-align: text-bottom;"/> Invisible',
                  callback: function(){Zim.set_status(3);}
          });
          context_status.addItem({
-                 label: '<img src="images/icons/extrasmall/redled.png" style="vertical-align: text-bottom;"/> Offline',
+                 label: '<img src="' + Zim.status_colors[0] + '" style="vertical-align: text-bottom;"/> Offline',
                  callback: function(){Zim.set_status(0);}
          });
     },
@@ -507,40 +507,35 @@ var Zim ={
         if (contact.uid == Zim.my_uid) return;
         var color = Zim.status_colors[contact.status];
         var colours = Object.values(Zim.status_colors);
-        if (contact.status != '0' || Zim.settings.show_offline == '1') {
-            if(!$('contact_'+contact.uid)) {
-                var show = {uname: contact.uname, uid: contact.uid,color: color};
-                $('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
-                Zim.add_contact_observer(contact);
-            } else {
-                var src = ($('zim_contact_status_img_'+contact.uid).readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
-                $('zim_contact_status_img_'+contact.uid).writeAttribute({src: src});
-            }
-            
-            //Only update if the user was online before this stops from detecting invis users
-            var old_element = Zim.contacts.find(function(c) {return c.uid == contact.uid});
-            if (typeof(old_element) !== 'undefined' && (old_element.status !== 0 && contact.status !== 0)) {
-                var uname = $$('#contact_'+contact.uid+' div');
-                if(typeof(uname) !== 'undefined'){
-                    uname = uname.first().innerHTML;
-                    if (uname !== contact.uname) {
-                        $$('#contact_'+contact.uid+' div').first().update(contact.uname);
-                    }
-                }
-                //update windows as well
-                if (has_open_message(contact.uid)) {
-                    var box = $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname');
-                    if(typeof(box) !== 'undefined'){
-                        uname = box.first().innerHTML;
-                        if (uname !== contact.uname) {
-                            $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname').first().update(contact.uname);
-                        }
-                    }
-                }
-            }
+        if(!$('contact_'+contact.uid)) {
+            var show = {uname: contact.uname, uid: contact.uid,color: color};
+            $('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
+            Zim.add_contact_observer(contact);
         } else {
-            //we only get here if contact offline AND display offline is false
-            $('contact_'+contact.uid).remove();
+            var src = ($('zim_contact_status_img_'+contact.uid).readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
+            $('zim_contact_status_img_'+contact.uid).writeAttribute({src: src});
+        }
+        
+        //Only update if the user was online before this stops from detecting invis users
+        var old_element = Zim.contacts.find(function(c) {return c.uid == contact.uid});
+        if (typeof(old_element) !== 'undefined' && (old_element.status !== 0 && contact.status !== 0)) {
+            var uname = $$('#contact_'+contact.uid+' div');
+            if(typeof(uname) !== 'undefined'){
+                uname = uname.first().innerHTML;
+                if (uname !== contact.uname) {
+                    $$('#contact_'+contact.uid+' div').first().update(contact.uname);
+                }
+            }
+            //update windows as well
+            if (has_open_message(contact.uid)) {
+                var box = $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname');
+                if(typeof(box) !== 'undefined'){
+                    uname = box.first().innerHTML;
+                    if (uname !== contact.uname) {
+                        $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname').first().update(contact.uname);
+                    }
+                }
+            }
         }
         
         if (has_open_message(contact.uid)) {
