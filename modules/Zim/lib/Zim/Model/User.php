@@ -95,5 +95,6 @@ class Zim_Model_User extends Doctrine_Record
         // WILL be saved in the database
         $now = date('Y-m-d H:i:s', time());
         $this->updated_at = $now;
+        $this->timedout = '0';
     }
 }
