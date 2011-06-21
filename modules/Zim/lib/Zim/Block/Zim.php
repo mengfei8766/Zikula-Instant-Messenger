@@ -58,10 +58,11 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         PageUtil::addVar('javascript', 'modules/Zim/javascript/Emoticon.js');
         if ($this->getVar('use_minjs')) {
             PageUtil::addVar('javascript', 'modules/Zim/javascript/Zim_min.js');
+            PageUtil::addVar('javascript', 'modules/Zim/javascript/tooltips_min.js');
         } else {
             PageUtil::addVar('javascript', 'modules/Zim/javascript/Zim.js');
+            PageUtil::addVar('javascript', 'modules/Zim/javascript/tooltips.js');
         }
-        PageUtil::addVar('javascript', 'modules/Zim/javascript/tooltips.js');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
         PageUtil::addVar('stylesheet', 'modules/Zim/style/tooltips.css');
 
