@@ -154,8 +154,8 @@ var Zim ={
                 });
                 Zim.contacts.each(function(item) {
                         if(!contact_in_list(item.uid, contacts)) {
-                            item.status = 0;
-                            Zim.toggle_contact_state(item);
+                        	Event.stopObserving('contact_' + item.uid); 
+                        	$('contact_'+ item.uid).remove();
                         }
                 });
                 Zim.contacts = contacts;
@@ -515,7 +515,7 @@ var Zim ={
             $('zim_contact_status_img_'+contact.uid).writeAttribute({src: src});
         }
         
-        //Only update if the user was online before this stops from detecting invis users
+        //Only update uname if the user was online before this stops from detecting invis users
         var old_element = Zim.contacts.find(function(c) {return c.uid == contact.uid});
         if (typeof(old_element) !== 'undefined' && (old_element.status !== 0 && contact.status !== 0)) {
             var uname = $$('#contact_'+contact.uid+' div');
@@ -663,7 +663,7 @@ StateWindow.prototype = {
 
 function contact_in_list(uid, contacts) {
     var result = false;
-    contacts.each(function(item, index) {
+    contacts.each(function(item) {
             if (item.uid == uid) {
                 result = true;
                 return;
