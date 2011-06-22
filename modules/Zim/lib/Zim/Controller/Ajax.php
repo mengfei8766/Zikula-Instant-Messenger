@@ -57,7 +57,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 
         if ($me['timedout'] == '1') {
             try {
-                ModUtil::apiFunc('Zim', 'contact', 'timein',$this->uid);
+                ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
             } catch (Zim_Exception_ContactNotFound $e) {
                 return new Zim_Response_Ajax_Exception($e);
             } catch (Zim_Exception_UIDNotSet $e) {
