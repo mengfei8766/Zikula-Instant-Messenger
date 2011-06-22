@@ -76,7 +76,7 @@ class Zim_Api_State extends Zikula_AbstractApi {
      */
     function get($uid) {
         $task = Doctrine_Query::create()
-        ->select('state.user as uid, state.uid as my_uid, state.start_msg as start_msg, u.uname as uname')
+        ->select('state.user as uid, state.uid as my_uid, state.start_msg as start_msg, u.uname as uname, u.status as status, u.timedout as timedout')
         ->from('Zim_Model_State state')
         ->where('state.uid = ?', $uid)
         ->leftJoin('state.to u');

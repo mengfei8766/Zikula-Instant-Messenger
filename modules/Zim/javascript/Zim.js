@@ -68,7 +68,7 @@ var Zim ={
                 Zim.sentmessage_template = new Template(data.sentmessage_template);
                 Zim.contacts = data.contacts;
                 Zim.settings = data.settings;
-                new Tooltip($('zim-my-status'), {});
+                new Tooltips('.tooltips', {});
                 Zim.set_status_image();
                 Zim.status_observer();
              

@@ -78,6 +78,8 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
             if ($contact['status'] == 3 || $contact['timedout'] == 1) {
                 $contacts[$key]['status'] = 0;
             }
+            unset($contacts[$key]['created_at']);
+            unset($contacts[$key]['updated_at']);
             unset($contacts[$key]['timedout']);
         }
 
@@ -112,6 +114,8 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         if ($user['status'] == 3 || $contact['timedout'] == 1) {
             $user['status'] = 0;
         }
+        unset($user['created_at']);
+        unset($user['updated_at']);
         unset($user['timedout']);
         
         //return json response.

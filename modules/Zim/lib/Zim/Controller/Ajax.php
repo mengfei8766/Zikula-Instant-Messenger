@@ -100,6 +100,13 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 
         //retreive state
         $state = ModUtil::apiFunc('Zim', 'state', 'get', $this->uid);
+        foreach ($state['windows'] as $key => $window) {
+            if ($window['status'] == 3 || $window['timedout'] == 1) {
+                $state['windows'][$key]['status'] = 0;
+            }
+            unset($state['windows'][$key]['timedout']);
+        }
+        
         if (isset($state)) {
             $output['state'] = $state;
         }
