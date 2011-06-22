@@ -188,10 +188,16 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * @param $uid Intiger User ID to keep alive.
      */
     function keep_alive($uid) {
+        if(!isset($uid) || empty($uid)) {
+            throw new Zim_Exception_UIDNotSet();
+        }
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.uid = ?', $uid);
         $me = $q->fetchOne();
+        if (sizeof($me) == 0) {
+            throw new Zim_Exception_ContactNotFound();
+        }
         $me->keepAlive();
         $me->save();
 
