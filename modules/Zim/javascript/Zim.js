@@ -24,6 +24,7 @@ var Zim ={
     messages_to_confirm: Array(),
     contact_template: '',
     message_template: '',
+    settingsmenu_template: '',
     sentmessage_template: '',
     my_uname: '',
     my_uid: '',
@@ -56,6 +57,7 @@ var Zim ={
                 var data = req.getData();
                 Zim.message_template = new Template(data.message_template);
                 Zim.contact_template = new Template(data.contact_template);
+                Zim.settingsmenu_template = data.settingsmenu_template;
                 var message_container = document.createElement('div');
                 Element.extend(message_container);
                 message_container.addClassName('zim-block-message-container');
@@ -611,6 +613,7 @@ var Zim ={
         Element.extend(zim_settings_menu);
         zim_settings_menu.addClassName('zim-settings');
         zim_settings_menu.setAttribute('id', 'zim-settings-menu');
+        zim_settings_menu.update(Zim.settingsmenu_template);
         var top_offset = $('zim-settings-button').getHeight();
         
         zim_settings_menu.setStyle({
@@ -628,16 +631,47 @@ var Zim ={
            'color': '#44bbff'
         });
         Event.stopObserving('zim-settings-button', 'click');
-        Event.observe('zim-settings-button', 'click', function(event) {
+        var close_settings_window = function(event) {
             $('zim-settings-menu').remove();
+            Event.stopObserving('zim-settings-button', 'click');
             Event.observe('zim-settings-button', 'click', function(event) {
                 Zim.open_settings_window();
             });
             $('zim-settings-button').setStyle({
                 'color': ''
             });
-
-        });
+        };
+        Event.observe('zim-settings-button', 'click', close_settings_window);
+        
+        if ($('zim-view-history') != undefined)
+        {
+        	Event.observe('zim-view-history', 'click', function(event){
+        		close_settings_window();
+                new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=get_template", {
+                    onComplete : function(req) {
+                        if (!req.isSuccess()) {
+                            Zikula.showajaxerror(req.getMessage());
+                            $('zim-block-history-box').remove();
+                            return;
+                        }
+                        var data = req.getData();
+                        var history_box = document.createElement('div');
+                        Element.extend(history_box);
+                        history_box.addClassName('zim-block-history-box');
+                        history_box.id = 'zim-block-history-box';
+                        history_box.update(data.template);
+                        $(document.body).insert(history_box);
+                        
+                        new Draggable('zim-block-history-box', {
+                            handle: 'zim-block-history-box-header'
+                        });
+                        Event.observe('zim-block-history-close', 'click', function(event){
+                        	history_box.remove();
+                        });
+                    }
+                });
+        	});
+        }
     }
 };
 
