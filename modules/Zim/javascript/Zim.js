@@ -664,7 +664,23 @@ var Zim ={
                         history_box.id = 'zim-block-history-box';
                         history_box.update(data.template);
                         $(document.body).insert(history_box);
-                        
+                        var user_nodes = $('zim-block-history-contacts').getElementsBySelector('li');
+                        user_nodes.each(function(node){
+                        	Event.observe(node.id, 'click', function(event){
+                        		var pars = "contact=" + (node.id).replace('contact_history_user', '');
+                        		new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=get_history", {
+                                    parameters: pars,
+                                    onComplete : function(req) {
+                                        if (!req.isSuccess()) {
+                                            Zikula.showajaxerror(req.getMessage());
+                                            return;
+                                        }
+                                        var data = req.getData();
+                                        $('zim-block-history-messages').update(data.messages);
+                                    }
+                                });
+                        	});
+                        });
                         new Draggable('zim-block-history-box', {
                             handle: 'zim-block-history-box-header'
                         });

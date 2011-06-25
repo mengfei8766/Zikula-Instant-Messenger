@@ -45,4 +45,10 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
         $output['template'] = $this->view->fetch('zim_block_history.tpl');
         return new Zikula_Response_Ajax($output);
     }
+    
+    public function get_history() {
+        $uid = (int)$this->request->getPost()->get('contact');
+        $output['messages'] = $uid;
+        return new Zikula_Response_Ajax($output);
+    }
 }
