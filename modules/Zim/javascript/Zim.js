@@ -647,6 +647,9 @@ var Zim ={
         {
         	Event.observe('zim-view-history', 'click', function(event){
         		close_settings_window();
+        		if ($('zim-block-history-box') != undefined) {
+        			return;
+        		}
                 new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=get_template", {
                     onComplete : function(req) {
                         if (!req.isSuccess()) {
