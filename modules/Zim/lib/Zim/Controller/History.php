@@ -47,8 +47,14 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
     }
     
     public function get_history() {
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        
         $uid = (int)$this->request->getPost()->get('contact');
-        $output['messages'] = $uid;
+        $messages = ModUtil::apiFunc('Zim', 'history', 'get_history', array('user1' => $this->uid, 'user2' => $uid));
+        $this->view->assign(array('messages' => $messages));
+        $output['template'] = $this->view->fetch('zim_block_history_messages.tpl');
         return new Zikula_Response_Ajax($output);
     }
 }

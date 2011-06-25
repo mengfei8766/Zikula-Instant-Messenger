@@ -80,6 +80,20 @@
     margin:0 auto;
 }
 
+
+.zim-block-history-messagetable {
+	width:100%;
+}
+
+.zim-block-history-messagetable tr:hover {
+	background-color:#CAE2FC;
+}
+.zim-block-history-messagetable td{
+	padding:0;
+	margin:0;
+	border-bottom:1px solid #D4D5D6;
+}
+
 .zim-block p{
 	font-size:14px;
 	display:inline;

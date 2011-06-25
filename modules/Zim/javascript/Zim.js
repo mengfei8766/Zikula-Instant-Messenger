@@ -676,7 +676,7 @@ var Zim ={
                                             return;
                                         }
                                         var data = req.getData();
-                                        $('zim-block-history-messages').update(data.messages);
+                                        $('zim-block-history-messages').update(data.template);
                                     }
                                 });
                         	});
