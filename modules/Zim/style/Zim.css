@@ -1,3 +1,5 @@
+
+/*CSS For ZIM Block*/
 #zim-block {
     width:100%;
     height:100%;
@@ -59,6 +61,7 @@
     vertical-align:middle; 
 }
 
+/*CSS FOR ZIM BLOCK HISTORY*/
 .zim-block-history-box {
 	min-width:600px;
 	min-height:450px;
@@ -79,7 +82,45 @@
     -webkit-border-bottom-left-radius:20px;
     margin:0 auto;
 }
+.zim-block-history-box-header {
+	width:100%;
+	border-bottom:1px solid #D4D5D6;
+	height:15px;
+	font-weight:bold;
+	cursor:move;
+}
 
+.zim-block-history-box-header-icons {
+	float:right;
+	margin-right:5px;
+	cursor:pointer;
+}
+
+#zim-block-history-contacts {
+	width:30%;
+	min-height:435px;
+	border-right:1px solid #D4D5D6;
+	float:left;
+	text-align:left;
+}
+#zim-block-history-contacts ul {
+	list-style:none;
+	width:100%;
+	margin:0;
+}
+#zim-block-history-contacts li {
+	border-bottom:1px solid #D4D5D6;
+	margin:0;
+	font-weight:bold;
+	cursor:pointer;
+}
+#zim-block-history-messages {
+	margin:0;
+	padding:0;
+	width:69%;
+	float:left;
+	text-align:left;
+}
 
 .zim-block-history-messagetable {
 	width:100%;
@@ -89,10 +130,13 @@
 	background-color:#CAE2FC;
 }
 .zim-block-history-messagetable td{
-	padding:0;
-	margin:0;
 	border-bottom:1px solid #D4D5D6;
 }
+
+.zim-block-history-messagesetwidth td{
+	width:100px;
+}
+/*END CSS FOR ZIM BLOCK HISTORY*/
 
 .zim-block p{
 	font-size:14px;
