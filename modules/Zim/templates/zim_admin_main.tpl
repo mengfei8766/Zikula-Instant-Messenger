@@ -1,12 +1,12 @@
 {admincategorymenu}
 <div class="z-adminbox">
     {img modname='Zim' src='admin.png'}
-    <h1>{gt text="Zikula Instant Messenger"}</h1>
+    <h2>{gt text="Zikula Instant Messenger"}</h2>
     {modulelinks modname='Zim' type='admin'}
 </div>
 <div class="z-admincontainer z-clearfix">
     <div class="z-adminpageicon">{icon type="view" size="medium"}</div>
-    <h2>{gt text="Zim Settings"}</h2>
+    <h3>{gt text="Zim Settings"}</h3>
 <form class="z-form" id="zim_performance" action="{modurl modname='Zim' type='admin' func='settings_update'}" method="post" enctype="application/x-www-form-urlencoded">
 	<fieldset>
 		<input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
