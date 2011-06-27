@@ -2,12 +2,14 @@
 	<tr class="zim-block-history-messageheader">
 		<td class="zim-block-history-messagesetwidth">From</td>
 		<td class="zim-block-history-messagesetwidth">To</td>
+		<td class="zim-block-history-messagesetwidth">Sent</td>
 		<td>Message</td>
 	</tr>
 	{foreach from=$messages item='message'}
 		<tr>
 			<td class="zim-block-history-messagesetwidth">{$message.from.uname}</td>
 			<td class="zim-block-history-messagesetwidth">{$message.to.uname}</td>
+			<td class="zim-block-history-messagesetwidth">{$message.created_at}</td>
 			<td>{$message.message}</td>
 		</tr>
 	{/foreach}

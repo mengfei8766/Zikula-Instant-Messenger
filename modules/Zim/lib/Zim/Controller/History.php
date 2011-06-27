@@ -57,4 +57,15 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
         $output['template'] = $this->view->fetch('zim_block_history_messages.tpl');
         return new Zikula_Response_Ajax($output);
     }
+    
+    public function delete() {
+        //security checks
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
+        
+        $user = (int)$this->request->getPost()->get('uid');
+        $delete = ModUtil::apiFunc('Zim', 'history', 'delete', array('user' => $user, 'uid' => $this->uid));
+        $output = array();
+        return new Zikula_Response_Ajax($output);
+    }
 }

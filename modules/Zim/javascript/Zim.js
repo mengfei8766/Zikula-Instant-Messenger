@@ -680,6 +680,21 @@ var Zim ={
                                     }
                                 });
                         	});
+                        	var del = node.getElementsBySelector('img');
+                        	Event.observe(del[0], 'click', function(event){
+                        		Event.stopObserving(node.id, 'click');
+                        		var pars = '&uid=' + (node.id).replace('contact_history_user', '');
+                        		new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=delete", {
+                                    parameters: pars,
+                                    onComplete : function(req) {
+                                        if (!req.isSuccess()) {
+                                            Zikula.showajaxerror(req.getMessage());
+                                            return;
+                                        }
+                                        node.remove();
+                                    }
+                                });
+                        	});
                         });
                         new Draggable('zim-block-history-box', {
                             handle: 'zim-block-history-box-header'

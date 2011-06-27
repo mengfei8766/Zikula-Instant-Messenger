@@ -18,36 +18,47 @@ class Zim_Model_Message extends Doctrine_Record
             'primary' => true,
             'notnull' => true,
             'autoincrement' => true
-        )
-        );
+        ));
+        
         $this->hasColumn('msg_to', 'integer', 16, array(
         	'unique'  => false,
             'primary' => false,
             'notnull' => true
-        )
-        );
+        ));
+        
         $this->hasColumn('msg_from', 'integer', 16, array(
         	'unique'  => false,
             'primary' => false,
             'notnull' => true
-        )
-        );
+        ));
+        
         $this->hasColumn('message', 'clob', array(
         	'unique' => false,
         	'primary'=> false,
             'notnull' => true,
         	'default' => ''
-        	)
-        	);
-        	$this->hasColumn('recd', 'integer',2 , array(
+    	));
+    	
+    	$this->hasColumn('recd', 'integer',2 , array(
         	'unique' => false,
         	'primary'=> false,
             'notnull' => true,
         	'default' => 0
-        	)
-        	);
+    	));
 
-
+        $this->hasColumn('msg_to_deleted', 'integer',2 , array(
+        	'unique' => false,
+        	'primary'=> false,
+            'notnull' => true,
+        	'default' => 0
+    	));
+    	
+    	$this->hasColumn('msg_from_deleted', 'integer',2 , array(
+        	'unique' => false,
+        	'primary'=> false,
+            'notnull' => true,
+        	'default' => 0
+    	));
     }
 
     public function setUp()
@@ -56,12 +67,11 @@ class Zim_Model_Message extends Doctrine_Record
         $this->hasOne('Zim_Model_User as to', array(
                 'local' => 'msg_to',
                 'foreign' => 'uid',
-        )
-        );
+        ));
+        
         $this->hasOne('Zim_Model_User as from', array(
                 'local' => 'msg_from',
                 'foreign' => 'uid',
-        )
-        );
+        ));
     }
 }

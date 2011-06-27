@@ -57,6 +57,11 @@
     -webkit-border-top-right-radius:5px;
 }
 
+.zim-settings li {
+	font-weight:bold;
+	padding-left:5px;
+}
+
 form.inplaceeditor-form input[type="text"] { /* Input box */
 	width:50%;
 	display:inline;
@@ -73,7 +78,7 @@ form.inplaceeditor-form { /* The form */
 
 /*CSS FOR ZIM BLOCK HISTORY*/
 .zim-block-history-box {
-	min-width:600px;
+	min-width:700px;
 	min-height:450px;
 	border: 1px solid #D4D5D6;
 	background:#ffffff;
@@ -107,13 +112,13 @@ form.inplaceeditor-form { /* The form */
 }
 
 #zim-block-history-contacts {
-	width:30%;
+	width:180px;
 	min-height:435px;
 	border-right:1px solid #D4D5D6;
 	float:left;
 	text-align:left;
 }
-#zim-block-history-contacts ul, .zim-settings ul{
+#zim-block-history-contacts ul, #zim-settings-menu ul{
 	list-style:none;
 	width:100%;
 	margin:0;
@@ -121,13 +126,19 @@ form.inplaceeditor-form { /* The form */
 #zim-block-history-contacts li {
 	border-bottom:1px solid #D4D5D6;
 	margin:0;
+	padding-left:5px;
 	font-weight:bold;
 	cursor:pointer;
 }
+#zim-block-history-contacts img {
+	float:right;
+    vertical-align:middle; 
+}
+
 #zim-block-history-messages {
 	margin:0;
-	padding:0;
-	width:69%;
+	padding: 0;
+	width:520px;
 	float:left;
 	text-align:left;
 }
@@ -140,7 +151,12 @@ form.inplaceeditor-form { /* The form */
 	background-color:#CAE2FC;
 }
 .zim-block-history-messagetable td{
+	padding:0 2px 0 2px;
 	border-bottom:1px solid #D4D5D6;
+	border-right:1px solid #D4D5D6;
+}
+.zim-block-history-messageheader td{
+	font-weight:bold;
 }
 
 .zim-block-history-messagesetwidth td{
