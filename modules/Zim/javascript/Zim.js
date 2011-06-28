@@ -694,6 +694,7 @@ var Zim ={
                                             return;
                                         }
                                         node.remove();
+                                        $('zim-block-history-messages').update('');
                                     }
                                 });
                         	});
