@@ -108,6 +108,17 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
             }
             unset($state['windows'][$key]['timedout']);
         }
+        foreach ($state['messages'] as $key => $message) {
+            unset($state['messages'][$key]['recd']);
+            unset($state['messages'][$key]['msg_to_deleted']);
+            unset($state['messages'][$key]['msg_from_deleted']);
+            unset($state['messages'][$key]['from']['created_at']);
+            unset($state['messages'][$key]['from']['updated_at']);
+            unset($state['messages'][$key]['from']['timedout']);
+            if ($state['messages'][$key]['from']['status'] == 3 || $state['messages'][$key]['from']['status'] == 1) {
+                $state['messages'][$key]['from']['status'] = 0;
+            }
+        }
 
         if (isset($state)) {
             $output['state'] = $state;

@@ -360,6 +360,7 @@ var Zim ={
         } else {
             window_uid = message.msg_from;
             to_uname = message.from.uname;
+            user_status = message.from.status;
             color = '#FF0000';
         }
         var status = has_open_message(window_uid);
@@ -379,7 +380,8 @@ var Zim ={
             if (!status) {
                 var contact = {
                     uid: window_uid,
-                    uname: to_uname
+                    uname: to_uname,
+                    status: user_status
                 };
                 if (Zim.add_message_box(contact) == false) {
                     alert("could not add box");
