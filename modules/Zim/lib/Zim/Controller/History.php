@@ -34,8 +34,8 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        
-        $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
+
+        $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts_having_history', $this->uid);
         foreach ($contacts as $key => $contact) {
             if ($contact['uid'] == $this->uid) unset($contacts[$key]);
         }

@@ -50,6 +50,22 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         return $contacts;
 
     }
+    
+    function get_all_contacts_having_history($uid) {
+        if (!isset($uid) || $uid == '') {
+            throw new Zim_Exception_UIDNotSet();
+        }
+        $task = Doctrine_Query::create()
+        ->from('Zim_Model_User user')
+        //->where('user.uid != ?', $uid)
+        ->where('(SELECT COUNT(m1.mid) FROM Zim_Model_Message m1 WHERE m1.msg_from = user.uid AND m1.msg_to   = ? AND m1.msg_to_deleted != 1 GROUP BY m1.msg_from) > 0',$uid)
+		->orWhere(' (SELECT COUNT(m2.mid) FROM Zim_Model_Message m2 WHERE m2.msg_to   = user.uid AND m2.msg_from = ? AND m2.msg_from_deleted != 1 GROUP BY m2.msg_to)   > 0', $uid)
+        ->orWhere('(SELECT COUNT(m3.mid) FROM Zim_Model_HistoricalMessage m3 WHERE m3.msg_from = user.uid AND m3.msg_to   = ? AND m3.msg_to_deleted != 1 GROUP BY m3.msg_from) > 0',$uid)
+		->orWhere(' (SELECT COUNT(m4.mid) FROM Zim_Model_HistoricalMessage m4 WHERE m4.msg_to   = user.uid AND m4.msg_from = ? AND m4.msg_from_deleted != 1 GROUP BY m4.msg_to)   > 0', $uid);
+        $results = $task->execute();
+        $results = $results->toArray();
+        return $results;
+    }
 
     /**
      * Get all of the online contacts only
