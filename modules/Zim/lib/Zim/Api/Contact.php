@@ -38,6 +38,8 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
      * Gets all the contacts.
+     *
+     * @return Array Every contact in Zim's user table (every user who has ever used zim).
      */
     function get_all_contacts() {
         $this->timeout();
@@ -50,18 +52,25 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         return $contacts;
 
     }
-    
+
+    /**
+     * Get all the contacts having history with some user.
+     * This is primarily used to determine a list of contacts for which a history lookup will have messages.
+     *
+     * @param $uid Integer The user to find contacts for.
+     *
+     * @return Array All the contacts for which the user has history.
+     */
     function get_all_contacts_having_history($uid) {
         if (!isset($uid) || $uid == '') {
             throw new Zim_Exception_UIDNotSet();
         }
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User user')
-        //->where('user.uid != ?', $uid)
-        ->where('(SELECT COUNT(m1.mid) FROM Zim_Model_Message m1 WHERE m1.msg_from = user.uid AND m1.msg_to   = ? AND m1.msg_to_deleted != 1 GROUP BY m1.msg_from) > 0',$uid)
-		->orWhere(' (SELECT COUNT(m2.mid) FROM Zim_Model_Message m2 WHERE m2.msg_to   = user.uid AND m2.msg_from = ? AND m2.msg_from_deleted != 1 GROUP BY m2.msg_to)   > 0', $uid)
-        ->orWhere('(SELECT COUNT(m3.mid) FROM Zim_Model_HistoricalMessage m3 WHERE m3.msg_from = user.uid AND m3.msg_to   = ? AND m3.msg_to_deleted != 1 GROUP BY m3.msg_from) > 0',$uid)
-		->orWhere(' (SELECT COUNT(m4.mid) FROM Zim_Model_HistoricalMessage m4 WHERE m4.msg_to   = user.uid AND m4.msg_from = ? AND m4.msg_from_deleted != 1 GROUP BY m4.msg_to)   > 0', $uid);
+        ->where('(SELECT COUNT(m1.mid) FROM Zim_Model_Message m1 WHERE m1.msg_from = user.uid AND m1.msg_to = ? AND m1.msg_to_deleted != 1 GROUP BY m1.msg_from) > 0',$uid)
+        ->orWhere(' (SELECT COUNT(m2.mid) FROM Zim_Model_Message m2 WHERE m2.msg_to = user.uid AND m2.msg_from = ? AND m2.msg_from_deleted != 1 GROUP BY m2.msg_to)   > 0', $uid)
+        ->orWhere('(SELECT COUNT(m3.mid) FROM Zim_Model_HistoricalMessage m3 WHERE m3.msg_from = user.uid AND m3.msg_to = ? AND m3.msg_to_deleted != 1 GROUP BY m3.msg_from) > 0',$uid)
+        ->orWhere(' (SELECT COUNT(m4.mid) FROM Zim_Model_HistoricalMessage m4 WHERE m4.msg_to = user.uid AND m4.msg_from = ? AND m4.msg_from_deleted != 1 GROUP BY m4.msg_to)   > 0', $uid);
         $results = $task->execute();
         $results = $results->toArray();
         return $results;
@@ -126,33 +135,21 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
 
     /**
      * Initializes user for first time use.
+     *
+     * @return Array newly created user.
      */
-    function first_time_init() {
+    function first_time_init($uid) {
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
-        ->where('user.uid = ?', $this->uid);
+        ->where('user.uid = ?', $uid);
         $me = $q->fetchOne();
         if (empty($me)) {
             $me = new Zim_Model_User();
             $me['status'] = 1;
             $me->save();
         }
-        //return the status of the user
+        //return the user
         return $me;
-    }
-
-    /**
-     * Timeout function goes through all the users who are online and checks to
-     * see if they have been inactive for too long, if so then it sets them offline.
-     */
-    function timeout() {
-        $q = Doctrine_Query::create()
-        ->update('Zim_Model_User u')
-        //->set('u.status','?', '0')
-        ->set('u.timedout', '?', '1')
-        ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()- $this->getVar('timeout_period', 30)));
-        $q->execute();
-        return;
     }
 
     function timein($uid) {
@@ -174,12 +171,13 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      *
      * @param $args['uid']   Intiger User id of the user for whom to change the username.
      * @param $args['uname'] String  Nickname to change to.
+     *
+     * @return The updated contact.
      */
     function update_username($args) {
         //check input to make sure everything is set.
-        if (!isset($args['uid']) || !$args['uid']) 
+        if (!isset($args['uid']) || !$args['uid'])
         throw new Zim_Exception_UIDNotSet();
-        //TODO: in this case maybe we should just get the user and use their zikula uname.
 
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User')

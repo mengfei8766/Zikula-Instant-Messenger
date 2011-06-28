@@ -108,7 +108,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
             }
             unset($state['windows'][$key]['timedout']);
         }
-        
+
         if (isset($state)) {
             $output['state'] = $state;
         }

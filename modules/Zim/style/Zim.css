@@ -159,8 +159,8 @@ form.inplaceeditor-form { /* The form */
 	font-weight:bold;
 }
 
-.zim-block-history-messagesetwidth td{
-	width:100px;
+.zim-block-history-messagesetwidth{
+	max-width:100px;
 }
 /*END CSS FOR ZIM BLOCK HISTORY*/
 

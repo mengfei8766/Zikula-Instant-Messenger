@@ -7,7 +7,7 @@
  * @author  Kyle Giovannetti
  * @package Zim
  */
-//TODO: why aren't messages and windows in seperate session variables.
+
 class Zim_Api_State extends Zikula_AbstractApi {
 
     /**
@@ -50,6 +50,13 @@ class Zim_Api_State extends Zikula_AbstractApi {
         }
     }
 
+    /**
+     * Sets the start message for an active window session.
+     * This is used so that Zim knows what the first message in a chat should be when
+     * carrying over a window from one page to the next.
+     *
+     * @param $args Array Messages to set the start_msg for.
+     */
     function message_set($args)
     {
         foreach ($args['state_messages_set'] as $message) {
@@ -73,6 +80,10 @@ class Zim_Api_State extends Zikula_AbstractApi {
 
     /**
      * Gets the current state of the user, what windows/messages are open.
+     *
+     * @param $uid The user id of the user we wish to get the state for.
+     *
+     * @return The state in an Array.
      */
     function get($uid) {
         $task = Doctrine_Query::create()

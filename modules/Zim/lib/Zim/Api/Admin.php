@@ -10,6 +10,10 @@
 
 class Zim_Api_Admin extends Zikula_AbstractApi
 {
+    /**
+     * Getlinks function used by Zikula.
+     * This is just a stub for the moment.
+     */
     public function getlinks()
     {
         $links = array();
