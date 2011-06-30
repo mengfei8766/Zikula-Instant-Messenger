@@ -72,7 +72,7 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         try {
             $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $uid);
         } catch (Zim_Exception_ContactNotFound $e) {
-            $me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init');
+            $me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $uid);
         }
 
         //get the block
