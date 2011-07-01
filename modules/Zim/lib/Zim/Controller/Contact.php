@@ -121,7 +121,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         //return json response.
         return new Zikula_Response_Ajax($user);
 
-    }
+    }    
 
     /**
      * Update users username.

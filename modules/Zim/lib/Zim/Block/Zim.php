@@ -32,10 +32,10 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
                      'show_preview'   => true);
     }
     
-	public function modify($blockinfo)
+    public function modify($blockinfo)
     {
-    	$vars = BlockUtil::varsFromContent($blockinfo['content']);
-   		if (empty($vars['unloggedin_block'])) {
+        $vars = BlockUtil::varsFromContent($blockinfo['content']);
+           if (empty($vars['unloggedin_block'])) {
             $vars['unloggedin_block'] = 0;
         }
         $this->view->assign($vars);
@@ -44,8 +44,8 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
     
     public function update($blockinfo)
     {
-    	$vars['unloggedin_block'] = (int)$this->request->getPost()->get('unloggedin_block');
-    	if (empty($vars['unloggedin_block'])) {
+        $vars['unloggedin_block'] = (int)$this->request->getPost()->get('unloggedin_block');
+        if (empty($vars['unloggedin_block'])) {
             $vars['unloggedin_block'] = 0;
         }
         
@@ -62,19 +62,19 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
      */
     public function display($blockinfo)
     {
-    	$vars = BlockUtil::varsFromContent($blockinfo['content']);
-    	//disable cache
+        $vars = BlockUtil::varsFromContent($blockinfo['content']);
+        //disable cache
         $this->view->setCaching(false);
-    	//if users not logged in we cant show the block at all
+        //if users not logged in we cant show the block at all
         if (!UserUtil::isLoggedIn()) {
-        	if ($vars['unloggedin_block']) {
-        		PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
-        		$blockinfo['content'] = $this->view->fetch('zim_block_notloggedin.tpl');
-        		//return the block
-        		return BlockUtil::themeBlock($blockinfo);
-        	} else {
-            	return false;
-        	}
+            if ($vars['unloggedin_block']) {
+                PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
+                $blockinfo['content'] = $this->view->fetch('zim_block_notloggedin.tpl');
+                //return the block
+                return BlockUtil::themeBlock($blockinfo);
+            } else {
+                return false;
+            }
         }
         
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
