@@ -31,22 +31,55 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
                      'form_refresh'   => false,
                      'show_preview'   => true);
     }
+    
+	public function modify($blockinfo)
+    {
+    	$vars = BlockUtil::varsFromContent($blockinfo['content']);
+   		if (empty($vars['unloggedin_block'])) {
+            $vars['unloggedin_block'] = 0;
+        }
+        $this->view->assign($vars);
+        return $this->view->fetch('zim_block_modify.tpl');
+    }
+    
+    public function update($blockinfo)
+    {
+    	$vars['unloggedin_block'] = (int)$this->request->getPost()->get('unloggedin_block');
+    	if (empty($vars['unloggedin_block'])) {
+            $vars['unloggedin_block'] = 0;
+        }
+        
+        $blockinfo['content'] = BlockUtil::varsToContent($vars);
+        
+        // clear the block cache
+        $this->view->clear_cache('zim_block_modify.tpl');
+        Zikula_View_Theme::getInstance()->clear_cache();
+        return($blockinfo);
+    }
 
     /**
      * display block
      */
     public function display($blockinfo)
     {
-        if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
-            return false;
+    	$vars = BlockUtil::varsFromContent($blockinfo['content']);
+    	//disable cache
+        $this->view->setCaching(false);
+    	//if users not logged in we cant show the block at all
+        if (!UserUtil::isLoggedIn()) {
+        	if ($vars['unloggedin_block']) {
+        		PageUtil::addVar('stylesheet', 'modules/Zim/style/Zim.css');
+        		$blockinfo['content'] = $this->view->fetch('zim_block_notloggedin.tpl');
+        		//return the block
+        		return BlockUtil::themeBlock($blockinfo);
+        	} else {
+            	return false;
+        	}
         }
         
-        //disable cache
-        $this->view->setCaching(false);
-
-        //if users not logged in we cant show the block at all
-        if (!UserUtil::isLoggedIn()) {
-            return;
+    	echo $vars['unloggedin_block'];die();
+        if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
+            return false;
         }
          
         //load all the JS and CSS that ZIM needs
