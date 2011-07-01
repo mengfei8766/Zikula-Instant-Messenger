@@ -77,7 +77,6 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
         	}
         }
         
-    	echo $vars['unloggedin_block'];die();
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
             return false;
         }
