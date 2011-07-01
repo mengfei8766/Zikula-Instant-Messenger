@@ -73,10 +73,10 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         //$state_windows = $this->request->getPost()->get('state_windows', array());
 
         ModUtil::apiFunc('Zim', 'state', 'window_add',
-        array(	'state_windows_add'	 => $state_window_add,
+        array(    'state_windows_add'     => $state_window_add,
                 'uid'        => $this->uid));
         ModUtil::apiFunc('Zim', 'state', 'window_del',
-        array(	'state_windows_del'	 => $state_window_del,
+        array(    'state_windows_del'     => $state_window_del,
                 'uid'        => $this->uid));
 
 
@@ -86,7 +86,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         
         //add new messages into the state.
         ModUtil::apiFunc('Zim', 'state', 'message_set',
-        array(	'state_messages_set' => $messages,
+        array(    'state_messages_set' => $messages,
                 'uid'                => $this->uid));
         
         foreach ($messages as $key => $message) {

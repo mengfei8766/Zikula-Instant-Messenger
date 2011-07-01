@@ -14,51 +14,51 @@ class Zim_Model_Message extends Doctrine_Record
     {
         $this->setTableName('zim_message');
         $this->hasColumn('mid', 'integer', 16, array(
-        	'unique'  => true,
+            'unique'  => true,
             'primary' => true,
             'notnull' => true,
             'autoincrement' => true
         ));
         
         $this->hasColumn('msg_to', 'integer', 16, array(
-        	'unique'  => false,
+            'unique'  => false,
             'primary' => false,
             'notnull' => true
         ));
         
         $this->hasColumn('msg_from', 'integer', 16, array(
-        	'unique'  => false,
+            'unique'  => false,
             'primary' => false,
             'notnull' => true
         ));
         
         $this->hasColumn('message', 'clob', array(
-        	'unique' => false,
-        	'primary'=> false,
+            'unique' => false,
+            'primary'=> false,
             'notnull' => true,
-        	'default' => ''
-    	));
-    	
-    	$this->hasColumn('recd', 'integer',2 , array(
-        	'unique' => false,
-        	'primary'=> false,
+            'default' => ''
+        ));
+        
+        $this->hasColumn('recd', 'integer',2 , array(
+            'unique' => false,
+            'primary'=> false,
             'notnull' => true,
-        	'default' => 0
-    	));
+            'default' => 0
+        ));
 
         $this->hasColumn('msg_to_deleted', 'integer',2 , array(
-        	'unique' => false,
-        	'primary'=> false,
+            'unique' => false,
+            'primary'=> false,
             'notnull' => true,
-        	'default' => 0
-    	));
-    	
-    	$this->hasColumn('msg_from_deleted', 'integer',2 , array(
-        	'unique' => false,
-        	'primary'=> false,
+            'default' => 0
+        ));
+        
+        $this->hasColumn('msg_from_deleted', 'integer',2 , array(
+            'unique' => false,
+            'primary'=> false,
             'notnull' => true,
-        	'default' => 0
-    	));
+            'default' => 0
+        ));
     }
 
     public function setUp()

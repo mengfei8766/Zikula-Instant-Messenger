@@ -49,18 +49,18 @@ class Zim_Model_User extends Doctrine_Record
     {
         $this->actAs('Timestampable');
         $this->hasMany('Zim_Model_Message as SentMessages', array(
-        	'local'		=>	'uid',
-        	'foreign'	=>	'msg_from',
+            'local'        =>    'uid',
+            'foreign'    =>    'msg_from',
         )
         );
         $this->hasMany('Zim_Model_State as State', array(
-        	'local'		=>	'uid',
-        	'foreign'	=>	'uid',
+            'local'        =>    'uid',
+            'foreign'    =>    'uid',
         )
         );
         $this->hasMany('Zim_Model_Message as RecdMessages', array(
-        	'local'		=>	'uid',
-        	'foreign'	=>	'msg_to',
+            'local'        =>    'uid',
+            'foreign'    =>    'msg_to',
         )
         );
     }

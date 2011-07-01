@@ -51,8 +51,8 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //save the status update so it filters to all users
         if ((int)$status !== (int)$me['status']) {
             ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
-            Array(	'status'=> $status,
-         			'uid'	=> $this->uid));
+            Array(    'status'=> $status,
+                     'uid'    => $this->uid));
         }
 
         if ($me['timedout'] == '1') {
