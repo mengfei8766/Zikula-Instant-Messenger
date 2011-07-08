@@ -6,11 +6,11 @@
 		<td>Message</td>
 	</tr>
 	{foreach from=$messages item='message'}
-		<tr>
-			<td class="zim-block-history-messagesetwidth">{$message.from.uname}</td>
-			<td class="zim-block-history-messagesetwidth">{$message.to.uname}</td>
-			<td class="zim-block-history-messagesetwidth">{$message.created_at}</td>
-			<td>{$message.message}</td>
-		</tr>
+	<tr>
+		<td class="zim-block-history-messagesetwidth">{$message.from.uname}</td>
+		<td class="zim-block-history-messagesetwidth">{$message.to.uname}</td>
+		<td class="zim-block-history-messagesetwidth">{$message.created_at}</td>
+		<td>{$message.message}</td>
+	</tr>
 	{/foreach}
 </table>

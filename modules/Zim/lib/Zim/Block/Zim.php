@@ -31,26 +31,26 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
                      'form_refresh'   => false,
                      'show_preview'   => true);
     }
-    
+
     public function modify($blockinfo)
     {
         $vars = BlockUtil::varsFromContent($blockinfo['content']);
-           if (empty($vars['unloggedin_block'])) {
+        if (empty($vars['unloggedin_block'])) {
             $vars['unloggedin_block'] = 0;
         }
         $this->view->assign($vars);
         return $this->view->fetch('zim_block_modify.tpl');
     }
-    
+
     public function update($blockinfo)
     {
         $vars['unloggedin_block'] = (int)$this->request->getPost()->get('unloggedin_block');
         if (empty($vars['unloggedin_block'])) {
             $vars['unloggedin_block'] = 0;
         }
-        
+
         $blockinfo['content'] = BlockUtil::varsToContent($vars);
-        
+
         // clear the block cache
         $this->view->clear_cache('zim_block_modify.tpl');
         Zikula_View_Theme::getInstance()->clear_cache();
@@ -76,13 +76,13 @@ class Zim_Block_Zim extends Zikula_Controller_AbstractBlock
                 return false;
             }
         }
-        
+
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT)) {
             return false;
         }
          
         //load all the JS and CSS that ZIM needs
-        //TODO: is this the best way of doing this? 
+        //TODO: is this the best way of doing this?
         PageUtil::addVar('javascript', 'javascript/helpers/Zikula.js');
         PageUtil::addVar('javascript', 'javascript/ajax/original_uncompressed/scriptaculous.js');
         PageUtil::addVar('javascript', 'javascript/livepipe/livepipe.js');
