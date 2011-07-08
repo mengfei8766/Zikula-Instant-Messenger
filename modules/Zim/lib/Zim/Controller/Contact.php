@@ -117,11 +117,11 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         unset($user['created_at']);
         unset($user['updated_at']);
         unset($user['timedout']);
-        
+
         //return json response.
         return new Zikula_Response_Ajax($user);
 
-    }    
+    }
 
     /**
      * Update users username.
