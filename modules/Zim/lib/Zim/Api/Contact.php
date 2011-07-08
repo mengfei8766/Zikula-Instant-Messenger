@@ -33,7 +33,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         }
         $contact = $contact->toArray();
         if (!isset($contact['uname']) || trim($contact['uname']) == ''){
-        	$contact['uname'] = $this->update_username(array('uid' => $contact['uid']));
+            $contact['uname'] = $this->update_username(array('uid' => $contact['uid']));
         }
 
         //return the contact
@@ -157,17 +157,16 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         return $me;
     }
 
-    function timein($uid) {
-        if (!isset($uid) || $uid == '') {
-            throw new Zim_Exception_UIDNotSet();
-        }
+    /**
+     * Timeout function goes through all the users who are online and checks to
+     * see if they have been inactive for too long, if so then it sets them offline.
+     */
+    function timeout() {
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User u')
-        ->set('u.timedout', '?', '0')
-        ->where("u.uid = ?", $uid);
-        if ($q->execute() < 1) {
-            throw new Zim_Exception_ContactNotFound();
-        }
+        ->set('u.timedout', '?', '1')
+        ->where("u.updated_at <= ?", date('Y-m-d H:i:s', time()- $this->getVar('timeout_period', 30)));
+        $q->execute();
         return;
     }
 
@@ -192,7 +191,7 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         ->where('uid = ?', $args['uid']);
         $result = $q->execute();
         if (!isset($result) || $result == 0) {
-        	throw new Zim_Exception_UsernameCouldNotBeUpdated();
+            throw new Zim_Exception_UsernameCouldNotBeUpdated();
         }
 
         $q = Doctrine_Query::create()
