@@ -36,7 +36,7 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         $args = array('to' =>  $this->uid, 'recd' => true);
         $messages = ModUtil::apiFunc('Zim', 'message', 'getAll', $args);
         foreach ($messages as $key => $message) {
-            unset($messages[$key]['recd']);
+        unset($messages[$key]['recd']);
             unset($messages[$key]['msg_to_deleted']);
             unset($messages[$key]['msg_from_deleted']);
             unset($messages[$key]['from']['created_at']);
@@ -83,12 +83,12 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         //get all new messages from database
         $args = array(  'to'    =>  $this->uid);
         $messages = ModUtil::apiFunc('Zim', 'message', 'getall', $args);
-
+        
         //add new messages into the state.
         ModUtil::apiFunc('Zim', 'state', 'message_set',
         array(    'state_messages_set' => $messages,
                 'uid'                => $this->uid));
-
+        
         foreach ($messages as $key => $message) {
             unset($messages[$key]['recd']);
             unset($messages[$key]['msg_to_deleted']);

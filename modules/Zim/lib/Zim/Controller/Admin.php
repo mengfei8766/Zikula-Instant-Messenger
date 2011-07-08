@@ -34,7 +34,7 @@ class Zim_Controller_Admin extends Zikula_AbstractController
         }
         return $this->view->fetch('zim_admin_main.tpl');
     }
-
+    
     public function settings_update()
     {
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_ADMIN)) {
@@ -45,19 +45,19 @@ class Zim_Controller_Admin extends Zikula_AbstractController
         $settings['allow_offline_msg'] = $this->request->getPost()->get('settings_allow_offline_msg', 0);
         $settings['show_offline'] = $this->request->getPost()->get('settings_show_offline', 0);
         $settings['keep_history'] = $this->request->getPost()->get('settings_keep_history', 0);
-
+        
         if (!isset($settings) || empty($settings)) {
             return false;
         }
 
         $vars = $this->getVars();
         foreach ($settings as $key => $setting) {
-            if (array_key_exists($key, $vars)) {
-                $this->setVar($key, $setting);
-            }
+           if (array_key_exists($key, $vars)) {
+               $this->setVar($key, $setting);
+           }
         }
 
         LogUtil::registerStatus($this->__('Done! Saved module configuration.'));
-        return $this->view->fetch('zim_admin_main.tpl');
+        return $this->view->fetch('zim_admin_main.tpl');   
     }
 }

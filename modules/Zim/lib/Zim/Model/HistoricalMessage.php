@@ -18,46 +18,46 @@ class Zim_Model_HistoricalMessage extends Doctrine_Record
             'notnull' => true,
             'autoincrement' => false
         ));
-
+        
         $this->hasColumn('msg_to', 'integer', 16, array(
             'unique'  => false,
             'primary' => false,
             'notnull' => true
         ));
-
+        
         $this->hasColumn('msg_from', 'integer', 16, array(
             'unique'  => false,
             'primary' => false,
             'notnull' => true
         ));
-
+        
         $this->hasColumn('message', 'clob', array(
             'unique' => false,
             'primary'=> false,
             'notnull' => true,
             'default' => ''
-            ));
-
-            $this->hasColumn('recd', 'integer',2 , array(
+        ));
+        
+        $this->hasColumn('recd', 'integer',2 , array(
             'unique' => false,
             'primary'=> false,
             'notnull' => true,
             'default' => 0
-            ));
-
-            $this->hasColumn('msg_to_deleted', 'integer',2 , array(
+        ));
+        
+        $this->hasColumn('msg_to_deleted', 'integer',2 , array(
             'unique' => false,
             'primary'=> false,
             'notnull' => true,
             'default' => 0
-            ));
-
-            $this->hasColumn('msg_from_deleted', 'integer',2 , array(
+        ));
+        
+        $this->hasColumn('msg_from_deleted', 'integer',2 , array(
             'unique' => false,
             'primary'=> false,
             'notnull' => true,
             'default' => 0
-            ));
+        ));
 
 
     }
@@ -69,7 +69,7 @@ class Zim_Model_HistoricalMessage extends Doctrine_Record
                 'local' => 'msg_to',
                 'foreign' => 'uid',
         ));
-
+        
         $this->hasOne('Zim_Model_User as from', array(
                 'local' => 'msg_from',
                 'foreign' => 'uid',

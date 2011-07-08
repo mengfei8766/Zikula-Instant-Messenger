@@ -47,7 +47,7 @@ class Zim_Model_State extends Doctrine_Record
                 $msg = new Zim_Model_HistoricalMessage();
                 $msg->fromArray($message->toArray());
                 $msg->save();
-            }
+            } 
             $message->delete();
         }
     }
