@@ -21,9 +21,15 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
         Zikula_AbstractController::configureView();
         $this->view->setCaching(false);
         $this->uid = UserUtil::getVar('uid');
+        try {
+            $this->me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+            return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
+        }
     }
 
     private $uid;
+    private $me;
 
     /**
      * Gets the history window template, including a list of contacts with a history.

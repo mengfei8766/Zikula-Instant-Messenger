@@ -21,9 +21,17 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         Zikula_AbstractController::configureView();
         $this->view->setCaching(false);
         $this->uid = UserUtil::getVar('uid');
+        $this->me = array();
+        //get users status
+        try {
+            $this->me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+            $this->me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $this->uid);
+        }
     }
 
     private $uid;
+    private $me;
 
     /**
      * The init function is called via an ajax call from the browser, it performs
@@ -34,28 +42,22 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $me = array();
-        //get users status
-        try {
-            $me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
-        } catch (Zim_Exception_ContactNotFound $e) {
-            $me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $this->uid);
-        }
+
 
         //see if the JS side requested a certain status, if not then get it from the DB
         $status = (int)$this->request->getPost()->get('status');
         if (!isset($status) || $status == '') {
-            $status = (int)$me['status'];
+            $status = (int)$this->me['status'];
         }
         //the user requested a new status in the init and its different from the DB
         //save the status update so it filters to all users
-        if ((int)$status !== (int)$me['status']) {
+        if ((int)$status !== (int)$this->me['status']) {
             ModUtil::apiFunc('Zim', 'contact', 'update_contact_status',
             Array(    'status'=> $status,
                      'uid'    => $this->uid));
         }
 
-        if ($me['timedout'] == '1') {
+        if ($this->me['timedout'] == '1') {
             try {
                 ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
             } catch (Zim_Exception_ContactNotFound $e) {
@@ -88,7 +90,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //prepare output
         $output['status'] = $status;
         $output['my_uid'] = $this->uid;
-        $output['my_uname'] = $me['uname'];
+        $output['my_uname'] = $this->me['uname'];
         $output['contacts'] = $contacts;
         $output['contact_template'] = $contact_template;
         $output['message_template'] = $message_template;

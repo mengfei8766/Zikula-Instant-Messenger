@@ -18,9 +18,15 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
     protected function postInitialize()
     {
         $this->uid = UserUtil::getVar('uid');
+        try {
+            $this->me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+            return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
+        }
     }
 
     private $uid;
+    private $me;
 
     /**
      * Get all of the messages for a user.
@@ -41,10 +47,10 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
             unset($messages[$key]['msg_from_deleted']);
             unset($messages[$key]['from']['created_at']);
             unset($messages[$key]['from']['updated_at']);
-            unset($messages[$key]['from']['timedout']);
-            if ($messages[$key]['from']['status'] == 3 || $messages[$key]['from']['status'] == 1) {
+            if ($messages[$key]['from']['status'] == 3 || $messages[$key]['from']['status'] == 1 || $messages[$key]['from']['timedout'] == 1) {
                 $messages[$key]['from']['status'] = 0;
             }
+            unset($messages[$key]['from']['timedout']);
         }
         $output['messages'] = $messages;
         return new Zikula_Response_Ajax($output);
@@ -95,10 +101,10 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
             unset($messages[$key]['msg_from_deleted']);
             unset($messages[$key]['from']['created_at']);
             unset($messages[$key]['from']['updated_at']);
-            unset($messages[$key]['from']['timedout']);
-            if ($messages[$key]['from']['status'] == 3 || $messages[$key]['from']['status'] == 1) {
+            if ($messages[$key]['from']['status'] == 3 || $messages[$key]['from']['status'] == 1 || $messages[$key]['from']['timedout'] == 1) {
                 $messages[$key]['from']['status'] = 0;
             }
+            unset($messages[$key]['from']['timedout']);
         }
 
         //return the new messages
@@ -115,7 +121,9 @@ class Zim_Controller_Message extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-
+        if ($this->me['status'] == 0 || $this->me['status'] == 3 || $this->me['timedout'] == 1) {
+            return new Zim_Response_Ajax_Exception(null,'Error: You are not allowed to send a message while offline.');
+        }
         //make sure the 'to' user id is set
         $message['msg_to'] = $this->request->getPost()->get('to');
         if (!isset($message['msg_to']) || !$message['msg_to']) {

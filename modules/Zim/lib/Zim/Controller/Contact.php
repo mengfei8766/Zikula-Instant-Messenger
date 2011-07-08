@@ -18,9 +18,15 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
     protected function postInitialize()
     {
         $this->uid = UserUtil::getVar('uid');
+        try {
+            $this->me = ModUtil::apiFunc('Zim', 'contact', 'get_contact', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+            return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
+        }
     }
 
     private $uid;
+    private $me;
 
     /**
      * Update the users status.
