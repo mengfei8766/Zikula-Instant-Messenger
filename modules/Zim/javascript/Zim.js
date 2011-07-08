@@ -506,7 +506,6 @@ var Zim ={
     },
     
     toggle_contact_state: function(contact) { 
-        
         if (contact.uid == Zim.my_uid) return;
         var color = Zim.status_colors[contact.status];
         var colours = Object.values(Zim.status_colors);
@@ -531,11 +530,11 @@ var Zim ={
             }
             //update windows as well
             if (has_open_message(contact.uid)) {
-                var box = $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname');
+                var box = $$('#zim-block-message-' + contact.uid + ' div.zim-message-contact-uname');
                 if(typeof(box) !== 'undefined'){
                     uname = box.first().innerHTML;
                     if (uname !== contact.uname) {
-                        $$('#zim-block-message-' + contact.uid + ' div.zim-contact-uname').first().update(contact.uname);
+                        $$('#zim-block-message-' + contact.uid + ' div.zim-message-contact-uname').first().update(contact.uname);
                     }
                 }
             }
