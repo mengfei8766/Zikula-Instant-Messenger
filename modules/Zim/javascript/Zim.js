@@ -479,6 +479,9 @@ var Zim ={
             ($('zim-block-message-container').childElements()).each(function(item) {
                 $(item.id).remove();
             });
+            $$('#zim-block-contacts li').each(function(item) {
+                item.remove();
+            });
         } else if (Zim.status == 0) {
             Zim.status = status;
             return Zim.init();
