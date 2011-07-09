@@ -75,6 +75,45 @@ form.inplaceeditor-form { /* The form */
     margin:0;
 }
 /*END CSS FOR BLOCK*/
+.zim-group {
+    border-top: 1px solid #D4D5D6;
+    border-bottom: 1px solid #D4D5D6;
+    background: #fafafa; /*non-CSS3 browsers*/
+    background: -webkit-gradient(linear,left top, left bottom,from(#fafafa),to(#f2f2f2)); /*webkit*/
+    background: -moz-linear-gradient(top, #fafafa, #f2f2f2); /*gecko*/
+    background: linear-gradient(#fafafa, #f2f2f2); /*CSS3*/
+}
+.zim-block-group-box {
+    min-width:300px;
+	min-height:70px;
+	border: 1px solid #D4D5D6;
+	background:#ffffff;
+	position:absolute; top:0px; left:0px;
+	-moz-border-radius-topleft:10px;
+    -moz-border-radius-topright:10spx;
+    -moz-border-radius-bottomleft:10px;
+    -moz-border-radius-bottomright:10spx;
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    -webkit-border-top-right-radius:10px;
+    -webkit-border-top-left-radius:10px;
+    -webkit-border-bottom-right-radius:10px;
+    -webkit-border-bottom-left-radius:10px;
+    margin:0 auto;
+    background: #fafafa; /*non-CSS3 browsers*/
+    background: -webkit-gradient(linear,left top, left bottom,from(#fafafa),to(#f2f2f2)); /*webkit*/
+    background: -moz-linear-gradient(top, #fafafa, #f2f2f2); /*gecko*/
+    background: linear-gradient(#fafafa, #f2f2f2); /*CSS3*/
+}
+.zim-block-group-box fieldset {
+    border:none;
+    margin: 0 5px 0 5px;
+    border-top:1px solid #D4D5D6;
+    cursor:move;
+}
+
 
 /*CSS FOR ZIM BLOCK HISTORY*/
 .zim-block-history-box {

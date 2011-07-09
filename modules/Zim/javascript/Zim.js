@@ -26,6 +26,8 @@ var Zim ={
     message_template: '',
     settingsmenu_template: '',
     sentmessage_template: '',
+    groupadd_template: '',
+    group_template: '',
     my_uname: '',
     my_uid: '',
     status: '',
@@ -68,6 +70,10 @@ var Zim ={
                 Zim.my_uname = data.my_uname;
                 Zim.my_uid = data.my_uid;
                 Zim.sentmessage_template = new Template(data.sentmessage_template);
+                Zim.groupadd_template = data.groupadd_template;
+                if (typeof data.group_template != 'undefined') {
+                	Zim.group_template = new Template(data.group_template);
+                }
                 Zim.contacts = data.contacts;
                 Zim.settings = data.settings;
                 new Tooltips('.tooltips', {});
@@ -708,6 +714,47 @@ var Zim ={
                         	history_box.remove();
                         });
                     }
+                });
+        	});
+        }
+        
+        if ($('zim-group-create') != undefined) {
+        	Event.observe('zim-group-create', 'click', function(event){
+        		close_settings_window();
+        		if ($('zim-block-group-box') != undefined) {
+        			return;
+        		}
+        		var group_box = document.createElement('div');
+                Element.extend(group_box);
+                group_box.addClassName('zim-block-group-box');
+                group_box.id = 'zim-block-group-box';
+                group_box.update(Zim.groupadd_template);
+                $(document.body).insert(group_box);
+                new Draggable('zim-block-group-box', {
+                    handle: 'zim-block-groupdrag'
+                });	
+                Event.observe('zim-block-group-submit', 'click', function(event){
+                	Event.stop(event);
+                	var pars = "&groupname=" + $('zim-block-groupname').getValue();
+                	new Zikula.Ajax.Request("ajax.php?module=Zim&type=group&func=create_group", {
+                		parameters: pars,
+                		onComplete : function(req) {
+	                		if (!req.isSuccess()) {
+	                            Zikula.showajaxerror(req.getMessage());
+	                            return;
+	                        }
+	                        var data = req.getData();
+	                        var show = {groupname: data.groupname, gid: data.gid};
+	                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+	                        //TODO: group was added
+	                        $('zim-block-group-box').remove();
+	                        
+                		}
+                	});
+                });
+                Event.observe('zim-block-group-cancel', 'click', function(event){
+                	Event.stop(event);
+                	$('zim-block-group-box').remove();
                 });
         	});
         }

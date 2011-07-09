@@ -23,7 +23,8 @@ class Zim_Api_Group extends Zikula_AbstractApi
 
         $group = new Zim_Model_Group();
         $group->fromArray($args);
-        return $group->save();
+        $group->save();
+        return $group->toArray();
     }
 
     /**

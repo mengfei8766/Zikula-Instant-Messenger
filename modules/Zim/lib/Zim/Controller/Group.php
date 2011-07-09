@@ -23,7 +23,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         } catch (Zim_Exception_ContactNotFound $e) {
             return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
         }
-        $this->groups_allowed = ($this->getVar('user_groups') == '1' ? true : false);
+        $this->groups_allowed = ((int)$this->getVar('contact_groups') == (int)'1' ? true : false);
     }
 
     private $uid;
