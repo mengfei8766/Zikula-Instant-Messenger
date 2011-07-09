@@ -23,8 +23,11 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         if (!isset($args['to']) || !$args['to']) {
             return false;
         }
-        if (!isset($args['recd'])) {
+        if (!isset($args['recd']) || !is_bool($args['recd'])) {
             $args['recd'] = false;
+        }
+        if (!isset($args['deleted']) || !is_bool($args['deleted'])) {
+            $args['deleted'] = false;
         }
         //get the table and select everything.
         $task = Doctrine_Query::create()
@@ -32,6 +35,9 @@ class Zim_Api_Message extends Zikula_AbstractApi {
         ->where('message.msg_to = ? ', $args['to']);
         if (!$args['recd']){
             $task->andWhere('message.recd != 1');
+        }
+        if (!$args['deleted']){
+            $task->andWhere('message.msg_to_deleted != 1');
         }
         $task->leftJoin('message.from uname')
         ->orderBy('message.created_at');

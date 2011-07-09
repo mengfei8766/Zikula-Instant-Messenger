@@ -97,14 +97,14 @@ class Zim_Api_State extends Zikula_AbstractApi {
             $state['windows'] = $s->toArray();
             $q = Doctrine_Query::create();
             $q->from("Zim_Model_Message m");
-            $q->where("m.mid >= ? AND (m.msg_to = ? OR m.msg_from = ?)", array(
+            $q->where("m.mid >= ? AND ((m.msg_to = ? AND m.msg_to_deleted != 1) OR (m.msg_from = ? AND m.msg_from_deleted != 1))", array(
             $state['windows'][0]['start_msg'],
             $state['windows'][0]['my_uid'],
             $state['windows'][0]['my_uid']
             )
             );
             foreach ($state['windows'] as $key => $window) {
-                $q->orWhere("m.mid >= ? AND (m.msg_to = ? OR m.msg_from = ?)", array(
+                $q->orWhere("m.mid >= ? AND ((m.msg_to = ? AND m.msg_to_deleted != 1) OR (m.msg_from = ? AND m.msg_from_deleted != 1))", array(
                 $window['start_msg'],
                 $window['my_uid'],
                 $window['my_uid']
