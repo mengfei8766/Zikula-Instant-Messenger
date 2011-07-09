@@ -8,7 +8,7 @@
  * @package Zim
  */
 
-class Zim_Model_UserGroup extends Doctrine_Record
+class Zim_Model_GroupUser extends Doctrine_Record
 {
     /**
      * Set table definition.
@@ -17,7 +17,7 @@ class Zim_Model_UserGroup extends Doctrine_Record
      */
     public function setTableDefinition()
     {
-        $this->setTableName('zim_usergroups');
+        $this->setTableName('zim_groupusers');
 
         $this->hasColumn('uid',   'integer', 16, array(
             'primary' => true,
