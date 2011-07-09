@@ -15,15 +15,15 @@ class Zim_Api_Group extends Zikula_AbstractApi
      */
     public function create_group($args) {
         if (!isset($args['uid']) || $args['uid'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_UIDNotSet();
         }
         if (!isset($args['groupname']) || $args['groupname'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_GnameNotSet();
         }
 
         $group = new Zim_Model_Group();
         $group->fromArray($args);
-        $group->save();
+        return $group->save();
     }
 
     /**
@@ -31,7 +31,17 @@ class Zim_Api_Group extends Zikula_AbstractApi
      *
      */
     public function delete_group($args) {
+        if (!isset($args['uid']) || $args['uid'] == '') {
+            throw new Zim_Exception_UIDNotSet();
+        }
+        if (!isset($args['gid']) || $args['gid'] == '') {
+            throw new Zim_Exception_GIDNotSet();
+        }
 
+        //TODO: delete group
+
+        $output = array();
+        return $output;
     }
 
     /**
@@ -40,13 +50,13 @@ class Zim_Api_Group extends Zikula_AbstractApi
      */
     public function edit_groupname($args) {
         if (!isset($args['groupname']) || $args['groupname'] == '' || trim($args['groupname'] == '')) {
-            //TODO throw bad data
+            throw new Zim_Exception_GnameNotSet();
         }
         if (!isset($args['gid']) || $args['gid'] == '' ) {
-            //TODO throw bad data
+            throw new Zim_Exception_GIDNotSet();
         }
         if (!isset($args['uid']) || $args['uid'] == '' ) {
-            //TODO throw bad data
+            throw new Zim_Exception_UIDNotSet();
         }
         $args['groupname'] = trim($args['groupname']);
 
@@ -67,12 +77,29 @@ class Zim_Api_Group extends Zikula_AbstractApi
      */
     public function add_to_group($args) {
         if (!isset($args['uid']) || $args['uid'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_UIDNotSet();
         }
         if (!isset($args['gid']) || $args['gid'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_GIDNotSet();
+        }
+        if (!isset($args['user']) || $args['user'] == '') {
+            throw new Zim_Exception_GIDNotSet();
         }
 
+        //check to make sure that user owns the group
+        $q = Doctrine_Query::create()
+        ->from("Zim_Model_Group g")
+        ->where('g.gid = ?', $args['gid'])
+        ->andWhere('g.uid = ?', $args['uid'])
+        ->limit('1');
+        $group = $q->fetchOne();
+        if (empty($group)) {
+            return;
+            //TODO: group not found
+        }
+
+        $args['uid'] = $args['user'];
+        unset($args['user']);
         $groupuser = new Zim_Model_GroupUser();
         $group->fromArray($args);
         $group->save();
@@ -83,14 +110,30 @@ class Zim_Api_Group extends Zikula_AbstractApi
      */
     public function del_from_group($args) {
         if (!isset($args['uid']) || $args['uid'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_UIDNotSet();
         }
         if (!isset($args['gid']) || $args['gid'] == '') {
-            //TODO throw bad data
+            throw new Zim_Exception_GIDNotSet();
         }
+        if (!isset($args['user']) || $args['user'] == '') {
+            throw new Zim_Exception_GIDNotSet();
+        }
+
+        //check to make sure that user owns the group
+        $q = Doctrine_Query::create()
+        ->from("Zim_Model_Group g")
+        ->where('g.gid = ?', $args['gid'])
+        ->andWhere('g.uid = ?', $args['uid'])
+        ->limit('1');
+        $group = $q->fetchOne();
+        if (empty($group)) {
+            return;
+            //TODO: group not found
+        }
+
         $q = Doctrine_Query::create()
         ->delete('Zim_Model_GroupUser g')
-        ->addWhere('g.uid = ?', $args['uid'])
+        ->addWhere('g.uid = ?', $args['user'])
         ->andWhere('g.gid', $args['gid']);
         $result = $q->execute();
         if (!isset($result) || $result == 0) {
