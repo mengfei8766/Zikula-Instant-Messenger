@@ -51,7 +51,7 @@ class Zim_Model_Group extends Doctrine_Record
         $this->hasMany('Zim_Model_user as members', array(
             'local'      =>    'gid',
             'foreign'    =>    'uid',
-            'refclass'	 =>    'Zim_Model_GroupUser'
+            'refClass'	 =>    'Zim_Model_GroupUser'
         )
         );
     }

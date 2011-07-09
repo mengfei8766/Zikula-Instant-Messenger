@@ -10,6 +10,19 @@
 
 class Zim_Api_Group extends Zikula_AbstractApi
 {
+
+
+    public function get_all($args){
+        if (!isset($args['uid']) || $args['uid'] == '') {
+            throw new Zim_Exception_UIDNotSet();
+        }
+        $q = Doctrine_Query::create()
+        ->from('Zim_Model_Group g')
+        ->where('uid = ?', $args['uid'])
+        ->leftJoin('g.members members');
+        $result = $q->execute();
+        return $result->toArray();
+    }
     /**
      * Create a new group.
      */

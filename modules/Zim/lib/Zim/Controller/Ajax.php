@@ -132,6 +132,9 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
             $output['state'] = $state;
         }
 
+        $groups = ModUtil::apiFunc('Zim', 'group', 'get_all', array('uid' => $this->uid));
+        $output['groups'] = $groups;
+
         //return the JSON output
         return new Zikula_Response_Ajax($output);
     }
