@@ -47,9 +47,20 @@
 			<input id="zim_general_keephistory" type="checkbox" name="settings_keep_history" value="1" {if $modvars.Zim.keep_history} checked="checked"{/if}/>
 		</div>
 	</fieldset>
-	 <div class="z-buttons z-formbuttons">
-     	{button src="button_ok.png" set="icons/extrasmall" __alt="Save" __title="Save" __text="Save"}
-     	<a href="{modurl modname=Zim type=admin func=main}" title="{gt text="Cancel"}">{img modname=core src="button_cancel.png" set="icons/extrasmall" __alt="Cancel" __title="Cancel"} {gt text="Cancel"}</a>
-     </div>
+    <fieldset>
+        <legend>{gt text='Contact List Settings'}</legend>
+        <div class="z-formrow">
+            <label for="zim_contactlist_groups">{gt text='Groups'}</label>
+            <select id="zim_contactlist_groups" name="settings[contact_groups]">
+                    <option value="0" {if $modvars.Zim.contact_groups eq 0} selected="selected"{/if}>{gt text="Users may not create contact list groups, all contacts are in one list"}</option>
+                    <option value="1" {if $modvars.Zim.contact_groups eq 1} selected="selected"{/if}>{gt text="Users may create contact list groups"}</option>
+                    <option value="2" {if $modvars.Zim.contact_groups eq 2} selected="selected"{/if}>{gt text="Contact list groups are determined by Zikula user group"}</option>
+            </select>
+        </div>
+    </fieldset>
+	<div class="z-buttons z-formbuttons">
+        {button src="button_ok.png" set="icons/extrasmall" __alt="Save" __title="Save" __text="Save"}
+        <a href="{modurl modname=Zim type=admin func=main}" title="{gt text="Cancel"}">{img modname=core src="button_cancel.png" set="icons/extrasmall" __alt="Cancel" __title="Cancel"} {gt text="Cancel"}</a>
+    </div>
 </form>
 </div>

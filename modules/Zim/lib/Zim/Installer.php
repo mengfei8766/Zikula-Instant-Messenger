@@ -19,7 +19,7 @@ class Zim_Installer extends Zikula_AbstractInstaller
      */
     public function install()
     {
-         
+
         try {
             DoctrineUtil::createTablesFromModels('Zim');
         } catch (Exception $e) {
@@ -35,6 +35,7 @@ class Zim_Installer extends Zikula_AbstractInstaller
         $this->setVar('allowed_msg_tags', '<b><u>');
         $this->setVar('use_minjs', 0);
         $this->setVar('keep_history', 1);
+        $this->setVar('contact_groups', 1);
 
         // Initialisation successful
         return true;
