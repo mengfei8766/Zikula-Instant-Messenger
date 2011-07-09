@@ -179,7 +179,7 @@ var Zim ={
                 var matches = Array();
                 var partial = Array();
                 if (event.element().value == '') {
-                     $$('#zim-block-contacts li').each(function(item) {
+                     $$('#zim-block-contacts li.zim-contact').each(function(item) {
                              item.show();
                      });
                 };
@@ -201,7 +201,7 @@ var Zim ={
                 matches.sort(function sortNumber(a,b) {
                  return a.pos - b.pos;
                 });
-                $$('#zim-block-contacts li').each(function(item) {
+                $$('#zim-block-contacts li.zim-contact').each(function(item) {
                         var found = false;
                         matches.each(function(match) {
                             var itemid = item.id.replace('contact_', '');
@@ -479,7 +479,7 @@ var Zim ={
             ($('zim-block-message-container').childElements()).each(function(item) {
                 $(item.id).remove();
             });
-            $$('#zim-block-contacts li').each(function(item) {
+            $$('#zim-block-contacts li.zim-contact').each(function(item) {
                 item.remove();
             });
         } else if (Zim.status == 0) {
