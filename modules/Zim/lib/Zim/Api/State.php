@@ -57,6 +57,7 @@ class Zim_Api_State extends Zikula_AbstractApi {
      *
      * @param $args Array Messages to set the start_msg for.
      */
+    //TODO: this process can be simplified by finding the message with the smallest ID first.
     function message_set($args)
     {
         foreach ($args['state_messages_set'] as $message) {

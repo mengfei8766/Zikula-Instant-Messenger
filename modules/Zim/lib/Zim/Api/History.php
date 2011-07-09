@@ -67,7 +67,7 @@ class Zim_Api_History extends Zikula_AbstractApi {
         ->set('m.msg_to_deleted', '?', 1)
         ->where('m.msg_to = ?', $args['uid'])
         ->andWhere('m.msg_from = ?', $args['user']);
-        $q->execute();
+        $count[] = $q->execute();
 
         //set as deleted where they are the sender and message is in an active session window.
         $q = Doctrine_Query::create()
@@ -75,7 +75,7 @@ class Zim_Api_History extends Zikula_AbstractApi {
         ->set('m.msg_from_deleted', "?", 1)
         ->where('m.msg_from = ?', $args['uid'])
         ->andWhere('m.msg_to = ?', $args['user']);
-        $q->execute();
+        $ount[] = $q->execute();
 
         //set as deleted where they are the recipient and message is now in an active session window.
         $q = Doctrine_Query::create()
@@ -83,7 +83,7 @@ class Zim_Api_History extends Zikula_AbstractApi {
         ->set('m.msg_to_deleted', "?", 1)
         ->where('m.msg_to = ?', $args['uid'])
         ->andWhere('m.msg_from = ?', $args['user']);
-        $q->execute();
+        $count[] = $q->execute();
 
         //set as deleted where they are the sender and message is not in an active session window.
         $q = Doctrine_Query::create()
@@ -91,19 +91,43 @@ class Zim_Api_History extends Zikula_AbstractApi {
         ->set('m.msg_from_deleted', "?", 1)
         ->where('m.msg_from = ?', $args['uid'])
         ->andWhere('m.msg_to = ?', $args['user']);
-        $q->execute();
+        $count[] = $q->execute();
 
-        //cleanup the history removing any messages that have been deleted by both sender and recipient.
-        $q = Doctrine_Query::create()
-        ->delete('Zim_Model_Message m')
-        ->where('(m.msg_from_deleted = 1) AND (m.msg_to_deleted = 1)');
-        $q->execute();
+        if (MAX($count) > 0) {
+            $q = Doctrine_Query::create()
+            ->select('MAX(m.mid)')
+            ->from('Zim_Model_Message m')
+            ->where('(m.msg_from = ? AND m.msg_to = ?)', array($args['uid'], $args['user']))
+            ->orWhere('(m.msg_from = ? AND m.msg_to = ?)', array($args['user'], $args['uid']))
+            ->limit('1');
 
-        $q = Doctrine_Query::create()
-        ->delete('Zim_Model_HistoricalMessage m')
-        ->where('(m.msg_from_deleted = 1) AND (m.msg_to_deleted = 1)');
-        $q->execute();
+            $q2 = Doctrine_Query::create()
+            ->select('MAX(m.mid)')
+            ->from('Zim_Model_HistoricalMessage m')
+            ->where('(m.msg_from = ? AND m.msg_to = ?)', array($args['uid'], $args['user']))
+            ->orWhere('(m.msg_from = ? AND m.msg_to = ?)', array($args['user'], $args['uid']))
+            ->limit('1');
+            $max = MAX($q2->fetchOne()->MAX, $q->fetchOne()->MAX);
 
+            $q = Doctrine_Query::create()
+            ->update('Zim_Model_State s')
+            ->set('s.start_msg', "?", (int)$max + 1)
+            ->where('s.uid = ?', $args['uid'])
+            ->andWhere('s.user = ?', $args['user'])
+            ->limit('1');
+            $q->execute();
+
+            //cleanup the history removing any messages that have been deleted by both sender and recipient.
+            $q = Doctrine_Query::create()
+            ->delete('Zim_Model_Message m')
+            ->where('(m.msg_from_deleted = 1) AND (m.msg_to_deleted = 1)');
+            $q->execute();
+
+            $q = Doctrine_Query::create()
+            ->delete('Zim_Model_HistoricalMessage m')
+            ->where('(m.msg_from_deleted = 1) AND (m.msg_to_deleted = 1)');
+            $q->execute();
+        }
         return;
     }
 }
