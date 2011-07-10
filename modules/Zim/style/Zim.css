@@ -1,6 +1,7 @@
 
 /*CSS For ZIM Block*/
 #zim-block {
+    z-index:11;
     width:100%;
     height:100%;
     border:1px solid #C0C0C0;
@@ -209,6 +210,7 @@ form.inplaceeditor-form { /* The form */
     width:100%;
     bottom:0px;
     right:0px;
+    z-index: 10;
 }
 .zim-message-contact-uname {
 	font-weight: bolder;
