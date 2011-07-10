@@ -16,12 +16,82 @@ class Zim_Api_Group extends Zikula_AbstractApi
         if (!isset($args['uid']) || $args['uid'] == '') {
             throw new Zim_Exception_UIDNotSet();
         }
+        if (!isset($args['show_members']) || $args['show_members'] == '') {
+            $args['show_members'] = true;
+        }
+        if (!isset($args['offline_members']) || $args['offline_members'] == '') {
+            $args['offline_members'] = false;
+        }
+        if (!isset($args['clean']) || $args['clean'] == '') {
+            $args['clean'] = true;
+        }
+
+
         $q = Doctrine_Query::create()
         ->from('Zim_Model_Group g')
-        ->where('uid = ?', $args['uid'])
-        ->leftJoin('g.members members');
-        $result = $q->execute();
-        return $result->toArray();
+        ->where('g.uid = ?', $args['uid']);
+        if ($args['show_members']) {
+            if (!$args['offline_members']) {
+                $q->leftJoin('g.members members WITH members.timedout != 1 AND members.status != 0 AND members.status != 3');
+
+            } else {
+                $q->leftJoin('g.members members');
+            }
+        }
+        $grouped_results = $q->execute();
+        $grouped_results = $grouped_results->toArray();
+
+        if ($args['show_members']) {
+            $contacts_found = array();
+            foreach ($grouped_results as $key => $group) {
+                    foreach ($group['members'] as $key2 => $contact) {
+                        array_push($contacts_found,$contact['uid']);
+                    }
+            }
+
+            $q = Doctrine_Query::create()
+            ->from('Zim_Model_User user');
+            if (!$args['offline_members']) {
+                $q->where('user.status != 0')
+                ->andWhere('user.status != 3')
+                ->andWhere('user.timedout != 1')
+                ->andWhereNotIn('user.uid = ?', $contacts_found);
+            } else {
+                $q->WhereNotIn('user.uid = ?', $contacts_found);
+            }
+            $ungrouped_results = $q->execute();
+            $ungrouped_results = $ungrouped_results->toArray();
+        }
+
+        if ($args['clean'] && $args['show_members']) {
+            foreach ($grouped_results as $key => $group) {
+                foreach ($group['members'] as $key2 => $contact) {
+                    if ($contact['status'] == 3 || $contact['timedout'] == 1) {
+                        $grouped_results[$key]['members'][$key2]['status'] = 0;
+                    }
+                    unset($grouped_results[$key]['members'][$key2]['created_at']);
+                    unset($grouped_results[$key]['members'][$key2]['updated_at']);
+                    unset($grouped_results[$key]['members'][$key2]['timedout']);
+                }
+            }
+            if (isset($ungrouped_results)) {
+                foreach ($ungrouped_results as $key=>$contact) {
+                    if ($contact['status'] == 3 || $contact['timedout'] == 1) {
+                        $ungrouped_results[$key]['status'] = 0;
+                    }
+                    unset($ungrouped_results[$key]['created_at']);
+                    unset($ungrouped_results[$key]['updated_at']);
+                    unset($ungrouped_results[$key]['timedout']);
+                }
+            }
+        }
+        if (isset($ungrouped_results) && sizeof($ungrouped_results) > 0) {
+            $results = array_merge($grouped_results, $ungrouped_results);
+        } else {
+            $results = $grouped_results;
+        }
+
+        return $results;
     }
     /**
      * Create a new group.
