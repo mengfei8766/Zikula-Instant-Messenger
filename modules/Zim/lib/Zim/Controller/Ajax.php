@@ -75,10 +75,14 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
                 if ($contact['status'] == 3 || $contact['timedout'] == 1) {
                     $contacts[$key]['status'] = 0;
                 }
-                unset($contacts[$key]['timedout']);
             }
         } else {
             $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
+        }
+        foreach ($contacts as $key => $contact) {
+            unset($contacts[$key]['timedout']);
+            unset($contacts[$key]['created_at']);
+            unset($contacts[$key]['updated_at']);
         }
 
         //get templates for javascript
