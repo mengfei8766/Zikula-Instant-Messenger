@@ -17,7 +17,8 @@
 }
 #zim-block ul {
     list-style-type: none;
-    width: 95%;
+    width: 100%;
+    margin: auto;
 }
 
 #zim-block li {
@@ -82,8 +83,9 @@ form.inplaceeditor-form { /* The form */
     background: #fafafa; /*non-CSS3 browsers*/
     background: -webkit-gradient(linear,left top, left bottom,from(#fafafa),to(#f2f2f2)); /*webkit*/
     background: -moz-linear-gradient(top, #fafafa, #f2f2f2); /*gecko*/
-    background: linear-gradient(#fafafa, #f2f2f2); /*CSS3*/
+    background: linear-gradient(#fafafa, #f2f2f2); /*CSS3*/  
 }
+
 .zim-block-group-box {
     min-width:300px;
 	min-height:70px;
@@ -118,6 +120,7 @@ form.inplaceeditor-form { /* The form */
 
 /*CSS FOR ZIM BLOCK HISTORY*/
 .zim-block-history-box {
+    z-index:9999;
 	min-width:700px;
 	min-height:450px;
 	border: 1px solid #D4D5D6;
