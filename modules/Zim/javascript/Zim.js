@@ -94,11 +94,13 @@ var Zim ={
                 Zim.contacts.each(function(item) {
                 	if (typeof item.gid != 'undefined') {
                 		var show = {groupname: item.groupname, gid: item.gid};
-                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                		if ($('zim_group_' + item.gid) == undefined) {
+                			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                		}
+                        item.members.each(function(item2) {
+                    		Zim.toggle_contact_state(item2, item.gid);
+                    	});
                 	}
-                	item.members.each(function(item) {
-                		Zim.toggle_contact_state(item);
-                	});
                 });
 
                 Zim.periodical_update_contact = new PeriodicalExecuter(function(pe) {
@@ -173,14 +175,21 @@ var Zim ={
                 }
                 var data = req.getData();
                 var contacts = data.contacts;
-                contacts.each(function(item, index) {
-                    Zim.toggle_contact_state(item);
+                contacts.each(function(item) {
+                	if (typeof item.uname != 'undefined') {
+                		Zim.toggle_contact_state(item);
+                	}
                 });
-                Zim.contacts.each(function(item) {
-                        if(!contact_in_list(item.uid, contacts)) {
-                        	Event.stopObserving('contact_' + item.uid); 
-                        	$('contact_'+ item.uid).remove();
-                        }
+                contacts.each(function(item) {
+                	if (typeof item.gid != 'undefined') {
+                		var show = {groupname: item.groupname, gid: item.gid};
+                		if (typeof $('zim_group_' + item.gid) != undefined) {
+                			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                		}
+                		item.members.each(function(item2) {
+                    		Zim.toggle_contact_state(item2, item.gid);
+                    	});
+                	}
                 });
                 Zim.contacts = contacts;
                 Zim.get_messages();
@@ -530,13 +539,18 @@ var Zim ={
         $('zim-my-status').writeAttribute({src: src});
     },
     
-    toggle_contact_state: function(contact) { 
+    toggle_contact_state: function(contact, groupid) { 
         if (contact.uid == Zim.my_uid) return;
         var color = Zim.status_colors[contact.status];
         var colours = Object.values(Zim.status_colors);
         if(!$('contact_'+contact.uid)) {
             var show = {uname: contact.uname, uid: contact.uid,color: color};
-            $('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
+            if (typeof groupid == 'undefined') {
+            	$('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
+            } else {
+            	$('zim-group-list-' + groupid).insert(Zim.contact_template.evaluate(show));
+            	//TODO: add user to existing group
+            }
             Zim.add_contact_observer(contact);
         } else {
             var src = ($('zim_contact_status_img_'+contact.uid).readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
