@@ -29,11 +29,11 @@ class Zim_Api_Group extends Zikula_AbstractApi
 
         $q = Doctrine_Query::create()
         ->from('Zim_Model_Group g')
-        ->where('g.uid = ?', $args['uid']);
+        ->where('g.uid = ?', $args['uid'])
+        ->orderBy('g.groupname');
         if ($args['show_members']) {
             if (!$args['offline_members']) {
                 $q->leftJoin('g.members members WITH members.timedout != 1 AND members.status != 0 AND members.status != 3');
-
             } else {
                 $q->leftJoin('g.members members');
             }
@@ -45,7 +45,7 @@ class Zim_Api_Group extends Zikula_AbstractApi
             $contacts_found = array();
             foreach ($grouped_results as $key => $group) {
                     foreach ($group['members'] as $key2 => $contact) {
-                        array_push($contacts_found,$contact['uid']);
+                        $contacts_found[] = $contact['uid'];
                     }
             }
 
@@ -54,10 +54,12 @@ class Zim_Api_Group extends Zikula_AbstractApi
             if (!$args['offline_members']) {
                 $q->where('user.status != 0')
                 ->andWhere('user.status != 3')
-                ->andWhere('user.timedout != 1')
-                ->andWhereNotIn('user.uid = ?', $contacts_found);
-            } else {
-                $q->WhereNotIn('user.uid = ?', $contacts_found);
+                ->andWhere('user.timedout != 1');
+                if (sizeof($contacts_found) > 0) {
+                    $q->andWhereNotIn('user.uid', $contacts_found);
+                }
+            } elseif (sizeof($contacts_found) > 0) {
+                $q->WhereNotIn('user.uid', $contacts_found);
             }
             $ungrouped_results = $q->execute();
             $ungrouped_results = $ungrouped_results->toArray();
@@ -90,7 +92,6 @@ class Zim_Api_Group extends Zikula_AbstractApi
         } else {
             $results = $grouped_results;
         }
-
         return $results;
     }
     /**

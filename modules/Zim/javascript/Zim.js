@@ -38,6 +38,7 @@ var Zim ={
         '3': 'modules/Zim/images/icons/invisible.png'
     },
     contacts: Array(),
+    groups: Array(),
     init_in_progress: false,
     
     init: function() {
@@ -75,14 +76,29 @@ var Zim ={
                 	Zim.group_template = new Template(data.group_template);
                 }
                 Zim.contacts = data.contacts;
+                Zim.groups = data.groups;
                 Zim.settings = data.settings;
                 new Tooltips('.tooltips', {});
                 Zim.set_status_image();
                 Zim.status_observer();
              
                 if (Zim.status == '0') return;
-                Zim.contacts.each(function(item) {
-                    Zim.toggle_contact_state(item);
+                //Zim.contacts.each(function(item) {
+                 //   Zim.toggle_contact_state(item);
+                //});
+                Zim.groups.each(function(item) {
+                	if (typeof item.uid != 'undefined') {
+                		Zim.toggle_contact_state(item);
+                	}
+                });
+                Zim.groups.each(function(item) {
+                	if (typeof item.gid != 'undefined') {
+                		var show = {groupname: item.groupname, gid: item.gid};
+                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                	}
+                	item.members.each(function(item) {
+                		Zim.toggle_contact_state(item);
+                	});
                 });
 
                 Zim.periodical_update_contact = new PeriodicalExecuter(function(pe) {
