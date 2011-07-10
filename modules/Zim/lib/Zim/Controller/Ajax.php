@@ -76,7 +76,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
                   'show_members'    => true,
                   'clean' 			=> true
 
-                )
+            )
             );
         } else {
             if ($show_offline) {

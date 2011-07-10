@@ -44,9 +44,9 @@ class Zim_Api_Group extends Zikula_AbstractApi
         if ($args['show_members']) {
             $contacts_found = array();
             foreach ($grouped_results as $key => $group) {
-                    foreach ($group['members'] as $key2 => $contact) {
-                        $contacts_found[] = $contact['uid'];
-                    }
+                foreach ($group['members'] as $key2 => $contact) {
+                    $contacts_found[] = $contact['uid'];
+                }
             }
 
             $q = Doctrine_Query::create()
@@ -190,7 +190,7 @@ class Zim_Api_Group extends Zikula_AbstractApi
         $group->save();
     }
 
-	/**
+    /**
      * Delete a user from a group.
      */
     public function del_from_group($args) {

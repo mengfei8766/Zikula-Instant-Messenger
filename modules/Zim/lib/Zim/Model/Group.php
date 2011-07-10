@@ -52,7 +52,7 @@ class Zim_Model_Group extends Doctrine_Record
             'local'      =>    'gid',
             'foreign'    =>    'uid',
             'refClass'	 =>    'Zim_Model_GroupUser'
-        )
-        );
+            )
+            );
     }
 }

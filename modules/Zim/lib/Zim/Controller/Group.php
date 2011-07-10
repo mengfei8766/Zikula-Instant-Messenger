@@ -44,7 +44,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         $args['uid'] = $this->uid;
 
         try {
-           $group = ModUtil::apiFunc('Zim', 'Group', 'create_group', $args);
+            $group = ModUtil::apiFunc('Zim', 'Group', 'create_group', $args);
         } catch (Zim_Exception_UIDNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_GnameNotSet $e) {
@@ -69,7 +69,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         $args['uid'] = $this->uid;
 
         try {
-           $group = ModUtil::apiFunc('Zim', 'Group', 'delete_group', $args);
+            $group = ModUtil::apiFunc('Zim', 'Group', 'delete_group', $args);
         } catch (Zim_Exception_UIDNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_GIDNotSet $e) {
@@ -95,7 +95,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         $args['uid'] = $this->uid;
 
         try {
-           $group = ModUtil::apiFunc('Zim', 'Group', 'edit_groupname', $args);
+            $group = ModUtil::apiFunc('Zim', 'Group', 'edit_groupname', $args);
         } catch (Zim_Exception_GnameNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_GIDNotSet $e) {
@@ -124,7 +124,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         $args['gid'] = $this->request->getPost()->get('gid');
 
         try {
-           $group = ModUtil::apiFunc('Zim', 'Group', 'add_to_group', $args);
+            $group = ModUtil::apiFunc('Zim', 'Group', 'add_to_group', $args);
         } catch (Zim_Exception_GIDNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_UIDNotSet $e) {
@@ -135,7 +135,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         return new Zikula_Response_Ajax($group);
     }
 
-	/**
+    /**
      * Delete a user from a group.
      */
     public function del_from_group() {
@@ -150,7 +150,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         $args['user'] = $this->request->getPost()->get('uid');
 
         try {
-           $group = ModUtil::apiFunc('Zim', 'Group', 'del_from_group', $args);
+            $group = ModUtil::apiFunc('Zim', 'Group', 'del_from_group', $args);
         } catch (Zim_Exception_GIDNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_UIDNotSet $e) {
