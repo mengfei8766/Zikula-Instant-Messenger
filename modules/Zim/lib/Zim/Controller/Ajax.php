@@ -68,21 +68,32 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         }
 
         //get all contacts
-        $show_offline = $this->getVar('show_offline');
-        if ($show_offline) {
-            $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
-            foreach ($contacts as $key => $contact) {
-                if ($contact['status'] == 3 || $contact['timedout'] == 1) {
-                    $contacts[$key]['status'] = 0;
-                }
-            }
+        $show_offline = (bool)$this->getVar('show_offline');
+        if ($this->getVar('contact_groups') != 0) {
+            $contacts = ModUtil::apiFunc('Zim', 'group', 'get_all',
+            array('uid' => $this->uid,
+                  'offline_members' => $show_offline,
+                  'show_members'    => true,
+                  'clean' 			=> true
+
+                )
+            );
         } else {
-            $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
-        }
-        foreach ($contacts as $key => $contact) {
-            unset($contacts[$key]['timedout']);
-            unset($contacts[$key]['created_at']);
-            unset($contacts[$key]['updated_at']);
+            if ($show_offline) {
+                $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
+                foreach ($contacts as $key => $contact) {
+                    if ($contact['status'] == 3 || $contact['timedout'] == 1) {
+                        $contacts[$key]['status'] = 0;
+                    }
+                }
+            } else {
+                $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
+            }
+            foreach ($contacts as $key => $contact) {
+                unset($contacts[$key]['timedout']);
+                unset($contacts[$key]['created_at']);
+                unset($contacts[$key]['updated_at']);
+            }
         }
 
         //get templates for javascript
@@ -135,9 +146,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         if (isset($state)) {
             $output['state'] = $state;
         }
-
-        $groups = ModUtil::apiFunc('Zim', 'group', 'get_all', array('uid' => $this->uid));
-        $output['groups'] = $groups;
 
         //return the JSON output
         return new Zikula_Response_Ajax($output);

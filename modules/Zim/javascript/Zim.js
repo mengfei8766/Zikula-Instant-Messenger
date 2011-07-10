@@ -86,12 +86,12 @@ var Zim ={
                 //Zim.contacts.each(function(item) {
                  //   Zim.toggle_contact_state(item);
                 //});
-                Zim.groups.each(function(item) {
-                	if (typeof item.uid != 'undefined') {
+                Zim.contacts.each(function(item) {
+                	if (typeof item.uname != 'undefined') {
                 		Zim.toggle_contact_state(item);
                 	}
                 });
-                Zim.groups.each(function(item) {
+                Zim.contacts.each(function(item) {
                 	if (typeof item.gid != 'undefined') {
                 		var show = {groupname: item.groupname, gid: item.gid};
                         $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
