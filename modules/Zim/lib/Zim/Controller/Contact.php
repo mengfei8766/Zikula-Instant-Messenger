@@ -71,22 +71,33 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
             return new Zim_Response_Ajax_Exception($e);
         }
 
-        //get the contact list
-        $show_offline = $this->getVar('show_offline');
-        if ($show_offline) {
-            $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
-        } else {
-            $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
-        }
+        //get all contacts
+        $show_offline = (bool)$this->getVar('show_offline');
+        if ($this->getVar('contact_groups') != 0) {
+            $contacts = ModUtil::apiFunc('Zim', 'group', 'get_all',
+            array('uid' => $this->uid,
+                  'offline_members' => $show_offline,
+                  'show_members'    => true,
+                  'clean' 			=> true
 
-        //go through each contact making sure that any invisible contact is shown as offline
-        foreach ($contacts as $key => $contact) {
-            if ($contact['status'] == 3 || $contact['timedout'] == 1) {
-                $contacts[$key]['status'] = 0;
+            )
+            );
+        } else {
+            if ($show_offline) {
+                $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
+                foreach ($contacts as $key => $contact) {
+                    if ($contact['status'] == 3 || $contact['timedout'] == 1) {
+                        $contacts[$key]['status'] = 0;
+                    }
+                }
+            } else {
+                $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_online_contacts');
             }
-            unset($contacts[$key]['created_at']);
-            unset($contacts[$key]['updated_at']);
-            unset($contacts[$key]['timedout']);
+            foreach ($contacts as $key => $contact) {
+                unset($contacts[$key]['timedout']);
+                unset($contacts[$key]['created_at']);
+                unset($contacts[$key]['updated_at']);
+            }
         }
 
         $output['contacts'] = $contacts;

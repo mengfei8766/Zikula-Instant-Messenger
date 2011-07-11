@@ -96,6 +96,19 @@ var Zim ={
                 		var show = {groupname: item.groupname, gid: item.gid};
                 		if ($('zim_group_' + item.gid) == undefined) {
                 			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                			Event.observe('zim_group_' + item.gid, 'click', function(event) {
+                				if ($('zim-group-list-' + item.gid).visible()) {
+                					$('zim-group-list-' + item.gid).blindUp();
+                					var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                	                src = src.replace('down', 'up');
+                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                				} else {
+                					$('zim-group-list-' + item.gid).blindDown();
+                					src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                	                src = src.replace('up', 'down');
+                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                				}
+                			});
                 		}
                         item.members.each(function(item2) {
                     		Zim.toggle_contact_state(item2, item.gid);
@@ -183,12 +196,42 @@ var Zim ={
                 contacts.each(function(item) {
                 	if (typeof item.gid != 'undefined') {
                 		var show = {groupname: item.groupname, gid: item.gid};
-                		if (typeof $('zim_group_' + item.gid) != undefined) {
+                		if ($('zim_group_' + item.gid) == undefined) {
                 			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                			Event.observe('zim_group_' + item.gid, 'click', function(event) {
+                				if ($('zim-group-list-' + item.gid).visible()) {
+                					$('zim-group-list-' + item.gid).blindUp();
+                					var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                	                src = src.replace('down', 'up');
+                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                				} else {
+                					$('zim-group-list-' + item.gid).blindDown();
+                					src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                	                src = src.replace('up', 'down');
+                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                				}
+                			});
                 		}
-                		item.members.each(function(item2) {
+                        item.members.each(function(item2) {
                     		Zim.toggle_contact_state(item2, item.gid);
                     	});
+                	}
+                });
+                
+                //remove contacts that dont exist in the updated list.
+                Zim.contacts.each(function(item) {
+                	if (typeof item.gid != 'undefined') {
+                		item.members.each(function(item2) {
+                			if(!contact_in_list(item2.uid, contacts)) {
+                            	Event.stopObserving('contact_' + item2.uid); 
+                            	$('contact_'+ item2.uid).remove();
+                            }
+                    	});
+                	} else if (typeof item.uid != 'undefined') {
+	                    if(!contact_in_list(item.uid, contacts)) {
+	                    	Event.stopObserving('contact_' + item.uid); 
+	                    	$('contact_'+ item.uid).remove();
+	                    }
                 	}
                 });
                 Zim.contacts = contacts;
