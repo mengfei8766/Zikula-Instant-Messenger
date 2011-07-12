@@ -32,10 +32,10 @@ var Zim ={
     my_uid: '',
     status: '',
     status_colors:{
-        '0': 'modules/Zim/images/icons/offline.png',
-        '1': 'modules/Zim/images/icons/online.png',
-        '2': 'modules/Zim/images/icons/busy.png',
-        '3': 'modules/Zim/images/icons/invisible.png'
+        '0': Zikula.Config.baseURL + 'modules/Zim/images/icons/offline.png',
+        '1': Zikula.Config.baseURL + 'modules/Zim/images/icons/online.png',
+        '2': Zikula.Config.baseURL + 'modules/Zim/images/icons/busy.png',
+        '3': Zikula.Config.baseURL + 'modules/Zim/images/icons/invisible.png'
     },
     contacts: Array(),
     groups: Array(),
@@ -49,7 +49,7 @@ var Zim ={
         	var pars = "status=" + Zim.status;
         }
         
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=ajax&func=init", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=ajax&func=init", {
             parameters: pars,
             onComplete : function(req) {
                 if (!req.isSuccess()) {
@@ -180,7 +180,7 @@ var Zim ={
         }
         Zim.execute_count = 1;
         if (Zim.periodical_update_contact.currentlyExecuting == false) {return false;}
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_online_contacts", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=contact&func=get_online_contacts", {
             onComplete : function(req) {
                 if (!req.isSuccess()) {
                     Zikula.showajaxerror(req.getMessage());
@@ -361,7 +361,7 @@ var Zim ={
     },
     send_message: function(uid,message) {
         var pars = "message=" + message +"&to=" + uid;
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=message&func=send_new_message", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=message&func=send_new_message", {
             parameters: pars,
             onCreate: function() {
                 $('zim-message-textbox-' + uid).clear();
@@ -401,7 +401,7 @@ var Zim ={
             });
             pars += str;
         }
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=message&func=get_new_messages", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=message&func=get_new_messages", {
             parameters: pars,
             onComplete : function(req) {
                 if (!req.isSuccess()) {
@@ -505,7 +505,7 @@ var Zim ={
     
     get_contact: function(uid) {
         var pars = "uid=" + uid;
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=get_contact", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=contact&func=get_contact", {
             parameters: pars,
             onComplete : function(req) {
                 if (!req.isSuccess()) {
@@ -561,7 +561,7 @@ var Zim ={
             return Zim.init();
         }
         var pars = "status=" + status;
-        new Zikula.Ajax.Request("ajax.php?module=Zim&type=contact&func=update_status", {
+        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=contact&func=update_status", {
             parameters: pars,
             onComplete : function(req) {
                 if (!req.isSuccess()) {
@@ -577,9 +577,7 @@ var Zim ={
     
     set_status_image: function() {
         var color = Zim.status_colors[Zim.status];
-        var colours = Object.values(Zim.status_colors).concat(Array('images/ajax/indicator_circle.gif'));
-        var src = ($('zim-my-status').readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
-        $('zim-my-status').writeAttribute({src: src});
+        $('zim-my-status').writeAttribute({src: color});
     },
     
     toggle_contact_state: function(contact, groupid) { 
@@ -733,7 +731,7 @@ var Zim ={
         		if ($('zim-block-history-box') != undefined) {
         			return;
         		}
-                new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=get_template", {
+                new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_template", {
                     onComplete : function(req) {
                         if (!req.isSuccess()) {
                             Zikula.showajaxerror(req.getMessage());
@@ -751,7 +749,7 @@ var Zim ={
                         user_nodes.each(function(node){
                         	Event.observe(node.id, 'click', function(event){
                         		var pars = "contact=" + (node.id).replace('contact_history_user', '');
-                        		new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=get_history", {
+                        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_history", {
                                     parameters: pars,
                                     onComplete : function(req) {
                                         if (!req.isSuccess()) {
@@ -767,7 +765,7 @@ var Zim ={
                         	Event.observe(del[0], 'click', function(event){
                         		Event.stopObserving(node.id, 'click');
                         		var pars = '&uid=' + (node.id).replace('contact_history_user', '');
-                        		new Zikula.Ajax.Request("ajax.php?module=Zim&type=history&func=delete", {
+                        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=delete", {
                                     parameters: pars,
                                     onComplete : function(req) {
                                         if (!req.isSuccess()) {
@@ -809,7 +807,7 @@ var Zim ={
                 Event.observe('zim-block-group-submit', 'click', function(event){
                 	Event.stop(event);
                 	var pars = "&groupname=" + $('zim-block-groupname').getValue();
-                	new Zikula.Ajax.Request("ajax.php?module=Zim&type=group&func=create_group", {
+                	new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=create_group", {
                 		parameters: pars,
                 		onComplete : function(req) {
 	                		if (!req.isSuccess()) {

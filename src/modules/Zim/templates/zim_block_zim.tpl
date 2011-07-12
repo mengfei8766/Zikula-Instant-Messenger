@@ -1,6 +1,6 @@
 <div id="zim-block" class="zim-block">
     <div class="zim-block-head" id="zim-block-head">
-        <img id="zim-my-status" class="status-img tooltips" src="images/ajax/indicator_circle.gif" alt="Status" title="Update Status" />
+        {img src="indicator_circle.gif" modname="core" set="ajax" title="Update Status" alt="Status" class="status-img tooltips" id="zim-my-status}
         <p id="zim-uname" class="tooltips" title="Click to Edit Username">{$uname}</p>
         <div class="tooltips" style="float:right;border-left: 1px solid #D4D5D6;padding:0 3px 0 3px;font-weight:bold;cursor:pointer;" id="zim-settings-button" title="Click to Set Options">Options</div>
     </div>
