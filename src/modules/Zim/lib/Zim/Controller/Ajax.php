@@ -100,7 +100,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         //get templates for javascript
         $contact_template = $this->view->fetch('zim_block_contact.tpl');
         $message_template = $this->view->fetch('zim_block_message.tpl');
-        $settingsmenu_template = $this->view->fetch('zim_block_settingsmenu.tpl');
         $sentmessage_template = $this->view->fetch('zim_block_sentmessage.tpl');
         $groupadd_template = $this->view->fetch('zim_block_groupadd.tpl');
         $group_template = $this->view->fetch('zim_block_group.tpl');
@@ -113,7 +112,6 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         $output['contact_template'] = $contact_template;
         $output['message_template'] = $message_template;
         $output['sentmessage_template'] = $sentmessage_template;
-        $output['settingsmenu_template'] = $settingsmenu_template;
         if ($this->getVar('contact_groups')) {
             $output['groupadd_template'] = $groupadd_template;
             $output['group_template'] = $group_template;
