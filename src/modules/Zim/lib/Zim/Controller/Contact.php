@@ -23,7 +23,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         } catch (Zim_Exception_ContactNotFound $e) {
             return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
         }
-   		//keep the user from timing out
+   	    //keep the user from timing out
         try {
             ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
         } catch (Zim_Exception_ContactNotFound $e) {
@@ -78,7 +78,7 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
             array('uid' => $this->uid,
                   'offline_members' => $show_offline,
                   'show_members'    => true,
-                  'clean' 			=> true
+                  'clean'           => true
 
             )
             );
