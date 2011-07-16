@@ -178,24 +178,28 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
         //check input to make sure everything is set.
         if (!isset($args['uid']) || !$args['uid'])
         throw new Zim_Exception_UIDNotSet();
-        if (!isset($args['uname']) || empty($args['uname']) || trim($args['uname']) == '')
-        $args['uname'] = UserUtil::getVar('uname', $args['uid']);
+        if (!isset($args['uname']) || empty($args['uname']) || trim($args['uname']) == '') {
+            $args['uname'] = UserUtil::getVar('uname', $args['uid']);
+        } 
         $args['uname'] = trim($args['uname']);
         $q = Doctrine_Query::create()
         ->update('Zim_Model_User')
         ->set('uname', "?", $args['uname'])
         ->where('uid = ?', $args['uid']);
         $result = $q->execute();
-        if (!isset($result) || $result == 0) {
-            throw new Zim_Exception_UsernameCouldNotBeUpdated();
-        }
-
+        
         $q = Doctrine_Query::create()
         ->from('Zim_Model_User user')
         ->where('user.uid = ?', $args['uid'])
         ->limit(1);
         $contact = $q->fetchOne();
         $contact = $contact->get('uname');
+        
+        if (!isset($result) || $result == 0) {
+            if ($contact != $args['uname']) {
+                throw new Zim_Exception_UsernameCouldNotBeUpdated();
+            }
+        }
 
         //return the users uname
         return $contact;
