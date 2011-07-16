@@ -24,7 +24,6 @@ var Zim ={
     messages_to_confirm: Array(),
     contact_template: '',
     message_template: '',
-    settingsmenu_template: '',
     sentmessage_template: '',
     groupadd_template: '',
     group_template: '',
@@ -60,7 +59,6 @@ var Zim ={
                 var data = req.getData();
                 Zim.message_template = new Template(data.message_template);
                 Zim.contact_template = new Template(data.contact_template);
-                Zim.settingsmenu_template = data.settingsmenu_template;
                 var message_container = document.createElement('div');
                 Element.extend(message_container);
                 message_container.addClassName('zim-block-message-container');
@@ -164,9 +162,108 @@ var Zim ={
                     formId: 'uname'
                 });
 
-                Event.observe('zim-settings-button', 'click', function(event) {
-                    Zim.open_settings_window();
-                });
+                if ($('zim-view-history') != undefined) {
+                	Event.observe('zim-view-history', 'click', function(event){
+                		if ($('zim-block-history-box') != undefined) {
+                			return;
+                		}
+                        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_template", {
+                            onComplete : function(req) {
+                                if (!req.isSuccess()) {
+                                    Zikula.showajaxerror(req.getMessage());
+                                    $('zim-block-history-box').remove();
+                                    return;
+                                }
+                                var data = req.getData();
+                                var history_box = document.createElement('div');
+                                Element.extend(history_box);
+                                history_box.addClassName('zim-block-history-box');
+                                history_box.id = 'zim-block-history-box';
+                                history_box.update(data.template);
+                                $(document.body).insert(history_box);
+                                var user_nodes = $('zim-block-history-contacts').getElementsBySelector('li');
+                                user_nodes.each(function(node){
+                                	Event.observe(node.id, 'click', function(event){
+                                		var pars = "contact=" + (node.id).replace('contact_history_user', '');
+                                		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_history", {
+                                            parameters: pars,
+                                            onComplete : function(req) {
+                                                if (!req.isSuccess()) {
+                                                    Zikula.showajaxerror(req.getMessage());
+                                                    return;
+                                                }
+                                                var data = req.getData();
+                                                $('zim-block-history-messages').update(data.template);
+                                            }
+                                        });
+                                	});
+                                	var del = node.getElementsBySelector('img');
+                                	Event.observe(del[0], 'click', function(event){
+                                		Event.stopObserving(node.id, 'click');
+                                		var pars = '&uid=' + (node.id).replace('contact_history_user', '');
+                                		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=delete", {
+                                            parameters: pars,
+                                            onComplete : function(req) {
+                                                if (!req.isSuccess()) {
+                                                    Zikula.showajaxerror(req.getMessage());
+                                                    return;
+                                                }
+                                                node.remove();
+                                                $('zim-block-history-messages').update('');
+                                            }
+                                        });
+                                	});
+                                });
+                                new Draggable('zim-block-history-box', {
+                                    handle: 'zim-block-history-box-header'
+                                });
+                                Event.observe('zim-block-history-close', 'click', function(event){
+                                	history_box.remove();
+                                });
+                            }
+                        });
+                	});
+                }
+                
+                if ($('zim-group-create') != undefined) {
+                	Event.observe('zim-group-create', 'click', function(event){
+                		if ($('zim-block-group-box') != undefined) {
+                			return;
+                		}
+                		var group_box = document.createElement('div');
+                        Element.extend(group_box);
+                        group_box.addClassName('zim-block-group-box');
+                        group_box.id = 'zim-block-group-box';
+                        group_box.update(Zim.groupadd_template);
+                        $(document.body).insert(group_box);
+                        new Draggable('zim-block-group-box', {
+                            handle: 'zim-block-groupdrag'
+                        });	
+                        Event.observe('zim-block-group-submit', 'click', function(event){
+                        	Event.stop(event);
+                        	var pars = "&groupname=" + $('zim-block-groupname').getValue();
+                        	new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=create_group", {
+                        		parameters: pars,
+                        		onComplete : function(req) {
+        	                		if (!req.isSuccess()) {
+        	                            Zikula.showajaxerror(req.getMessage());
+        	                            return;
+        	                        }
+        	                        var data = req.getData();
+        	                        var show = {groupname: data.groupname, gid: data.gid};
+        	                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+        	                        //TODO: group was added
+        	                        $('zim-block-group-box').remove();
+        	                        
+                        		}
+                        	});
+                        });
+                        Event.observe('zim-block-group-cancel', 'click', function(event){
+                        	Event.stop(event);
+                        	$('zim-block-group-box').remove();
+                        });
+                	});
+                }
                 Zim.init_in_progress = false;
             }
         });
@@ -688,148 +785,6 @@ var Zim ={
             return state;
         }
     },
-
-    open_settings_window: function() {
-        var zim_settings_menu = document.createElement('div');
-        Element.extend(zim_settings_menu);
-        zim_settings_menu.addClassName('zim-settings');
-        zim_settings_menu.setAttribute('id', 'zim-settings-menu');
-        zim_settings_menu.update(Zim.settingsmenu_template);
-        var top_offset = $('zim-settings-button').getHeight();
-        
-        zim_settings_menu.setStyle({
-           top: top_offset + "px",
-           left: $('zim-settings-button').positionedOffset().left + "px"
-        });
-        $('zim-block-head').appendChild(zim_settings_menu);
-        if (zim_settings_menu.cumulativeOffset().left + zim_settings_menu.getWidth() > document.viewport.getDimensions().width) {
-        	$('zim-settings-menu').setStyle({
-                left: "0px"
-             });
-        }
-        
-        $('zim-settings-button').setStyle({
-           'color': '#44bbff'
-        });
-        Event.stopObserving('zim-settings-button', 'click');
-        var close_settings_window = function(event) {
-            $('zim-settings-menu').remove();
-            Event.stopObserving('zim-settings-button', 'click');
-            Event.observe('zim-settings-button', 'click', function(event) {
-                Zim.open_settings_window();
-            });
-            $('zim-settings-button').setStyle({
-                'color': ''
-            });
-        };
-        Event.observe('zim-settings-button', 'click', close_settings_window);
-        
-        if ($('zim-view-history') != undefined)
-        {
-        	Event.observe('zim-view-history', 'click', function(event){
-        		close_settings_window();
-        		if ($('zim-block-history-box') != undefined) {
-        			return;
-        		}
-                new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_template", {
-                    onComplete : function(req) {
-                        if (!req.isSuccess()) {
-                            Zikula.showajaxerror(req.getMessage());
-                            $('zim-block-history-box').remove();
-                            return;
-                        }
-                        var data = req.getData();
-                        var history_box = document.createElement('div');
-                        Element.extend(history_box);
-                        history_box.addClassName('zim-block-history-box');
-                        history_box.id = 'zim-block-history-box';
-                        history_box.update(data.template);
-                        $(document.body).insert(history_box);
-                        var user_nodes = $('zim-block-history-contacts').getElementsBySelector('li');
-                        user_nodes.each(function(node){
-                        	Event.observe(node.id, 'click', function(event){
-                        		var pars = "contact=" + (node.id).replace('contact_history_user', '');
-                        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_history", {
-                                    parameters: pars,
-                                    onComplete : function(req) {
-                                        if (!req.isSuccess()) {
-                                            Zikula.showajaxerror(req.getMessage());
-                                            return;
-                                        }
-                                        var data = req.getData();
-                                        $('zim-block-history-messages').update(data.template);
-                                    }
-                                });
-                        	});
-                        	var del = node.getElementsBySelector('img');
-                        	Event.observe(del[0], 'click', function(event){
-                        		Event.stopObserving(node.id, 'click');
-                        		var pars = '&uid=' + (node.id).replace('contact_history_user', '');
-                        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=delete", {
-                                    parameters: pars,
-                                    onComplete : function(req) {
-                                        if (!req.isSuccess()) {
-                                            Zikula.showajaxerror(req.getMessage());
-                                            return;
-                                        }
-                                        node.remove();
-                                        $('zim-block-history-messages').update('');
-                                    }
-                                });
-                        	});
-                        });
-                        new Draggable('zim-block-history-box', {
-                            handle: 'zim-block-history-box-header'
-                        });
-                        Event.observe('zim-block-history-close', 'click', function(event){
-                        	history_box.remove();
-                        });
-                    }
-                });
-        	});
-        }
-        
-        if ($('zim-group-create') != undefined) {
-        	Event.observe('zim-group-create', 'click', function(event){
-        		close_settings_window();
-        		if ($('zim-block-group-box') != undefined) {
-        			return;
-        		}
-        		var group_box = document.createElement('div');
-                Element.extend(group_box);
-                group_box.addClassName('zim-block-group-box');
-                group_box.id = 'zim-block-group-box';
-                group_box.update(Zim.groupadd_template);
-                $(document.body).insert(group_box);
-                new Draggable('zim-block-group-box', {
-                    handle: 'zim-block-groupdrag'
-                });	
-                Event.observe('zim-block-group-submit', 'click', function(event){
-                	Event.stop(event);
-                	var pars = "&groupname=" + $('zim-block-groupname').getValue();
-                	new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=create_group", {
-                		parameters: pars,
-                		onComplete : function(req) {
-	                		if (!req.isSuccess()) {
-	                            Zikula.showajaxerror(req.getMessage());
-	                            return;
-	                        }
-	                        var data = req.getData();
-	                        var show = {groupname: data.groupname, gid: data.gid};
-	                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-	                        //TODO: group was added
-	                        $('zim-block-group-box').remove();
-	                        
-                		}
-                	});
-                });
-                Event.observe('zim-block-group-cancel', 'click', function(event){
-                	Event.stop(event);
-                	$('zim-block-group-box').remove();
-                });
-        	});
-        }
-    }
 };
 
 StateWindow = Class.create();
