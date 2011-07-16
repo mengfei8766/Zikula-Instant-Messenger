@@ -46,7 +46,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * @return Array Every contact in Zim's user table (every user who has ever used zim).
      */
     function get_all_contacts() {
-        $this->timeout();
         //get all the users
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User');
@@ -84,9 +83,6 @@ class Zim_Api_Contact extends Zikula_AbstractApi {
      * Get all of the online contacts only
      */
     function get_all_online_contacts() {
-         
-        $this->timeout();
-         
         //get the table and select everything.
         $task = Doctrine_Query::create()
         ->from('Zim_Model_User user')

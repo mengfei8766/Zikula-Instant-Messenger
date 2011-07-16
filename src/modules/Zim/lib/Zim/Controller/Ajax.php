@@ -28,6 +28,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         } catch (Zim_Exception_ContactNotFound $e) {
             $this->me = ModUtil::apiFunc('Zim', 'contact', 'first_time_init', $this->uid);
         }
+        ModUtil::apiFunc('Zim', 'contact', 'timeout');
     }
 
     private $uid;

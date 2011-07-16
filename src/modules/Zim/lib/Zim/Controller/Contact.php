@@ -23,6 +23,15 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         } catch (Zim_Exception_ContactNotFound $e) {
             return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
         }
+   		//keep the user from timing out
+        try {
+            ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
+        } catch (Zim_Exception_ContactNotFound $e) {
+            return new Zim_Response_Ajax_Exception($e);
+        } catch (Zim_Exception_UIDNotSet $e) {
+            return new Zim_Response_Ajax_Exception($e);
+        }
+        ModUtil::apiFunc('Zim', 'contact', 'timeout');
     }
 
     private $uid;
@@ -61,15 +70,6 @@ class Zim_Controller_Contact extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-
-        //keep the user from timing out
-        try {
-            ModUtil::apiFunc('Zim', 'contact', 'keep_alive', $this->uid);
-        } catch (Zim_Exception_ContactNotFound $e) {
-            return new Zim_Response_Ajax_Exception($e);
-        } catch (Zim_Exception_UIDNotSet $e) {
-            return new Zim_Response_Ajax_Exception($e);
-        }
 
         //get all contacts
         $show_offline = (bool)$this->getVar('show_offline');
