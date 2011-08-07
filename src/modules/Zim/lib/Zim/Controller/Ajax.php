@@ -70,7 +70,7 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 
         //get all contacts
         $show_offline = (bool)$this->getVar('show_offline');
-        if ($this->getVar('contact_groups') != 0) {
+        if ($this->getVar('contact_groups') == 1) {
             $contacts = ModUtil::apiFunc('Zim', 'group', 'get_all',
             array('uid' => $this->uid,
                   'offline_members' => $show_offline,
@@ -79,7 +79,17 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
 
             )
             );
-        } else {
+        } elseif ($this->getVar('contact_groups') == 2) {
+            $contacts = ModUtil::apiFunc('Zim', 'zikulaGroup', 'get_all',
+            array('uid' => $this->uid,
+                  'offline_members' => $show_offline,
+                  'show_members'    => true,
+                  'clean'           => true
+
+            )
+            );
+        }
+        elseif ($this->getVar('contact_groups') == 0){
             if ($show_offline) {
                 $contacts = ModUtil::apiFunc('Zim', 'contact', 'get_all_contacts');
                 foreach ($contacts as $key => $contact) {

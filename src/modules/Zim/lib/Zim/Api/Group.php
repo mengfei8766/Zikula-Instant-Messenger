@@ -94,6 +94,7 @@ class Zim_Api_Group extends Zikula_AbstractApi
         }
         return $results;
     }
+
     /**
      * Create a new group.
      */
