@@ -45,7 +45,7 @@ var Zim ={
         
         var pars = '';
         if (Zim.status !== '') {
-        	var pars = "status=" + Zim.status;
+            var pars = "status=" + Zim.status;
         }
         
         new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=ajax&func=init", {
@@ -71,7 +71,7 @@ var Zim ={
                 Zim.sentmessage_template = new Template(data.sentmessage_template);
                 Zim.groupadd_template = data.groupadd_template;
                 if (typeof data.group_template != 'undefined') {
-                	Zim.group_template = new Template(data.group_template);
+                    Zim.group_template = new Template(data.group_template);
                 }
                 Zim.contacts = data.contacts;
                 Zim.groups = data.groups;
@@ -81,37 +81,34 @@ var Zim ={
                 Zim.status_observer();
              
                 if (Zim.status == '0') return;
-                //Zim.contacts.each(function(item) {
-                 //   Zim.toggle_contact_state(item);
-                //});
                 Zim.contacts.each(function(item) {
-                	if (typeof item.uname != 'undefined') {
-                		Zim.toggle_contact_state(item);
-                	}
+                    if (typeof item.uname != 'undefined') {
+                        Zim.toggle_contact_state(item);
+                    }
                 });
                 Zim.contacts.each(function(item) {
-                	if (typeof item.gid != 'undefined') {
-                		var show = {groupname: item.groupname, gid: item.gid};
-                		if ($('zim_group_' + item.gid) == undefined) {
-                			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-                			Event.observe('zim_group_' + item.gid, 'click', function(event) {
-                				if ($('zim-group-list-' + item.gid).visible()) {
-                					$('zim-group-list-' + item.gid).blindUp();
-                					var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
-                	                src = src.replace('down', 'up');
-                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
-                				} else {
-                					$('zim-group-list-' + item.gid).blindDown();
-                					src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
-                	                src = src.replace('up', 'down');
-                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
-                				}
-                			});
-                		}
+                    if (typeof item.gid != 'undefined') {
+                        var show = {groupname: item.groupname, gid: item.gid};
+                        if ($('zim_group_' + item.gid) == undefined) {
+                            $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                            Event.observe('zim_group_' + item.gid, 'click', function(event) {
+                                if ($('zim-group-list-' + item.gid).visible()) {
+                                    $('zim-group-list-' + item.gid).blindUp();
+                                    var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                                    src = src.replace('down', 'up');
+                                    $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                                } else {
+                                    $('zim-group-list-' + item.gid).blindDown();
+                                    src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                                    src = src.replace('up', 'down');
+                                    $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                                }
+                            });
+                        }
                         item.members.each(function(item2) {
-                    		Zim.toggle_contact_state(item2, item.gid);
-                    	});
-                	}
+                            Zim.toggle_contact_state(item2, item.gid);
+                        });
+                    }
                 });
 
                 Zim.periodical_update_contact = new PeriodicalExecuter(function(pe) {
@@ -163,10 +160,10 @@ var Zim ={
                 });
 
                 if ($('zim-view-history') != undefined) {
-                	Event.observe('zim-view-history', 'click', function(event){
-                		if ($('zim-block-history-box') != undefined) {
-                			return;
-                		}
+                    Event.observe('zim-view-history', 'click', function(event){
+                        if ($('zim-block-history-box') != undefined) {
+                            return;
+                        }
                         new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_template", {
                             onComplete : function(req) {
                                 if (!req.isSuccess()) {
@@ -183,9 +180,9 @@ var Zim ={
                                 $(document.body).insert(history_box);
                                 var user_nodes = $('zim-block-history-contacts').getElementsBySelector('li');
                                 user_nodes.each(function(node){
-                                	Event.observe(node.id, 'click', function(event){
-                                		var pars = "contact=" + (node.id).replace('contact_history_user', '');
-                                		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_history", {
+                                    Event.observe(node.id, 'click', function(event){
+                                        var pars = "contact=" + (node.id).replace('contact_history_user', '');
+                                        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=get_history", {
                                             parameters: pars,
                                             onComplete : function(req) {
                                                 if (!req.isSuccess()) {
@@ -196,12 +193,12 @@ var Zim ={
                                                 $('zim-block-history-messages').update(data.template);
                                             }
                                         });
-                                	});
-                                	var del = node.getElementsBySelector('img');
-                                	Event.observe(del[0], 'click', function(event){
-                                		Event.stopObserving(node.id, 'click');
-                                		var pars = '&uid=' + (node.id).replace('contact_history_user', '');
-                                		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=delete", {
+                                    });
+                                    var del = node.getElementsBySelector('img');
+                                    Event.observe(del[0], 'click', function(event){
+                                        Event.stopObserving(node.id, 'click');
+                                        var pars = '&uid=' + (node.id).replace('contact_history_user', '');
+                                        new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=history&func=delete", {
                                             parameters: pars,
                                             onComplete : function(req) {
                                                 if (!req.isSuccess()) {
@@ -212,25 +209,25 @@ var Zim ={
                                                 $('zim-block-history-messages').update('');
                                             }
                                         });
-                                	});
+                                    });
                                 });
                                 new Draggable('zim-block-history-box', {
                                     handle: 'zim-block-history-box-header'
                                 });
                                 Event.observe('zim-block-history-close', 'click', function(event){
-                                	history_box.remove();
+                                    history_box.remove();
                                 });
                             }
                         });
-                	});
+                    });
                 }
                 
                 if ($('zim-group-create') != undefined) {
-                	Event.observe('zim-group-create', 'click', function(event){
-                		if ($('zim-block-group-box') != undefined) {
-                			return;
-                		}
-                		var group_box = document.createElement('div');
+                    Event.observe('zim-group-create', 'click', function(event){
+                        if ($('zim-block-group-box') != undefined) {
+                            return;
+                        }
+                        var group_box = document.createElement('div');
                         Element.extend(group_box);
                         group_box.addClassName('zim-block-group-box');
                         group_box.id = 'zim-block-group-box';
@@ -238,31 +235,31 @@ var Zim ={
                         $(document.body).insert(group_box);
                         new Draggable('zim-block-group-box', {
                             handle: 'zim-block-groupdrag'
-                        });	
+                        });    
                         Event.observe('zim-block-group-submit', 'click', function(event){
-                        	Event.stop(event);
-                        	var pars = "&groupname=" + $('zim-block-groupname').getValue();
-                        	new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=create_group", {
-                        		parameters: pars,
-                        		onComplete : function(req) {
-        	                		if (!req.isSuccess()) {
-        	                            Zikula.showajaxerror(req.getMessage());
-        	                            return;
-        	                        }
-        	                        var data = req.getData();
-        	                        var show = {groupname: data.groupname, gid: data.gid};
-        	                        $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-        	                        //TODO: group was added
-        	                        $('zim-block-group-box').remove();
-        	                        
-                        		}
-                        	});
+                            Event.stop(event);
+                            var pars = "&groupname=" + $('zim-block-groupname').getValue();
+                            new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=create_group", {
+                                parameters: pars,
+                                onComplete : function(req) {
+                                    if (!req.isSuccess()) {
+                                        Zikula.showajaxerror(req.getMessage());
+                                        return;
+                                    }
+                                    var data = req.getData();
+                                    var show = {groupname: data.groupname, gid: data.gid};
+                                    $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                                    //TODO: group was added
+                                    $('zim-block-group-box').remove();
+                                    
+                                }
+                            });
                         });
                         Event.observe('zim-block-group-cancel', 'click', function(event){
-                        	Event.stop(event);
-                        	$('zim-block-group-box').remove();
+                            Event.stop(event);
+                            $('zim-block-group-box').remove();
                         });
-                	});
+                    });
                 }
                 Zim.init_in_progress = false;
             }
@@ -286,50 +283,57 @@ var Zim ={
                 var data = req.getData();
                 var contacts = data.contacts;
                 contacts.each(function(item) {
-                	if (typeof item.uname != 'undefined') {
-                		Zim.toggle_contact_state(item);
-                	}
+                    if (typeof item.uname != 'undefined') {
+                        Zim.toggle_contact_state(item);
+                    }
                 });
                 contacts.each(function(item) {
-                	if (typeof item.gid != 'undefined') {
-                		var show = {groupname: item.groupname, gid: item.gid};
-                		if ($('zim_group_' + item.gid) == undefined) {
-                			$('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-                			Event.observe('zim_group_' + item.gid, 'click', function(event) {
-                				if ($('zim-group-list-' + item.gid).visible()) {
-                					$('zim-group-list-' + item.gid).blindUp();
-                					var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
-                	                src = src.replace('down', 'up');
-                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
-                				} else {
-                					$('zim-group-list-' + item.gid).blindDown();
-                					src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
-                	                src = src.replace('up', 'down');
-                	                $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
-                				}
-                			});
-                		}
+                    if (typeof item.gid != 'undefined') {
+                        var show = {groupname: item.groupname, gid: item.gid};
+                        if ($('zim_group_' + item.gid) == undefined) {
+                            $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                            Event.observe('zim_group_' + item.gid, 'click', function(event) {
+                                if ($('zim-group-list-' + item.gid).visible()) {
+                                    $('zim-group-list-' + item.gid).blindUp();
+                                    var src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                                    src = src.replace('down', 'up');
+                                    $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                                } else {
+                                    $('zim-group-list-' + item.gid).blindDown();
+                                    src = $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().readAttribute('src');
+                                    src = src.replace('up', 'down');
+                                    $$('#zim_group_' + item.gid + ' .zim-group-toggle').first().writeAttribute('src',src);
+                                }
+                            });
+                        }
                         item.members.each(function(item2) {
-                    		Zim.toggle_contact_state(item2, item.gid);
-                    	});
-                	}
+                            Zim.toggle_contact_state(item2, item.gid);
+                        });
+                    }
                 });
                 
                 //remove contacts that dont exist in the updated list.
                 Zim.contacts.each(function(item) {
-                	if (typeof item.gid != 'undefined') {
-                		item.members.each(function(item2) {
-                			if(!contact_in_list(item2.uid, contacts)) {
-                            	Event.stopObserving('contact_' + item2.uid); 
-                            	$('contact_'+ item2.uid).remove();
+                    if (typeof item.gid !== 'undefined') {
+                        item.members.each(function(item2) {
+                            if(!contact_in_list(item2.uid, contacts, item.gid)) {
+                                var c = $$('#zim-group-list-' + item.gid + ' > #contact_' + item2.uid).first();
+                                if (typeof c !== 'undefined') {
+                                    c.stopObserving(); 
+                                    c.remove();
+                                    throw $break;
+                                }
                             }
-                    	});
-                	} else if (typeof item.uid != 'undefined') {
-	                    if(!contact_in_list(item.uid, contacts)) {
-	                    	Event.stopObserving('contact_' + item.uid); 
-	                    	$('contact_'+ item.uid).remove();
-	                    }
-                	}
+                        });
+                    } else if (typeof item.uid != 'undefined') {
+                        if(!contact_in_list(item.uid, contacts)) {
+                            var c = $$('#zim-block-contacts > #contact_' + item.uid).first();
+                            if (typeof c !== 'undefined') {
+                                c.stopObserving(); 
+                                c.remove();
+                            }
+                        }
+                    }
                 });
                 Zim.contacts = contacts;
                 Zim.get_messages();
@@ -338,11 +342,18 @@ var Zim ={
         });
     },
     
-    add_contact_observer: function(contact) {
-        Event.stopObserving('contact_' + contact.uid); 
-        Event.observe('contact_' + contact.uid, 'click', function(event) {
-                 Zim.add_message_box(contact);
-         });
+    add_contact_observer: function(contact, groupid) {
+        if (typeof groupid == 'undefined') {
+            var c = $$('#zim-block-contacts > #contact_' + contact.uid).first();
+        } else {
+            var c = $$('#zim-group-list-' + groupid + '> #contact_' + contact.uid).first();
+        }
+        if (typeof c !== 'undefined') {
+            Event.stopObserving(c); 
+            Event.observe(c, 'click', function(event) {
+                     Zim.add_message_box(contact);
+             });
+        }
     },
     
     contact_search_observer: function() {
@@ -639,7 +650,7 @@ var Zim ={
     
     set_status: function(status) {
         if (status == Zim.status) {
-        	return;
+            return;
         } else if (status == 0) {
             Zim.periodical_update_contact.stop();
             Zim.contacts.each(function(item) {
@@ -677,24 +688,35 @@ var Zim ={
         $('zim-my-status').writeAttribute({src: color});
     },
     
-    toggle_contact_state: function(contact, groupid) { 
+    toggle_contact_state: function(contact, groupid) {
         if (contact.uid == Zim.my_uid) return;
         var color = Zim.status_colors[contact.status];
         var colours = Object.values(Zim.status_colors);
-        if(!$('contact_'+contact.uid)) {
-            var show = {uname: contact.uname, uid: contact.uid,color: color};
-            if (typeof groupid == 'undefined') {
-            	$('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
+        var show = {uname: contact.uname, uid: contact.uid,color: color};
+        if (typeof groupid !== 'undefined') {
+            var c = $$('#zim-group-list-' + groupid + '> #contact_' + contact.uid).first();
+            if (typeof c == 'undefined'){
+                $('zim-group-list-' + groupid).insert(Zim.contact_template.evaluate(show));
+                Zim.add_contact_observer(contact, groupid);
             } else {
-            	$('zim-group-list-' + groupid).insert(Zim.contact_template.evaluate(show));
-            	//TODO: add user to existing group
+                $$('#zim_contact_status_img_'+contact.uid).each(function(item){
+                    var src = (item.readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
+                    item.writeAttribute({src: src});
+                });
             }
-            Zim.add_contact_observer(contact);
         } else {
-            var src = ($('zim_contact_status_img_'+contact.uid).readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
-            $('zim_contact_status_img_'+contact.uid).writeAttribute({src: src});
+            var c = $$('#zim-block-contacts > #contact_' + contact.uid).first();
+            if (typeof c == 'undefined'){
+                $('zim-block-contacts').insert(Zim.contact_template.evaluate(show));
+                Zim.add_contact_observer(contact);
+            } else {
+                $$('#zim_contact_status_img_'+contact.uid).each(function(item){
+                    var src = (item.readAttribute('src')).replace(new RegExp('(' + colours.join('|') + ')', 'g'), color);
+                    item.writeAttribute({src: src});
+                });
+            }
         }
-        
+
         //Only update uname if the user was online before this stops from detecting invis users
         var old_element = Zim.contacts.find(function(c) {return c.uid == contact.uid});
         if (typeof(old_element) !== 'undefined' && (old_element.status !== 0 && contact.status !== 0)) {
@@ -716,7 +738,6 @@ var Zim ={
                 }
             }
         }
-        
         if (has_open_message(contact.uid)) {
             if (contact.status == "0" && !Zim.settings.allow_offline_msg) {
                 $('zim-message-textbox-' + contact.uid).disable();
@@ -741,11 +762,11 @@ var Zim ={
             
             var window_found = false;
             Zim.state.windows.each(function(item){
-            	if (item.user == uid) {window_found = true; throw $break;}
+                if (item.user == uid) {window_found = true; throw $break;}
             });
             if (!window_found){
-            	var sw = new StateWindow(uid);
-            	Zim.state.windows.push(sw);
+                var sw = new StateWindow(uid);
+                Zim.state.windows.push(sw);
             }
             
             Zim.state.windows.push(uid);
@@ -753,16 +774,16 @@ var Zim ={
         },
         
         remove_window: function(uid) {
-        	Zim.state.windows_to_del.push(uid);
+            Zim.state.windows_to_del.push(uid);
             Zim.state.windows_to_del.uniq();
             
             var idx = 0;
             Zim.state.windows.each(function(item){
-            	if (item.user == uid) {
-            		Zim.state.windows.splice(idx,1);
-            		throw $break;
-            	}
-            	idx = idx + 1;
+                if (item.user == uid) {
+                    Zim.state.windows.splice(idx,1);
+                    throw $break;
+                }
+                idx = idx + 1;
             });
         },
         
@@ -774,13 +795,13 @@ var Zim ={
         params: function() {
             var state = '';
             Zim.state.windows_to_add.each(function(item) {
-            	state = state + "&state_add[]=" + item;
+                state = state + "&state_add[]=" + item;
             });
             Zim.state.windows_to_del.each(function(item) {
-            	state = state + "&state_del[]=" + item;
+                state = state + "&state_del[]=" + item;
             });
             Zim.state.windows.each(function(item) {
-            	state = state + "&state_windows["+ item.user+"]=" + item.start_msg;
+                state = state + "&state_windows["+ item.user+"]=" + item.start_msg;
             });
             return state;
         }
@@ -789,31 +810,43 @@ var Zim ={
 
 StateWindow = Class.create();
 StateWindow.prototype = {
-	start_msg: null,
-	user: null,
-	
-	initialize: function(user) {  
-		this.user = user;
-		this.start_msg = null;
-	},
+    start_msg: null,
+    user: null,
+    
+    initialize: function(user) {  
+        this.user = user;
+        this.start_msg = null;
+    },
 
-	add_msg: function(message) {
-		if (message.uid !== this.user || message.uid !== Zim.my_uid) {
-			return;
-		}
-		if (message.mid > this.start_msg) {
-			this.start_msg = message.mid;
-		}
-	}
+    add_msg: function(message) {
+        if (message.uid !== this.user || message.uid !== Zim.my_uid) {
+            return;
+        }
+        if (message.mid > this.start_msg) {
+            this.start_msg = message.mid;
+        }
+    }
 }
 
-function contact_in_list(uid, contacts) {
+function contact_in_list(uid, contacts, gid) {
     var result = false;
     contacts.each(function(item) {
-            if (item.uid == uid) {
-                result = true;
-                return;
+        if ((typeof gid !== 'undefined') && (typeof item.gid !== 'undefined')) {
+            if (item.gid == gid) {
+                item.members.each(function(item2) {
+                    if (item2.uid == uid) {
+                        result = true;
+                        throw $break;
+                    }
+                });
+                if (result == true) { 
+                    throw $break;
+                }
             }
+        } else if (typeof gid == 'undefined' && item.uid == uid) {
+            result = true;
+            throw $break;
+        }
     });
     return result;
 }
