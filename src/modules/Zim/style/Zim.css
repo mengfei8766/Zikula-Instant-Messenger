@@ -172,6 +172,15 @@ form.inplaceeditor-form { /* The form */
     cursor: pointer;
 }
 
+.zim_contact_settings {
+    float: right;
+    cursor: pointer;
+    z-index: 50;
+}
+
+.zim_contact_list_hover {
+    border: 2px dashed #D4D5D6;
+}
 
 #zim-block-history-contacts {
     width: 180px;

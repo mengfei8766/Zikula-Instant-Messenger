@@ -91,6 +91,28 @@ var Zim ={
                         var show = {groupname: item.groupname, gid: item.gid};
                         if ($('zim_group_' + item.gid) == undefined) {
                             $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
+                            Droppables.add('zim_group_' + item.gid, {
+                            	accept:'zim-contact',
+                            	hoverclass: 'zim_contact_list_hover',
+                            	onDrop: function(element) {
+                            		var uid = parseInt((element.id).replace('contact_', ''));
+                            		var pars = "uid=" + uid + "&gid=" + item.gid;
+                            		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=add_to_group", {
+                                        parameters: pars,
+                                        onComplete : function(req) {
+                                            if (!req.isSuccess()) {
+                                                Zikula.showajaxerror(req.getMessage());
+                                                return;
+                                                Zim.init_in_progress = false;
+                                            }
+                                            var data = req.getData();
+                                            element.remove();
+                                    		$('zim-group-list-' + data.gid).insert(element);
+                            			}
+                            		});
+
+                            	}
+                            })
                             Event.observe('zim_group_' + item.gid, 'click', function(event) {
                                 if ($('zim-group-list-' + item.gid).visible()) {
                                     $('zim-group-list-' + item.gid).blindUp();
@@ -353,6 +375,11 @@ var Zim ={
             Event.observe(c, 'click', function(event) {
                      Zim.add_message_box(contact);
              });
+
+            new Draggable(c, { 
+            	constraint: 'vertical', 
+            	handle: (c.getElementsBySelector('img')).first(),
+            	revert:true});
         }
     },
     

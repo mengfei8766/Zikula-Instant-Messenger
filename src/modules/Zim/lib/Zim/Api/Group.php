@@ -172,6 +172,7 @@ class Zim_Api_Group extends Zikula_AbstractApi
             throw new Zim_Exception_GIDNotSet();
         }
 
+        //TODO: consider using a transaction
         //check to make sure that user owns the group
         $q = Doctrine_Query::create()
         ->from("Zim_Model_Group g")
@@ -181,14 +182,27 @@ class Zim_Api_Group extends Zikula_AbstractApi
         $group = $q->fetchOne();
         if (empty($group)) {
             return;
-            //TODO: group not found
+            //TODO: group not found or not owned
         }
 
-        $args['uid'] = $args['user'];
-        unset($args['user']);
-        $groupuser = new Zim_Model_GroupUser();
-        $group->fromArray($args);
-        $group->save();
+        $q2 = Doctrine_Query::create()
+        ->from("Zim_Model_Group g")
+        ->where('m.uid = ?', $args['user'])
+        ->andWhere('g.uid = ?', $args['uid'])
+        ->leftJoin('g.members m')
+        ->limit('1');
+        $oldGroup = $q2->fetchOne();
+        if (!empty($oldGroup)) {
+            $oldGroup->unlink('members');
+            $oldGroup->save();
+        }
+
+        $groupUser = new Zim_Model_GroupUser();
+        $groupUser->uid = $args['user'];
+        $groupUser->gid = $args['gid'];
+        $groupUser->save();
+
+        return $group->toArray();
     }
 
     /**
