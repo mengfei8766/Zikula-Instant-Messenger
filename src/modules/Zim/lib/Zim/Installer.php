@@ -72,7 +72,9 @@ class Zim_Installer extends Zikula_AbstractInstaller
             'zim_users',
             'zim_state',
             'zim_message',
-            'zim_message_history'
+            'zim_message_history',
+            'zim_groups',
+            'zim_groupusers',
             );
 
             foreach ($tables as $table) {
