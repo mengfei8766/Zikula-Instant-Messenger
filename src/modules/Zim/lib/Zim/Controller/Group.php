@@ -24,6 +24,7 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
             return new Zim_Response_Ajax_Exception(null,'Error: You do not exist.');
         }
         $this->groups_allowed = ((int)$this->getVar('contact_groups') == (int)'1' ? true : false);
+        $this->throwForbiddenUnless($this->groups_allowed);
     }
 
     private $uid;
@@ -37,7 +38,6 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $this->throwForbiddenUnless($this->groups_allowed);
 
         //Get params from front end (ajax)
         $args['groupname'] = $this->request->getPost()->get('groupname');
@@ -63,7 +63,6 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $this->throwForbiddenUnless($this->groups_allowed);
 
         $args['gid'] = $this->request->getPost()->get('gid');
         $args['uid'] = $this->uid;
@@ -90,7 +89,6 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $this->throwForbiddenUnless($this->groups_allowed);
 
         $args['gid'] = $this->request->getPost()->get('gid');
         $args['groupname'] = $this->request->getPost()->get('groupname');
@@ -119,7 +117,6 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $this->throwForbiddenUnless($this->groups_allowed);
 
         //get required information.
         $args['uid'] = $this->uid;
@@ -145,7 +142,6 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //security checks
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('Zim::', '::', ACCESS_COMMENT));
-        $this->throwForbiddenUnless($this->groups_allowed);
 
         //get required information.
         $args['uid'] = $this->uid;
@@ -163,5 +159,4 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
         //return JSON response.
         return new Zikula_Response_Ajax($group);
     }
-
 }

@@ -113,6 +113,28 @@ class Zim_Api_Group extends Zikula_AbstractApi
     }
 
     /**
+     * get one group
+     */
+    public function get($args) {
+        if (!isset($args['gid']) || $args['gid'] == '' ) {
+            throw new Zim_Exception_GIDNotSet();
+        }
+        if (!isset($args['uid']) || $args['uid'] == '' ) {
+            throw new Zim_Exception_UIDNotSet();
+        }
+        $q = Doctrine_Query::create()
+            ->from('Zim_Model_Group g')
+            ->where('g.uid = ?', $args['uid'])
+            ->andWhere('g.gid = ?', $args['gid'])
+            ->limit(1);
+        $group = $q->fetchOne();
+        if (empty($group) || $group == 0) {
+            throw new Zim_Exception_GroupNotFound();
+        }
+        return $group->toArray();
+            
+    }
+    /**
      * Delete a group.
      *
      */
@@ -129,7 +151,7 @@ class Zim_Api_Group extends Zikula_AbstractApi
         $q = Doctrine_Query::create()
             ->delete('Zim_Model_Group g')
             ->where('g.gid = ?', $args['gid'])
-            ->addWhere('g.uid = ?', $args['uid']);
+            ->andWhere('g.uid = ?', $args['uid']);
         if ($q->execute() > 0) {
             $q = Doctrine_Query::create()
             ->delete('Zim_Model_GroupUser g')
@@ -165,7 +187,11 @@ class Zim_Api_Group extends Zikula_AbstractApi
 
         $result = $q->execute();
         if (!isset($result) || $result == 0) {
-            throw new Zim_Exception_GroupNotFound();
+            try {
+                $this->get($args);    
+            } catch (Zim_Exception_GroupNotFound $e) {
+                throw new Zim_Exception_GroupNotFound();
+            }
         }
         return array('groupname' => $args['groupname']);
     }

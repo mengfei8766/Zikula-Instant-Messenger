@@ -81,7 +81,7 @@ var Zim ={
                 Zim.set_status_image();
                 Zim.status_observer();
              
-                if (Zim.status == '0') return;
+                if (Zim.status == '0') return;              
                 Zim.contacts.each(function(item) {
                     if (typeof item.uname != 'undefined') {
                         Zim.toggle_contact_state(item);
@@ -364,10 +364,10 @@ var Zim ={
                      Zim.add_message_box(contact);
              });
             if (Zim.settings.contact_groups == 1) {
-            	new Draggable(c, { 
+                new Draggable(c, { 
                     constraint: 'vertical', 
                     handle: (c.getElementsBySelector('img')).first(),
-                    revert:true});	
+                    revert:true});    
             }
         }
     },
@@ -395,11 +395,11 @@ var Zim ={
 
             }
         });
-    
     },
     
     make_group_editable : function(item) {
-    	new Ajax.InPlaceEditor('zim_groupname_' +item.gid, 'ajax.php?module=Zim&type=group&func=edit_groupname', {
+    	var groupname = item.groupname;
+        var editor = new Ajax.InPlaceEditor('zim_groupname_' +item.gid, 'ajax.php?module=Zim&type=group&func=edit_groupname', {
             okControl:false,
             submitOnBlur:true,
             cancelControl:false,
@@ -418,12 +418,13 @@ var Zim ={
             onComplete: function(transport, element) {
                 transport = Zikula.Ajax.Response.extend(transport);
                 if (!transport.isSuccess()) {
-                    this.element.innerHTML = Admin.Editor.getOrig(element.id);
+                    this.element.update(groupname);
                     Zikula.showajaxerror(transport.getMessage());
                     return;
                 }
                 var data = transport.getData();
                 this.element.innerHTML = data.groupname;
+                groupname = data.groupname;
             },
             formId: 'groupname'
         });
