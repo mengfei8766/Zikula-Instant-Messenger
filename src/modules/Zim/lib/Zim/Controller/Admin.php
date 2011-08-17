@@ -40,6 +40,8 @@ class Zim_Controller_Admin extends Zikula_AbstractController
         if (!SecurityUtil::checkPermission('Zim::', '::', ACCESS_ADMIN)) {
             return LogUtil::registerPermissionError();
         }
+        $this->checkCsrfToken();
+        
         $settings = $this->request->getPost()->get('settings');
         $settings['use_minjs'] = $this->request->getPost()->get('settings_use_minjs', 0);
         $settings['allow_offline_msg'] = $this->request->getPost()->get('settings_allow_offline_msg', 0);
