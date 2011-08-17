@@ -39,7 +39,7 @@ var Zim ={
     contacts: Array(),
     groups: Array(),
     init_in_progress: false,
-        
+    
     init: function() {
         Zim.init_in_progress = true;
         
@@ -92,6 +92,7 @@ var Zim ={
                         if ($('zim_group_' + item.gid) == undefined) {
                             $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
                             Zim.make_group_droppable(item);
+                            Zim.make_group_deletable(item);
                             Event.observe('zim_group_' + item.gid, 'click', function(event) {
                                 if ($('zim-group-list-' + item.gid).visible()) {
                                     $('zim-group-list-' + item.gid).blindUp();
@@ -252,6 +253,7 @@ var Zim ={
                                     $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
                                     $('zim-block-group-box').remove();
                                     Zim.make_group_droppable(data);
+                                    Zim.make_group_deletable(data);
                                 }
                             });
                         });
@@ -386,6 +388,52 @@ var Zim ={
         	}
         });
     
+    },
+    
+    make_group_deletable : function(item) {
+    	var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first().hide();
+        var hoverevent = function() {Event.observe('zim_group_' + item.gid, 'mouseover', function(event) {
+            	Event.stopObserving('zim_group_' + item.gid, 'mouseover');
+            	var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first();
+            	d.show();
+            	Event.observe(d, 'click', function(event) {
+            		Event.stopObserving('zim_group_' + item.gid);
+            		if (Zim.delete_group(item.gid)) {
+            			$$('#zim-group-list-' + item.gid + ' .zim-contact').each(function(contact) {  				
+            				contact.remove();
+            				$('zim-block-contacts').insert({top:contact});
+            			});
+            			$('zim-group-list-' + item.gid).remove();
+            			$('zim_group_' + item.gid).remove();
+            			return;
+            		} else {
+            			Zim.make_group_deletable(item);
+            		}
+            	});
+            	Event.observe('zim_group_' + item.gid, 'mouseout', function(event) {
+            		Event.stopObserving(d);
+            		Event.stopObserving('zim_group_' + item.gid, 'mouseout');
+            		d.hide();
+            		hoverevent();
+            	});
+            });
+        };
+        hoverevent();
+    },
+    
+    delete_group: function(groupid) {
+    	var pars = 'gid=' + groupid;
+    	var result = new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=delete_group", {
+            parameters: pars,
+            onComplete : function(req) {
+	    		if (!req.isSuccess()) {
+	                Zikula.showajaxerror(req.getMessage());
+	                return false;
+	    		}
+	    		return true;
+    		}
+    	});
+    	return result;
     },
 
     

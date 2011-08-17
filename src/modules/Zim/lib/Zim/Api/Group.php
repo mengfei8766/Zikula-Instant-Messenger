@@ -123,11 +123,22 @@ class Zim_Api_Group extends Zikula_AbstractApi
         if (!isset($args['gid']) || $args['gid'] == '') {
             throw new Zim_Exception_GIDNotSet();
         }
-
-        //TODO: delete group
-
-        $output = array();
-        return $output;
+        
+        //TODO: use transaction maybe?
+        
+        $q = Doctrine_Query::create()
+            ->delete('Zim_Model_Group g')
+            ->where('g.gid = ?', $args['gid'])
+            ->addWhere('g.uid = ?', $args['uid']);
+        if ($q->execute() > 0) {
+            $q = Doctrine_Query::create()
+            ->delete('Zim_Model_GroupUser g')
+            ->where('g.gid = ?', $args['gid']);
+            $q->execute();
+            return true;
+        }
+        throw new Zim_Exception_GroupNotFound();
+        return;
     }
 
     /**

@@ -90,6 +90,14 @@ form.inplaceeditor-form { /* The form */
     background: linear-gradient(#fafafa, #f2f2f2); /*CSS3*/
 }
 
+.zim-group:hover {
+    background: #CDCDCD; /*non-CSS3 browsers*/
+    background: -webkit-gradient(linear, left top, left bottom, from(#fafafa),
+        to(#CDCDCD) ); /*webkit*/
+    background: -moz-linear-gradient(top, #fafafa, #CDCDCD); /*gecko*/
+    background: linear-gradient(#fafafa, #CDCDCD); /*CSS3*/
+}
+
 .zim-group-toggle-container{
     position:absolute;
     height:100%;
