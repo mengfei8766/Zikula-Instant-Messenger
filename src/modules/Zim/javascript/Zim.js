@@ -17,7 +17,8 @@ var Zim ={
     settings: {
         execute_period: 6,
         contact_update_freq: 4,
-        allow_offline_msg: 1
+        allow_offline_msg: 1,
+        contact_groups : 1
     },
     execute_count: 0,
     periodical_get_messages: '',
@@ -91,8 +92,10 @@ var Zim ={
                         var show = {groupname: item.groupname, gid: item.gid};
                         if ($('zim_group_' + item.gid) == undefined) {
                             $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-                            Zim.make_group_droppable(item);
-                            Zim.make_group_deletable(item);
+                            if (Zim.settings.contact_groups == 1) {
+                                Zim.make_group_droppable(item);
+                                Zim.make_group_deletable(item);
+                            }
                             Event.observe('zim_group_' + item.gid, 'click', function(event) {
                                 if ($('zim-group-list-' + item.gid).visible()) {
                                     $('zim-group-list-' + item.gid).blindUp();
@@ -252,8 +255,10 @@ var Zim ={
                                     var show = {groupname: data.groupname, gid: data.gid};
                                     $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
                                     $('zim-block-group-box').remove();
-                                    Zim.make_group_droppable(data);
-                                    Zim.make_group_deletable(data);
+                                    if (Zim.settings.contact_groups == 1) {
+                                        Zim.make_group_droppable(data);
+                                        Zim.make_group_deletable(data);
+                                    }
                                 }
                             });
                         });
@@ -356,22 +361,23 @@ var Zim ={
             Event.observe(c, 'click', function(event) {
                      Zim.add_message_box(contact);
              });
-
-            new Draggable(c, { 
-            	constraint: 'vertical', 
-            	handle: (c.getElementsBySelector('img')).first(),
-            	revert:true});
+            if (Zim.settings.contact_groups == 1) {
+            	new Draggable(c, { 
+                    constraint: 'vertical', 
+                    handle: (c.getElementsBySelector('img')).first(),
+                    revert:true});	
+            }
         }
     },
     
     make_group_droppable : function(item) {
-    	Droppables.add('zim_group_' + item.gid, {
-        	accept:'zim-contact',
-        	hoverclass: 'zim_contact_list_hover',
-        	onDrop: function(element) {
-        		var uid = parseInt((element.id).replace('contact_', ''));
-        		var pars = "uid=" + uid + "&gid=" + item.gid;
-        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=add_to_group", {
+        Droppables.add('zim_group_' + item.gid, {
+            accept:'zim-contact',
+            hoverclass: 'zim_contact_list_hover',
+            onDrop: function(element) {
+                var uid = parseInt((element.id).replace('contact_', ''));
+                var pars = "uid=" + uid + "&gid=" + item.gid;
+                new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=add_to_group", {
                     parameters: pars,
                     onComplete : function(req) {
                         if (!req.isSuccess()) {
@@ -381,59 +387,59 @@ var Zim ={
                         }
                         var data = req.getData();
                         element.remove();
-                		$('zim-group-list-' + data.gid).insert(element);
-        			}
-        		});
+                        $('zim-group-list-' + data.gid).insert(element);
+                    }
+                });
 
-        	}
+            }
         });
     
     },
     
     make_group_deletable : function(item) {
-    	var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first().hide();
+        var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first().hide();
         var hoverevent = function() {Event.observe('zim_group_' + item.gid, 'mouseover', function(event) {
-            	Event.stopObserving('zim_group_' + item.gid, 'mouseover');
-            	var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first();
-            	d.show();
-            	Event.observe(d, 'click', function(event) {
-            		Event.stopObserving('zim_group_' + item.gid);
-            		if (Zim.delete_group(item.gid)) {
-            			$$('#zim-group-list-' + item.gid + ' .zim-contact').each(function(contact) {  				
-            				contact.remove();
-            				$('zim-block-contacts').insert({top:contact});
-            			});
-            			$('zim-group-list-' + item.gid).remove();
-            			$('zim_group_' + item.gid).remove();
-            			return;
-            		} else {
-            			Zim.make_group_deletable(item);
-            		}
-            	});
-            	Event.observe('zim_group_' + item.gid, 'mouseout', function(event) {
-            		Event.stopObserving(d);
-            		Event.stopObserving('zim_group_' + item.gid, 'mouseout');
-            		d.hide();
-            		hoverevent();
-            	});
+                Event.stopObserving('zim_group_' + item.gid, 'mouseover');
+                var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first();
+                d.show();
+                Event.observe(d, 'click', function(event) {
+                    Event.stopObserving('zim_group_' + item.gid);
+                    if (Zim.delete_group(item.gid)) {
+                        $$('#zim-group-list-' + item.gid + ' .zim-contact').each(function(contact) {                  
+                            contact.remove();
+                            $('zim-block-contacts').insert({top:contact});
+                        });
+                        $('zim-group-list-' + item.gid).remove();
+                        $('zim_group_' + item.gid).remove();
+                        return;
+                    } else {
+                        Zim.make_group_deletable(item);
+                    }
+                });
+                Event.observe('zim_group_' + item.gid, 'mouseout', function(event) {
+                    Event.stopObserving(d);
+                    Event.stopObserving('zim_group_' + item.gid, 'mouseout');
+                    d.hide();
+                    hoverevent();
+                });
             });
         };
         hoverevent();
     },
     
     delete_group: function(groupid) {
-    	var pars = 'gid=' + groupid;
-    	var result = new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=delete_group", {
+        var pars = 'gid=' + groupid;
+        var result = new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=delete_group", {
             parameters: pars,
             onComplete : function(req) {
-	    		if (!req.isSuccess()) {
-	                Zikula.showajaxerror(req.getMessage());
-	                return false;
-	    		}
-	    		return true;
-    		}
-    	});
-    	return result;
+                if (!req.isSuccess()) {
+                    Zikula.showajaxerror(req.getMessage());
+                    return false;
+                }
+                return true;
+            }
+        });
+        return result;
     },
 
     

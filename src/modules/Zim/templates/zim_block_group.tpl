@@ -2,7 +2,9 @@
 <li id='{literal}zim_group_#{gid}{/literal}' class='zim-group' > 
     <div>{literal}#{groupname}{/literal}
     <div class="zim-group-toggle-container">
-        {img class="zim-group-delete" modname="Zim" src="close.png" __alt="Delete Group" __title="Delete Group"}
+        {if $modvars.Zim.contact_groups eq 1}
+            {img class="zim-group-delete" modname="Zim" src="close.png" __alt="Delete Group" __title="Delete Group"}
+        {/if}
         {img class="zim-group-toggle" modname=core src=arrow_down_grey.png set=global __alt="Toggle Group" __title="Toggle Group"}
         </div>
     </div>

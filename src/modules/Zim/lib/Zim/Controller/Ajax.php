@@ -131,7 +131,8 @@ class Zim_Controller_Ajax extends Zikula_Controller_AbstractAjax
         $output['settings']['execute_period'] = $this->getVar('message_check_period');
         $output['settings']['contact_update_freq'] = $this->getVar('contact_update_freq');
         $output['settings']['allow_offline_msg'] = $this->getVar('allow_offline_msg');
-
+        $output['settings']['contact_groups'] = $this->getVar('contact_groups');
+        
         //retreive state
         $state = ModUtil::apiFunc('Zim', 'state', 'get', $this->uid);
         foreach ($state['windows'] as $key => $window) {
