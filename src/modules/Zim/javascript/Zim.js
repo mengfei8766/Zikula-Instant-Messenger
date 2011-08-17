@@ -17,7 +17,8 @@ var Zim ={
     settings: {
         execute_period: 6,
         contact_update_freq: 4,
-        allow_offline_msg: 1
+        allow_offline_msg: 1,
+        contact_groups : 1
     },
     execute_count: 0,
     periodical_get_messages: '',
@@ -39,7 +40,7 @@ var Zim ={
     contacts: Array(),
     groups: Array(),
     init_in_progress: false,
-        
+    
     init: function() {
         Zim.init_in_progress = true;
         
@@ -80,7 +81,7 @@ var Zim ={
                 Zim.set_status_image();
                 Zim.status_observer();
              
-                if (Zim.status == '0') return;
+                if (Zim.status == '0') return;              
                 Zim.contacts.each(function(item) {
                     if (typeof item.uname != 'undefined') {
                         Zim.toggle_contact_state(item);
@@ -91,7 +92,11 @@ var Zim ={
                         var show = {groupname: item.groupname, gid: item.gid};
                         if ($('zim_group_' + item.gid) == undefined) {
                             $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
-                            Zim.make_group_droppable(item);
+                            if (Zim.settings.contact_groups == 1) {
+                                Zim.make_group_droppable(item);
+                                Zim.make_group_deletable(item);
+                                Zim.make_group_editable(item);
+                            }
                             Event.observe('zim_group_' + item.gid, 'click', function(event) {
                                 if ($('zim-group-list-' + item.gid).visible()) {
                                     $('zim-group-list-' + item.gid).blindUp();
@@ -111,7 +116,7 @@ var Zim ={
                         });
                     }
                 });
-
+              
                 Zim.periodical_update_contact = new PeriodicalExecuter(function(pe) {
                     Zim.update_contacts();
                 }, Zim.settings.execute_period);
@@ -251,7 +256,11 @@ var Zim ={
                                     var show = {groupname: data.groupname, gid: data.gid};
                                     $('zim-block-contacts').insert(Zim.group_template.evaluate(show));
                                     $('zim-block-group-box').remove();
-                                    Zim.make_group_droppable(data);
+                                    if (Zim.settings.contact_groups == 1) {
+                                        Zim.make_group_droppable(data);
+                                        Zim.make_group_deletable(data);
+                                        Zim.make_group_editable(data);
+                                    }
                                 }
                             });
                         });
@@ -354,22 +363,23 @@ var Zim ={
             Event.observe(c, 'click', function(event) {
                      Zim.add_message_box(contact);
              });
-
-            new Draggable(c, { 
-            	constraint: 'vertical', 
-            	handle: (c.getElementsBySelector('img')).first(),
-            	revert:true});
+            if (Zim.settings.contact_groups == 1) {
+                new Draggable(c, { 
+                    constraint: 'vertical', 
+                    handle: (c.getElementsBySelector('img')).first(),
+                    revert:true});    
+            }
         }
     },
     
     make_group_droppable : function(item) {
-    	Droppables.add('zim_group_' + item.gid, {
-        	accept:'zim-contact',
-        	hoverclass: 'zim_contact_list_hover',
-        	onDrop: function(element) {
-        		var uid = parseInt((element.id).replace('contact_', ''));
-        		var pars = "uid=" + uid + "&gid=" + item.gid;
-        		new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=add_to_group", {
+        Droppables.add('zim_group_' + item.gid, {
+            accept:'zim-contact',
+            hoverclass: 'zim_contact_list_hover',
+            onDrop: function(element) {
+                var uid = parseInt((element.id).replace('contact_', ''));
+                var pars = "uid=" + uid + "&gid=" + item.gid;
+                new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=add_to_group", {
                     parameters: pars,
                     onComplete : function(req) {
                         if (!req.isSuccess()) {
@@ -379,13 +389,93 @@ var Zim ={
                         }
                         var data = req.getData();
                         element.remove();
-                		$('zim-group-list-' + data.gid).insert(element);
-        			}
-        		});
+                        $('zim-group-list-' + data.gid).insert(element);
+                    }
+                });
 
-        	}
+            }
         });
+    },
     
+    make_group_editable : function(item) {
+    	var groupname = item.groupname;
+        var editor = new Ajax.InPlaceEditor('zim_groupname_' +item.gid, 'ajax.php?module=Zim&type=group&func=edit_groupname', {
+            okControl:false,
+            submitOnBlur:true,
+            cancelControl:false,
+            ajaxOptions: Zikula.Ajax.Request.defaultOptions(),
+            onFormCustomization: function(obj, form) {
+                $(form).observe('keypress',function(e) {
+                    if(e.keyCode == Event.KEY_RETURN) {
+                        e.stop();
+                        e.element().blur();
+                    }
+                });
+            },
+            callback: function(form, value) {
+                return 'groupname='+encodeURIComponent(value)+'&gid=' +item.gid;
+            },
+            onComplete: function(transport, element) {
+                transport = Zikula.Ajax.Response.extend(transport);
+                if (!transport.isSuccess()) {
+                    this.element.update(groupname);
+                    Zikula.showajaxerror(transport.getMessage());
+                    return;
+                }
+                var data = transport.getData();
+                this.element.innerHTML = data.groupname;
+                groupname = data.groupname;
+            },
+            formId: 'groupname'
+        });
+    },
+    
+    make_group_deletable : function(item) {
+        var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first().hide();
+        var hoverevent = function() {Event.observe('zim_group_' + item.gid, 'mouseover', function(event) {
+                Event.stopObserving('zim_group_' + item.gid, 'mouseover');
+                var d = $$('#zim_group_' + item.gid + ' .zim-group-delete').first();
+                if (typeof d !== 'undefined') {
+                    d.show();
+                }
+                Event.observe(d, 'click', function(event) {
+                    Event.stopObserving('zim_group_' + item.gid);
+                    if (Zim.delete_group(item.gid)) {
+                        $$('#zim-group-list-' + item.gid + ' .zim-contact').each(function(contact) {                  
+                            contact.remove();
+                            $('zim-block-contacts').insert({top:contact});
+                        });
+                        $('zim-group-list-' + item.gid).remove();
+                        $('zim_group_' + item.gid).remove();
+                        return;
+                    } else {
+                        Zim.make_group_deletable(item);
+                    }
+                });
+                Event.observe('zim_group_' + item.gid, 'mouseout', function(event) {
+                    Event.stopObserving(d);
+                    Event.stopObserving('zim_group_' + item.gid, 'mouseout');
+                    d.hide();
+                    hoverevent();
+                });
+            });
+        };
+        hoverevent();
+    },
+    
+    delete_group: function(groupid) {
+        var pars = 'gid=' + groupid;
+        var result = new Zikula.Ajax.Request(Zikula.Config.baseURL + "ajax.php?module=Zim&type=group&func=delete_group", {
+            parameters: pars,
+            onComplete : function(req) {
+                if (!req.isSuccess()) {
+                    Zikula.showajaxerror(req.getMessage());
+                    return false;
+                }
+                return true;
+            }
+        });
+        return result;
     },
 
     
@@ -399,8 +489,22 @@ var Zim ={
                      });
                 };
                 Zim.contacts.each(function(item) {
-                        if (item.uid == Zim.my_uid) return;
-                        var pos = (item.uname).indexOf(event.element().value) 
+                    if (typeof item.gid !== 'undefined') {
+                    	item.members.each(function(item2) {
+                    		var pos = (item2.uname).indexOf(event.element().value); 
+                            item2.pos = pos;
+                            if (pos < 0) {return;}
+                            if (pos == 0) {
+                                matches.unshift(item2);
+                                return;
+                            } else {
+                                partial.push(item2);
+                                //TODO sort by position or something
+                            }	
+                    	});
+                    } else {
+                    	if (item.uid == Zim.my_uid) return;
+                    	var pos = (item.uname).indexOf(event.element().value); 
                         item.pos = pos;
                         if (pos < 0) {return;}
                         if (pos == 0) {
@@ -410,6 +514,7 @@ var Zim ={
                             partial.push(item);
                             //TODO sort by position or something
                         }
+                    }    
                 });
                 //TODO do i realkly need to concat?
                 matches = matches.concat(partial);
