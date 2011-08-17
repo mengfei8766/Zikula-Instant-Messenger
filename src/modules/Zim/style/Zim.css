@@ -246,6 +246,9 @@ form.inplaceeditor-form { /* The form */
 .zim-block-history-messagesetwidth {
     max-width: 100px;
 }
+.zim-block-history-download form{
+    display:inline;
+}
 
 /*END CSS FOR ZIM BLOCK HISTORY*/ /*CSS FOR ZIM MESSAGE WINDOWS*/
 #zim-block-message-container {

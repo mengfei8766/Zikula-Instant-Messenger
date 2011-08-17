@@ -1,3 +1,4 @@
+{$download}
 <table class="zim-block-history-messagetable">
 	<tr class="zim-block-history-messageheader">
 		<td class="zim-block-history-messagesetwidth">From</td>

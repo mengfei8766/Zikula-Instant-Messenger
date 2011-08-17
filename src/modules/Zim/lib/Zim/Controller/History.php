@@ -71,7 +71,10 @@ class Zim_Controller_History extends Zikula_Controller_AbstractAjax
         $messages = ModUtil::apiFunc('Zim', 'history', 'get_history', array('user1' => $this->uid, 'user2' => $uid));
 
         //get the template and return it to the user.
-        $this->view->assign(array('messages' => $messages));
+        $this->view->assign(array('contact'  => $uid));
+        $download = $this->view->fetch('zim_block_history_download.tpl');
+        $this->view->assign(array('messages' => $messages,
+                                  'download'  => $download));
         $output['template'] = $this->view->fetch('zim_block_history_messages.tpl');
         return new Zikula_Response_Ajax($output);
     }
