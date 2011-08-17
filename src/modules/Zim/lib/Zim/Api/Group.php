@@ -165,8 +165,9 @@ class Zim_Api_Group extends Zikula_AbstractApi
 
         $result = $q->execute();
         if (!isset($result) || $result == 0) {
-            //TODO failed
+            throw new Zim_Exception_GroupNotFound();
         }
+        return array('groupname' => $args['groupname']);
     }
 
     /**

@@ -104,11 +104,12 @@ class Zim_Controller_Group extends Zikula_Controller_AbstractAjax
             return new Zim_Response_Ajax_Exception($e);
         } catch (Zim_Exception_UIDNotSet $e) {
             return new Zim_Response_Ajax_Exception($e);
+        } catch(Zim_exception_GroupNotFound $e) {
+            return new Zim_Response_Ajax_Exception($e);
         }
 
-        $output = array();
         //return JSON response.
-        return new Zikula_Response_Ajax($output);
+        return new Zikula_Response_Ajax($group);
     }
 
     /**

@@ -1,6 +1,6 @@
 
 <li id='{literal}zim_group_#{gid}{/literal}' class='zim-group' > 
-    <div>{literal}#{groupname}{/literal}
+    <div><div id='{literal}zim_groupname_#{gid}{/literal}'>{literal}#{groupname}{/literal}</div>
     <div class="zim-group-toggle-container">
         {if $modvars.Zim.contact_groups eq 1}
             {img class="zim-group-delete" modname="Zim" src="close.png" __alt="Delete Group" __title="Delete Group"}
