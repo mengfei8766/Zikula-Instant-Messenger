@@ -489,32 +489,32 @@ var Zim ={
                      });
                 };
                 Zim.contacts.each(function(item) {
-                        if (typeof item.gid !== 'undefined') {
-                        	item.members.each(function(item2) {
-                        		var pos = (item2.uname).indexOf(event.element().value); 
-                                item2.pos = pos;
-                                if (pos < 0) {return;}
-                                if (pos == 0) {
-                                    matches.unshift(item2);
-                                    return;
-                                } else {
-                                    partial.push(item2);
-                                    //TODO sort by position or something
-                                }	
-                        	});
-                        } else {
-                        	if (item.uid == Zim.my_uid) return;
-                        	var pos = (item.uname).indexOf(event.element().value); 
-                            item.pos = pos;
+                    if (typeof item.gid !== 'undefined') {
+                    	item.members.each(function(item2) {
+                    		var pos = (item2.uname).indexOf(event.element().value); 
+                            item2.pos = pos;
                             if (pos < 0) {return;}
                             if (pos == 0) {
-                                matches.unshift(item);
+                                matches.unshift(item2);
                                 return;
                             } else {
-                                partial.push(item);
+                                partial.push(item2);
                                 //TODO sort by position or something
-                            }
-                        }    
+                            }	
+                    	});
+                    } else {
+                    	if (item.uid == Zim.my_uid) return;
+                    	var pos = (item.uname).indexOf(event.element().value); 
+                        item.pos = pos;
+                        if (pos < 0) {return;}
+                        if (pos == 0) {
+                            matches.unshift(item);
+                            return;
+                        } else {
+                            partial.push(item);
+                            //TODO sort by position or something
+                        }
+                    }    
                 });
                 //TODO do i realkly need to concat?
                 matches = matches.concat(partial);
